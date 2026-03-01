@@ -213,6 +213,7 @@ export interface CreateTradeEntryRequest {
 
 export interface UpdateTradeEntryRequest {
   instrument?: string;
+  entryDateTime?: string;
   entryPrice?: number;
   positionSize?: number;
   stopLossAmount?: number;

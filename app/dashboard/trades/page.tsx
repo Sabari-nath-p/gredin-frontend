@@ -207,7 +207,8 @@ export default function TradesPage() {
               return (
                 <div
                   key={trade.id}
-                  className={`bg-dark-card rounded-2xl border p-4 transition-colors ${
+                  onClick={() => router.push(`/dashboard/trades/${trade.id}`)}
+                  className={`bg-dark-card rounded-2xl border p-4 transition-colors cursor-pointer hover:border-green-primary/20 active:scale-[0.99] ${
                     isOpen ? 'border-blue-primary/20' : 'border-dark-border/50'
                   }`}
                 >
@@ -243,7 +244,7 @@ export default function TradesPage() {
                     {/* Right action */}
                     {isOpen ? (
                       <button
-                        onClick={() => router.push(`/dashboard/trades/${trade.id}/close`)}
+                        onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/trades/${trade.id}/close`); }}
                         className="flex items-center gap-1 px-3 py-1.5 bg-green-primary/10 hover:bg-green-primary/20 active:scale-95 text-green-primary rounded-xl text-xs font-bold transition-all border border-green-primary/20 flex-shrink-0"
                       >
                         Close <ChevronRight className="w-3 h-3" />
@@ -311,7 +312,7 @@ export default function TradesPage() {
                   const account = accounts.find(a => a.id === trade.tradeAccountId);
                   const pl = Number(trade.realisedProfitLoss);
                   return (
-                    <tr key={trade.id} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors">
+                    <tr key={trade.id} onClick={() => router.push(`/dashboard/trades/${trade.id}`)} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors cursor-pointer">
                       <td className="pl-5 pr-3 py-3 text-xs text-gray-text whitespace-nowrap">{formatDateTime(trade.entryDateTime)}</td>
                       <td className="px-3 py-3 text-xs text-gray-text">{account?.accountName || '—'}</td>
                       <td className="px-3 py-3 text-sm font-bold text-gray-light">{trade.instrument}</td>
@@ -350,7 +351,7 @@ export default function TradesPage() {
                       <td className="pr-5 pl-3 py-3 text-right">
                         {trade.status === 'OPEN' && (
                           <button
-                            onClick={() => router.push(`/dashboard/trades/${trade.id}/close`)}
+                            onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/trades/${trade.id}/close`); }}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-green-primary/10 hover:bg-green-primary/20 text-green-primary rounded-lg text-xs font-bold transition-colors border border-green-primary/20"
                           >
                             Close
