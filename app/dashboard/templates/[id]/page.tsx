@@ -16,6 +16,17 @@ import {
 } from '@/lib/api';
 import toast from 'react-hot-toast';
 
+// Works on both HTTP (production) and HTTPS/localhost
+function genKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try { return crypto.randomUUID(); } catch {}
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
 const FIELD_TYPES: { value: FieldType; label: string; icon: React.ElementType; desc: string; color: string }[] = [
   { value: 'TEXT', label: 'Text', icon: Type, desc: 'Short text input', color: 'blue-primary' },
   { value: 'LONG_TEXT', label: 'Long Text', icon: AlignLeft, desc: 'Multi-line textarea', color: 'green-primary' },
@@ -69,7 +80,7 @@ export default function EditTemplatePage() {
         (t.fields || [])
           .sort((a, b) => a.fieldOrder - b.fieldOrder)
           .map(f => ({
-            _key: crypto.randomUUID(),
+            _key: genKey(),
             id: f.id,
             fieldName: f.fieldName,
             fieldType: f.fieldType,
@@ -99,7 +110,7 @@ export default function EditTemplatePage() {
     setFields(prev => [
       ...prev,
       {
-        _key: crypto.randomUUID(),
+        _key: genKey(),
         fieldName: '',
         fieldType: type,
         fieldOrder: prev.length,

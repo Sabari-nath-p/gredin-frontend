@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Wallet, TrendingUp, BarChart3, DollarSign,
   ArrowUpRight, ArrowDownRight, Plus, Activity,
-  ChevronRight, Sparkles
+  ChevronRight, Sparkles, Clock, CheckCircle2
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
@@ -13,9 +14,11 @@ import { formatCurrency, formatPercentage, formatDateTime } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { token, user } = useAuthStore();
   const [accounts, setAccounts] = useState<TradeAccount[]>([]);
   const [recentTrades, setRecentTrades] = useState<TradeEntry[]>([]);
+  const [tradeTab, setTradeTab] = useState<'open' | 'closed'>('open');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function DashboardPage() {
         const sorted = allTrades.sort((a, b) => 
           new Date(b.entryDateTime).getTime() - new Date(a.entryDateTime).getTime()
         );
-        setRecentTrades(sorted.slice(0, 5));
+        setRecentTrades(sorted.slice(0, 12));
       }
     } catch (error: any) {
       toast.error('Failed to load dashboard data');
@@ -226,73 +229,127 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Recent Trades */}
+        {/* Recent Trades — tabbed */}
         <div className="card animate-fade-in stagger-4">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-bold text-gray-light">Recent Trades</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-light">Trade Log</h2>
             <Link href="/dashboard/trades" className="flex items-center gap-1 text-xs text-green-primary hover:text-green-secondary transition-colors font-medium">
               View All <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
 
-          {recentTrades.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="empty-state-icon">
-                <TrendingUp className="w-8 h-8 text-gray-text" />
-              </div>
-              <p className="text-gray-text mb-1 text-sm">No trades yet</p>
-              <p className="text-xs text-gray-text/60 mb-4">Start logging your trades</p>
-              <Link href="/dashboard/trades/new" className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4">
-                <Plus className="w-4 h-4" />
-                Log Trade
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {recentTrades.map((trade) => (
-                <div
-                  key={trade.id}
-                  className="flex items-center gap-3 p-3.5 bg-dark-bg/60 rounded-xl border border-dark-border/50"
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    trade.direction === 'BUY' ? 'bg-green-primary/10' : 'bg-red-primary/10'
-                  }`}>
-                    {trade.direction === 'BUY' ? (
-                      <ArrowUpRight className="w-5 h-5 text-green-primary" />
-                    ) : (
-                      <ArrowDownRight className="w-5 h-5 text-red-primary" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-light text-sm">{trade.instrument}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
-                        trade.direction === 'BUY' 
-                          ? 'bg-green-primary/10 text-green-primary' 
-                          : 'bg-red-primary/10 text-red-primary'
-                      }`}>
-                        {trade.direction}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-text">{formatDateTime(trade.entryDateTime)}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    {trade.status === 'CLOSED' && trade.realisedProfitLoss !== null ? (
-                      <p className={`text-sm font-bold number-highlight ${
-                        Number(trade.realisedProfitLoss) >= 0 ? 'text-green-primary' : 'text-red-primary'
-                      }`}>
-                        {Number(trade.realisedProfitLoss) >= 0 ? '+' : ''}{formatCurrency(Number(trade.realisedProfitLoss))}
-                      </p>
-                    ) : (
-                      <span className="text-[10px] font-semibold text-blue-primary bg-blue-primary/10 px-2 py-1 rounded">
-                        OPEN
-                      </span>
-                    )}
-                  </div>
+          {/* Open / Closed tabs */}
+          <div className="flex bg-dark-bg rounded-xl p-1 mb-4 gap-0.5">
+            <button
+              onClick={() => setTradeTab('open')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                tradeTab === 'open' ? 'bg-blue-primary/15 text-blue-primary' : 'text-gray-text hover:text-gray-light'
+              }`}
+            >
+              <Clock className="w-3 h-3" />
+              Open
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                tradeTab === 'open' ? 'bg-blue-primary/20 text-blue-primary' : 'bg-dark-card text-gray-text'
+              }`}>
+                {recentTrades.filter(t => t.status === 'OPEN').length}
+              </span>
+            </button>
+            <button
+              onClick={() => setTradeTab('closed')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                tradeTab === 'closed' ? 'bg-green-primary/15 text-green-primary' : 'text-gray-text hover:text-gray-light'
+              }`}
+            >
+              <CheckCircle2 className="w-3 h-3" />
+              Closed
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                tradeTab === 'closed' ? 'bg-green-primary/20 text-green-primary' : 'bg-dark-card text-gray-text'
+              }`}>
+                {recentTrades.filter(t => t.status === 'CLOSED').length}
+              </span>
+            </button>
+          </div>
+
+          {(() => {
+            const displayed = recentTrades.filter(t =>
+              tradeTab === 'open' ? t.status === 'OPEN' : t.status === 'CLOSED'
+            ).slice(0, 5);
+            if (recentTrades.length === 0) return (
+              <div className="text-center py-10">
+                <div className="empty-state-icon">
+                  <TrendingUp className="w-8 h-8 text-gray-text" />
                 </div>
-              ))}
-            </div>
-          )}
+                <p className="text-gray-text mb-1 text-sm">No trades yet</p>
+                <p className="text-xs text-gray-text/60 mb-4">Start logging your trades</p>
+                <Link href="/dashboard/trades/new" className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4">
+                  <Plus className="w-4 h-4" /> Log Trade
+                </Link>
+              </div>
+            );
+            if (displayed.length === 0) return (
+              <div className="text-center py-8">
+                <p className="text-sm text-gray-text">
+                  {tradeTab === 'open' ? 'No open positions' : 'No closed trades yet'}
+                </p>
+                {tradeTab === 'open' && (
+                  <Link href="/dashboard/trades/new" className="btn-primary inline-flex items-center gap-2 text-xs py-1.5 px-3 mt-3">
+                    <Plus className="w-3 h-3" /> New Trade
+                  </Link>
+                )}
+              </div>
+            );
+            return (
+              <div className="space-y-2">
+                {displayed.map(trade => {
+                  const pl = Number(trade.realisedProfitLoss);
+                  const isBuy = trade.direction === 'BUY';
+                  return (
+                    <div
+                      key={trade.id}
+                      className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
+                        trade.status === 'OPEN'
+                          ? 'bg-blue-primary/5 border-blue-primary/15 hover:border-blue-primary/30'
+                          : 'bg-dark-bg/60 border-dark-border/50 hover:border-dark-border'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        isBuy ? 'bg-green-primary/10' : 'bg-red-primary/10'
+                      }`}>
+                        {isBuy
+                          ? <ArrowUpRight className="w-4 h-4 text-green-primary" />
+                          : <ArrowDownRight className="w-4 h-4 text-red-primary" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-gray-light text-sm">{trade.instrument}</span>
+                          <span className={`text-[10px] px-1 py-0.5 rounded font-bold ${
+                            isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
+                          }`}>{trade.direction}</span>
+                        </div>
+                        <p className="text-xs text-gray-text/70">{formatDateTime(trade.entryDateTime)}</p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        {trade.status === 'OPEN' ? (
+                          <button
+                            onClick={() => router.push(`/dashboard/trades/${trade.id}/close`)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 bg-green-primary/10 hover:bg-green-primary/20 active:scale-95 text-green-primary rounded-lg text-[11px] font-bold transition-all border border-green-primary/20"
+                          >
+                            Close <ChevronRight className="w-3 h-3" />
+                          </button>
+                        ) : trade.realisedProfitLoss !== null ? (
+                          <p className={`text-sm font-bold number-highlight ${
+                            pl >= 0 ? 'text-green-primary' : 'text-red-primary'
+                          }`}>
+                            {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
       </div>
 
