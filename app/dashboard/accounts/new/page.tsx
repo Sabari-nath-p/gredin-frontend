@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Wallet, Info, Loader2 } from 'lucide-react';
+import { ArrowLeft, Wallet, Info, Loader2, Server } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/lib/store';
-import { tradeAccountApi, type CreateTradeAccountRequest } from '@/lib/api';
+import { tradeAccountApi, mt5SyncApi, type CreateTradeAccountRequest } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 const marketSegments = [
@@ -40,14 +40,27 @@ export default function NewAccountPage() {
     accountType: 'DEMO',
   });
 
+  const [connectMt5, setConnectMt5] = useState(false);
+  const [mt5Form, setMt5Form] = useState({ mt5Login: '', mt5Password: '', mt5Server: '' });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
 
     setLoading(true);
     try {
-      await tradeAccountApi.create(token, formData);
+      const res = await tradeAccountApi.create(token, formData);
       toast.success('Account created successfully!');
+      
+      if (connectMt5 && mt5Form.mt5Login) {
+        try {
+          await mt5SyncApi.linkAccount(token, res.data.id, mt5Form);
+          toast.success('MT5 linked successfully!');
+        } catch (mt5Error: any) {
+          toast.error(mt5Error.response?.data?.message || 'Failed to link MT5 account. You can retry later from the account page.');
+        }
+      }
+
       router.push('/dashboard/accounts');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to create account');
@@ -211,6 +224,67 @@ export default function NewAccountPage() {
               <p className="text-xs text-gray-text mt-1.5">Starting balance cannot be changed later</p>
             </div>
           </div>
+        </div>
+
+        {/* MT5 Integration */}
+        <div className="card space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Server className="w-5 h-5 text-blue-400" />
+              <h2 className="text-lg font-bold text-gray-light">MT5 Integration (Optional)</h2>
+            </div>
+            <label className="flex items-center cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={connectMt5}
+                  onChange={(e) => setConnectMt5(e.target.checked)}
+                />
+                <div className={`block w-10 h-6 rounded-full transition-colors ${connectMt5 ? 'bg-blue-500' : 'bg-dark-border'}`}></div>
+                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${connectMt5 ? 'transform translate-x-4' : ''}`}></div>
+              </div>
+            </label>
+          </div>
+          
+          {connectMt5 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dark-border animate-fade-in">
+              <div>
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">MT5 Login ID</label>
+                <input
+                  type="text"
+                  value={mt5Form.mt5Login}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Login: e.target.value })}
+                  className="input w-full"
+                  placeholder="MT5 Account Number"
+                  required={connectMt5}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">MT5 Password</label>
+                <input
+                  type="password"
+                  value={mt5Form.mt5Password}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Password: e.target.value })}
+                  className="input w-full"
+                  placeholder="Auto-sync password"
+                  required={connectMt5}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">Server Name</label>
+                <input
+                  type="text"
+                  value={mt5Form.mt5Server}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Server: e.target.value })}
+                  className="input w-full"
+                  placeholder="e.g. MetaQuotes-Demo"
+                  required={connectMt5}
+                />
+                <p className="text-xs text-gray-text mt-1.5">Trades will automatically sync every 5 minutes</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Info */}
