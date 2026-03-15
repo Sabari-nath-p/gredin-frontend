@@ -7,9 +7,10 @@ import { ArrowRight, LayoutDashboard } from 'lucide-react';
 interface Props {
   size?: 'sm' | 'default' | 'lg';
   variant?: 'primary' | 'outline';
+  compactOnMobile?: boolean;
 }
 
-export default function LandingCTAButton({ size = 'default', variant = 'primary' }: Props) {
+export default function LandingCTAButton({ size = 'default', variant = 'primary', compactOnMobile = false }: Props) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 
   const sizeClasses = {
@@ -22,15 +23,22 @@ export default function LandingCTAButton({ size = 'default', variant = 'primary'
     return (
       <Link
         href="/dashboard"
-        className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group ${sizeClasses} ${
+        className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group whitespace-nowrap shrink-0 ${sizeClasses} ${
           variant === 'primary'
             ? 'btn-primary'
             : 'border-2 border-[#00ff88]/40 text-[#00ff88] hover:bg-[#00ff88]/10 hover:border-[#00ff88]'
         }`}
       >
         <LayoutDashboard className="w-5 h-5" />
-        Open My Console
-        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        {compactOnMobile ? (
+          <>
+            <span className="sm:hidden">Console</span>
+            <span className="hidden sm:inline">Open My Console</span>
+          </>
+        ) : (
+          'Open My Console'
+        )}
+        <ArrowRight className={`w-4 h-4 group-hover:translate-x-1 transition-transform ${compactOnMobile ? 'hidden sm:inline' : ''}`} />
       </Link>
     );
   }
@@ -38,14 +46,21 @@ export default function LandingCTAButton({ size = 'default', variant = 'primary'
   return (
     <Link
       href="/login"
-      className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group ${sizeClasses} ${
+      className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group whitespace-nowrap shrink-0 ${sizeClasses} ${
         variant === 'primary'
           ? 'btn-primary'
           : 'border-2 border-[#00ff88]/40 text-[#00ff88] hover:bg-[#00ff88]/10 hover:border-[#00ff88]'
       }`}
     >
-      Get Started — It&apos;s Free
-      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+      {compactOnMobile ? (
+        <>
+          <span className="sm:hidden">Join</span>
+          <span className="hidden sm:inline">Get Started — It&apos;s Free</span>
+        </>
+      ) : (
+        'Get Started — It\'s Free'
+      )}
+      <ArrowRight className={`w-4 h-4 group-hover:translate-x-1 transition-transform ${compactOnMobile ? 'hidden sm:inline' : ''}`} />
     </Link>
   );
 }

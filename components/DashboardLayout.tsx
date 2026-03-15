@@ -30,6 +30,14 @@ const navigation = [
   { name: 'Profile', href: '/dashboard/profile', icon: User },
 ];
 
+const mobileBottomNavigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Accounts', href: '/dashboard/accounts', icon: Wallet },
+  { name: 'Trades', href: '/dashboard/trades', icon: TrendingUp },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Profile', href: '/dashboard/profile', icon: User },
+];
+
 export default function DashboardLayout({
   children,
 }: {
@@ -200,10 +208,34 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="min-h-[calc(100vh-57px)] p-4 lg:p-8 animate-fade-in">
+        <main className="min-h-[calc(100vh-57px)] p-4 pb-24 md:pb-4 lg:p-8 animate-fade-in">
           {children}
         </main>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden border-t border-dark-border bg-dark-card/95 backdrop-blur-xl">
+        <div className="grid grid-cols-5 gap-1 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+          {mobileBottomNavigation.map((item) => {
+            const isActive = pathname === item.href ||
+              (item.href !== '/dashboard' && pathname.startsWith(item.href));
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`
+                  flex flex-col items-center justify-center gap-1 rounded-xl py-2 transition-colors
+                  ${isActive ? 'text-green-primary bg-green-primary/10' : 'text-gray-text hover:text-gray-light hover:bg-dark-bg/80'}
+                `}
+              >
+                <item.icon className="w-[18px] h-[18px]" />
+                <span className="text-[10px] font-semibold leading-none">{item.name}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }

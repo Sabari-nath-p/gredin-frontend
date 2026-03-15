@@ -139,6 +139,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="input-field pl-12"
+                      style={{ paddingLeft: '3rem' }}
                       placeholder="trader@example.com"
                       required
                     />
@@ -179,6 +180,7 @@ export default function LoginPage() {
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       className="input-field pl-12 text-xl tracking-[0.3em] text-center font-mono"
+                      style={{ paddingLeft: '3rem', letterSpacing: '0.22em' }}
                       placeholder="000000"
                       maxLength={6}
                       required

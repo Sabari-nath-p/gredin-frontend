@@ -171,11 +171,11 @@ export default function LandingPage() {
               <a href="#faq" className="hover:text-[#00ff88] transition-colors">FAQ</a>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-shrink-0">
               <Link href="/login" className="text-sm text-[#8b92a8] hover:text-[#c9d1d9] transition-colors hidden sm:block">
                 Sign In
               </Link>
-              <LandingCTAButton size="sm" />
+              <LandingCTAButton size="sm" compactOnMobile />
             </div>
           </div>
         </nav>
