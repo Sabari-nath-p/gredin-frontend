@@ -377,6 +377,21 @@ export default function NewTradePage() {
                           />
                         </div>
                       )}
+                      {field.fieldType === 'MULTIPLE_CHOICE' && (
+                        <div>
+                          <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                          <select
+                            value={fieldValues[field.id]?.textValue || ''}
+                            onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                            className="input w-full text-sm"
+                          >
+                            <option value="">Select an option</option>
+                            {(field.fieldOptions || []).map((option) => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       {field.fieldType === 'CHECKBOX' && (
                         <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
                           <input
@@ -639,7 +654,7 @@ export default function NewTradePage() {
                       required
                     />
                     <p className="text-[10px] text-gray-text mt-0.5">
-                      Use <span className="text-green-primary">+</span> profit, <span className="text-red-primary">−</span> loss
+                      Enter the amount only. The selected result decides whether it is treated as profit or loss.
                     </p>
                   </div>
                 </div>

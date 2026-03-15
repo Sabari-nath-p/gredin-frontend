@@ -1,8 +1,50 @@
+import type { LogTemplateField, TradeEntry, TradeFieldValue } from './api';
+
 export const formatCurrency = (amount: number, currency = 'USD'): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
   }).format(amount);
+};
+
+export const getTradeGrossProfitLoss = (
+  result: string | null,
+  realisedProfitLoss: number | null | undefined,
+): number | null => {
+  if (realisedProfitLoss === null || realisedProfitLoss === undefined || Number.isNaN(Number(realisedProfitLoss))) {
+    return null;
+  }
+
+  const magnitude = Math.abs(Number(realisedProfitLoss));
+
+  switch (result) {
+    case 'PROFIT':
+      return magnitude;
+    case 'LOSS':
+      return -magnitude;
+    case 'BREAK_EVEN':
+      return 0;
+    default:
+      return Number(realisedProfitLoss);
+  }
+};
+
+export const getTradeNetProfitLoss = (
+  result: string | null,
+  realisedProfitLoss: number | null | undefined,
+  serviceCharge = 0,
+): number | null => {
+  const grossProfitLoss = getTradeGrossProfitLoss(result, realisedProfitLoss);
+
+  if (grossProfitLoss === null) {
+    return null;
+  }
+
+  if (result === 'BREAK_EVEN') {
+    return -Math.abs(serviceCharge || 0);
+  }
+
+  return grossProfitLoss - Math.abs(serviceCharge || 0);
 };
 
 export const formatNumber = (num: number, decimals = 2): string => {
@@ -70,4 +112,53 @@ export const getResultColor = (result: string | null): string => {
     default:
       return 'text-gray-text';
   }
+};
+
+export const formatTradeFieldValue = (
+  fieldValue: TradeFieldValue | undefined,
+  field?: LogTemplateField,
+): string | null => {
+  if (!fieldValue) {
+    return null;
+  }
+
+  const fieldType = field?.fieldType ?? fieldValue.field?.fieldType;
+
+  if (fieldType === 'CHECKBOX') {
+    return fieldValue.booleanValue === null || fieldValue.booleanValue === undefined
+      ? null
+      : fieldValue.booleanValue
+        ? 'Yes'
+        : 'No';
+  }
+
+  if (fieldType === 'IMAGE') {
+    return fieldValue.imageUrl ? 'Image attached' : null;
+  }
+
+  const textValue = fieldValue.textValue?.trim();
+  return textValue ? textValue : null;
+};
+
+export const getTradeTemplatePreviewItems = (
+  trade: TradeEntry,
+  maxItems = 2,
+): Array<{ label: string; value: string }> => {
+  if (!trade.fieldValues?.length) {
+    return [];
+  }
+
+  return trade.fieldValues
+    .map((fieldValue) => {
+      const label = fieldValue.field?.fieldName?.trim();
+      const value = formatTradeFieldValue(fieldValue, fieldValue.field);
+
+      if (!label || !value) {
+        return null;
+      }
+
+      return { label, value };
+    })
+    .filter((item): item is { label: string; value: string } => item !== null)
+    .slice(0, maxItems);
 };

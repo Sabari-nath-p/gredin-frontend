@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, logTemplateApi, type TradeAccount, type TradeEntry, type TradeStats, type LogTemplate } from '@/lib/api';
-import { formatCurrency, formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatDateTime, getTradeNetProfitLoss, getTradeTemplatePreviewItems } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function AccountDetailPage() {
@@ -490,10 +490,23 @@ export default function AccountDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {trades.map((trade) => (
+                {trades.map((trade) => {
+                  const templatePreviewItems = getTradeTemplatePreviewItems(trade);
+                  return (
                   <tr key={trade.id} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors">
                     <td className="px-6 py-3 text-xs text-gray-text">{formatDateTime(trade.entryDateTime)}</td>
-                    <td className="px-3 py-3 text-sm font-semibold text-gray-light">{trade.instrument}</td>
+                    <td className="px-3 py-3">
+                      <p className="text-sm font-semibold text-gray-light">{trade.instrument}</p>
+                      {templatePreviewItems.length > 0 && (
+                        <div className="mt-1 space-y-0.5">
+                          {templatePreviewItems.map((item) => (
+                            <p key={`${trade.id}-${item.label}`} className="text-[11px] text-gray-text truncate">
+                              <span className="text-gray-text/70">{item.label}:</span> {item.value}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </td>
                     <td className="px-3 py-3">
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                         trade.direction === 'BUY' 
@@ -528,12 +541,12 @@ export default function AccountDetailPage() {
                       ) : <span className="text-gray-text/40">—</span>}
                     </td>
                     <td className="px-3 py-3 text-right">
-                      {trade.realisedProfitLoss !== null ? (
+                      {getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) !== null ? (
                         <span className={`text-sm font-bold number-highlight ${
-                          Number(trade.realisedProfitLoss) >= 0 ? 'text-green-primary' : 'text-red-primary'
+                          (getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0) >= 0 ? 'text-green-primary' : 'text-red-primary'
                         }`}>
-                          {Number(trade.realisedProfitLoss) >= 0 ? '+' : ''}
-                          {formatCurrency(Number(trade.realisedProfitLoss))}
+                          {(getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0) >= 0 ? '+' : ''}
+                          {formatCurrency(getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0)}
                         </span>
                       ) : <span className="text-gray-text/40">—</span>}
                     </td>
@@ -548,7 +561,7 @@ export default function AccountDetailPage() {
                       )}
                     </td>
                   </tr>
-                ))}
+                );})}
               </tbody>
             </table>
           </div>

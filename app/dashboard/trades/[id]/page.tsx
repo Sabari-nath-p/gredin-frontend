@@ -6,15 +6,15 @@ import Link from 'next/link';
 import {
   ArrowLeft, TrendingUp, ArrowUpRight, ArrowDownRight, Edit3, Save,
   X, CheckCircle2, XCircle, MinusCircle, Clock, Trash2, Loader2,
-  DollarSign, BarChart3, Target, FileText, Wallet, Calendar,
+  Image, BarChart3, Target, FileText, Wallet, Calendar,
   ChevronRight, Shield, Layers, AlertTriangle,
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import {
-  tradeEntryApi, tradeAccountApi, logTemplateApi,
-  type TradeEntry, type TradeAccount, type LogTemplate,
+  tradeEntryApi, tradeAccountApi, logTemplateApi, uploadApi,
+  type TradeEntry, type TradeAccount, type LogTemplate, type TradeFieldValueRequest,
 } from '@/lib/api';
-import { formatCurrency, formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatDateTime, formatTradeFieldValue, getTradeGrossProfitLoss, getTradeNetProfitLoss } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 interface EditForm {
@@ -26,6 +26,8 @@ interface EditForm {
   takeProfitAmount: string;
   notes: string;
 }
+
+type FieldValueFormState = Record<string, { textValue?: string; booleanValue?: boolean; imageUrl?: string }>;
 
 export default function TradeDetailPage() {
   const params = useParams();
@@ -41,6 +43,8 @@ export default function TradeDetailPage() {
   const [saving, setSaving]       = useState(false);
   const [deleting, setDeleting]   = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [fieldValues, setFieldValues] = useState<FieldValueFormState>({});
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
 
   const [form, setForm] = useState<EditForm>({
     instrument: '', entryDateTime: '', entryPrice: '', positionSize: '',
@@ -48,6 +52,38 @@ export default function TradeDetailPage() {
   });
 
   useEffect(() => { loadAll(); }, [tradeId]);
+
+  const syncTemplateFieldValues = (tradeData: TradeEntry, templateData: LogTemplate | null) => {
+    if (!templateData?.fields?.length) {
+      setFieldValues({});
+      return;
+    }
+
+    const nextValues: FieldValueFormState = {};
+
+    templateData.fields.forEach((field) => {
+      const existing = tradeData.fieldValues?.find((value) => value.fieldId === field.id);
+
+      if (existing) {
+        nextValues[field.id] = {
+          textValue: existing.textValue || '',
+          booleanValue: existing.booleanValue || false,
+          imageUrl: existing.imageUrl || '',
+        };
+        return;
+      }
+
+      if (field.fieldType === 'CHECKBOX') {
+        nextValues[field.id] = { booleanValue: field.defaultValue === 'true' };
+      } else if (field.fieldType === 'IMAGE') {
+        nextValues[field.id] = { imageUrl: '' };
+      } else {
+        nextValues[field.id] = { textValue: field.defaultValue || '' };
+      }
+    });
+
+    setFieldValues(nextValues);
+  };
 
   const loadAll = async () => {
     if (!token || !tradeId) return;
@@ -57,6 +93,7 @@ export default function TradeDetailPage() {
       const t = res.data;
       setTrade(t);
       syncForm(t);
+      let loadedTemplate: LogTemplate | null = null;
       // Load account
       try {
         const accRes = await tradeAccountApi.getById(token, t.tradeAccountId);
@@ -65,8 +102,10 @@ export default function TradeDetailPage() {
       // Load template
       try {
         const tmplRes = await logTemplateApi.getTemplateForAccount(token, t.tradeAccountId);
-        setTemplate(tmplRes.data);
+        loadedTemplate = tmplRes.data;
+        setTemplate(loadedTemplate);
       } catch {}
+      syncTemplateFieldValues(t, loadedTemplate);
     } catch {
       toast.error('Trade not found');
       router.back();
@@ -87,22 +126,59 @@ export default function TradeDetailPage() {
     });
   };
 
+  const handleImageUpload = async (fieldId: string, file: File) => {
+    if (!token) return;
+    setUploadingField(fieldId);
+    try {
+      const res = await uploadApi.uploadImage(token, file);
+      if (res.data.url) {
+        setFieldValues((prev) => ({ ...prev, [fieldId]: { imageUrl: res.data.url || '' } }));
+        toast.success('Image uploaded');
+      } else {
+        toast.error('Image upload not available');
+      }
+    } catch {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
   const handleSave = async () => {
     if (!token || !trade) return;
     setSaving(true);
     try {
       const payload: Record<string, unknown> = {
-        instrument:       form.instrument.trim(),
-        entryDateTime:    form.entryDateTime ? new Date(form.entryDateTime).toISOString() : undefined,
-        entryPrice:       form.entryPrice    ? parseFloat(form.entryPrice)    : undefined,
-        positionSize:     form.positionSize  ? parseInt(form.positionSize)    : undefined,
-        stopLossAmount:   parseFloat(form.stopLossAmount  || '0'),
-        takeProfitAmount: parseFloat(form.takeProfitAmount || '0'),
-        notes:            form.notes,
+        notes: form.notes,
       };
+
+      if (trade.status === 'OPEN') {
+        payload.instrument = form.instrument.trim();
+        payload.entryDateTime = form.entryDateTime ? new Date(form.entryDateTime).toISOString() : undefined;
+        payload.entryPrice = form.entryPrice ? parseFloat(form.entryPrice) : undefined;
+        payload.positionSize = form.positionSize ? parseInt(form.positionSize) : undefined;
+        payload.stopLossAmount = parseFloat(form.stopLossAmount || '0');
+        payload.takeProfitAmount = parseFloat(form.takeProfitAmount || '0');
+      }
+
+      if (template?.fields?.length) {
+        const nextFieldValues: TradeFieldValueRequest[] = template.fields.map((field) => {
+          const value = fieldValues[field.id] || {};
+          return {
+            fieldId: field.id,
+            textValue: field.fieldType === 'CHECKBOX' || field.fieldType === 'IMAGE' ? undefined : value.textValue || '',
+            booleanValue: field.fieldType === 'CHECKBOX' ? Boolean(value.booleanValue) : undefined,
+            imageUrl: field.fieldType === 'IMAGE' ? value.imageUrl || '' : undefined,
+          };
+        });
+
+        payload.fieldValues = nextFieldValues;
+      }
+
       const res = await tradeEntryApi.update(token, trade.id, payload as any);
       setTrade(res.data);
       syncForm(res.data);
+      syncTemplateFieldValues(res.data, template);
       setEditing(false);
       toast.success('Trade updated');
     } catch (err: any) {
@@ -144,10 +220,12 @@ export default function TradeDetailPage() {
 
   if (!trade) return null;
 
-  const pl        = Number(trade.realisedProfitLoss);
+  const pl        = getTradeGrossProfitLoss(trade.result, trade.realisedProfitLoss) ?? 0;
+  const netPl     = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) ?? 0;
   const isBuy     = trade.direction === 'BUY';
   const isOpen    = trade.status === 'OPEN';
   const isClosed  = trade.status === 'CLOSED';
+  const canEditCoreFields = editing && isOpen;
 
   const resultIcon = trade.result === 'PROFIT'
     ? <CheckCircle2 className="w-5 h-5 text-green-primary" />
@@ -224,7 +302,7 @@ export default function TradeDetailPage() {
           ) : (
             <>
               <button
-                onClick={() => { setEditing(false); syncForm(trade); }}
+                onClick={() => { setEditing(false); syncForm(trade); syncTemplateFieldValues(trade, template); }}
                 className="flex items-center gap-1.5 px-3 py-2 bg-dark-card hover:bg-dark-border/40 text-gray-text rounded-xl text-xs font-bold transition-colors border border-dark-border"
               >
                 <X className="w-3.5 h-3.5" />
@@ -273,10 +351,10 @@ export default function TradeDetailPage() {
                   </p>
                   <p className="text-xs text-gray-text mt-1">Net</p>
                   <p className={`text-sm font-bold number-highlight ${
-                    (pl - Number(trade.serviceCharge)) >= 0 ? 'text-green-primary' : 'text-red-primary'
+                    netPl >= 0 ? 'text-green-primary' : 'text-red-primary'
                   }`}>
-                    {(pl - Number(trade.serviceCharge)) >= 0 ? '+' : ''}
-                    {formatCurrency(pl - Number(trade.serviceCharge))}
+                    {netPl >= 0 ? '+' : ''}
+                    {formatCurrency(netPl)}
                   </p>
                 </div>
               </div>
@@ -291,11 +369,17 @@ export default function TradeDetailPage() {
               {editing && <span className="text-[10px] text-blue-primary bg-blue-primary/10 px-2 py-0.5 rounded-full font-semibold ml-auto">Editing</span>}
             </div>
 
+            {editing && isClosed && (
+              <div className="mb-4 rounded-xl border border-blue-primary/20 bg-blue-primary/5 px-3 py-2 text-xs text-blue-primary">
+                Closed trades only allow note and template-field updates. Core trade values stay locked after close.
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Instrument */}
               <div>
                 <label className="block text-xs font-medium text-gray-text mb-1.5">Instrument</label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     className="input w-full text-sm"
                     value={form.instrument}
@@ -310,7 +394,7 @@ export default function TradeDetailPage() {
               {/* Entry Date */}
               <div>
                 <label className="block text-xs font-medium text-gray-text mb-1.5">Entry Date & Time</label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     type="datetime-local"
                     className="input w-full text-sm"
@@ -328,7 +412,7 @@ export default function TradeDetailPage() {
               {/* Entry Price */}
               <div>
                 <label className="block text-xs font-medium text-gray-text mb-1.5">Entry Price</label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     type="number" step="any"
                     className="input w-full text-sm"
@@ -346,7 +430,7 @@ export default function TradeDetailPage() {
               {/* Position Size */}
               <div>
                 <label className="block text-xs font-medium text-gray-text mb-1.5">Position Size</label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     type="number" step="1"
                     className="input w-full text-sm"
@@ -364,7 +448,7 @@ export default function TradeDetailPage() {
                 <label className="block text-xs font-medium text-gray-text mb-1.5 flex items-center gap-1">
                   <Shield className="w-3 h-3 text-red-primary/70" /> Stop Loss Amount
                 </label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     type="number" step="any"
                     className="input w-full text-sm"
@@ -384,7 +468,7 @@ export default function TradeDetailPage() {
                 <label className="block text-xs font-medium text-gray-text mb-1.5 flex items-center gap-1">
                   <Target className="w-3 h-3 text-green-primary/70" /> Take Profit Amount
                 </label>
-                {editing ? (
+                {canEditCoreFields ? (
                   <input
                     type="number" step="any"
                     className="input w-full text-sm"
@@ -422,7 +506,7 @@ export default function TradeDetailPage() {
           </div>
 
           {/* Template field values */}
-          {template && trade.fieldValues && trade.fieldValues.length > 0 && (
+          {template?.fields?.length ? (
             <div className="card">
               <div className="flex items-center gap-2 mb-4">
                 <Layers className="w-4 h-4 text-green-primary" />
@@ -433,36 +517,115 @@ export default function TradeDetailPage() {
                   .sort((a, b) => a.fieldOrder - b.fieldOrder)
                   .map(field => {
                     const fv = trade.fieldValues?.find(v => v.fieldId === field.id);
-                    if (!fv) return null;
+                    const fieldValue = fieldValues[field.id];
+                    const formattedValue = formatTradeFieldValue(fv, field);
                     return (
                       <div key={field.id}>
                         <label className="block text-xs font-medium text-gray-text mb-1.5">{field.fieldName}</label>
-                        {field.fieldType === 'CHECKBOX' ? (
-                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${
-                            fv.booleanValue ? 'bg-green-primary/10 text-green-primary' : 'bg-gray-text/10 text-gray-text'
-                          }`}>
-                            {fv.booleanValue ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-                            {fv.booleanValue ? 'Yes' : 'No'}
+                        {editing && field.fieldType === 'TEXT' && (
+                          <input
+                            type="text"
+                            value={fieldValue?.textValue || ''}
+                            onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                            className="input w-full text-sm"
+                            placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
+                          />
+                        )}
+                        {editing && field.fieldType === 'LONG_TEXT' && (
+                          <textarea
+                            value={fieldValue?.textValue || ''}
+                            onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                            className="input w-full text-sm"
+                            rows={3}
+                            placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
+                          />
+                        )}
+                        {editing && field.fieldType === 'MULTIPLE_CHOICE' && (
+                          <select
+                            value={fieldValue?.textValue || ''}
+                            onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                            className="input w-full text-sm"
+                          >
+                            <option value="">Select an option</option>
+                            {(field.fieldOptions || []).map((option) => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        )}
+                        {editing && field.fieldType === 'CHECKBOX' && (
+                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
+                            <input
+                              type="checkbox"
+                              checked={fieldValue?.booleanValue || false}
+                              onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
+                              className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                            />
+                            <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
+                          </label>
+                        )}
+                        {editing && field.fieldType === 'IMAGE' && (
+                          <div>
+                            {fieldValue?.imageUrl ? (
+                              <div className="relative rounded-xl overflow-hidden border border-dark-border">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={fieldValue.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-dark-bg" />
+                                <button
+                                  type="button"
+                                  onClick={() => setFieldValues((prev) => ({ ...prev, [field.id]: { imageUrl: '' } }))}
+                                  className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleImageUpload(field.id, file);
+                                  }}
+                                />
+                                {uploadingField === field.id ? (
+                                  <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
+                                ) : (
+                                  <>
+                                    <Image className="w-5 h-5 text-gray-text mb-1" />
+                                    <span className="text-[10px] text-gray-text">Click to upload</span>
+                                  </>
+                                )}
+                              </label>
+                            )}
                           </div>
-                        ) : field.fieldType === 'IMAGE' && fv.imageUrl ? (
+                        )}
+                        {!editing && field.fieldType === 'CHECKBOX' ? (
+                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${
+                            fv?.booleanValue ? 'bg-green-primary/10 text-green-primary' : 'bg-gray-text/10 text-gray-text'
+                          }`}>
+                            {fv?.booleanValue ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                            {fv?.booleanValue ? 'Yes' : 'No'}
+                          </div>
+                        ) : !editing && field.fieldType === 'IMAGE' && fv?.imageUrl ? (
                           <a href={fv.imageUrl} target="_blank" rel="noreferrer"
                             className="block rounded-xl overflow-hidden border border-dark-border hover:border-green-primary/30 transition-colors">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={fv.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-dark-bg" />
                           </a>
-                        ) : field.fieldType === 'LONG_TEXT' ? (
+                        ) : !editing && field.fieldType === 'LONG_TEXT' ? (
                           <p className="text-sm text-gray-light whitespace-pre-wrap bg-dark-bg/60 rounded-xl p-3 border border-dark-border/40">
-                            {fv.textValue || <span className="text-gray-text/40 italic">Empty</span>}
+                            {formattedValue || <span className="text-gray-text/40 italic">Empty</span>}
                           </p>
-                        ) : (
-                          <p className="text-sm text-gray-light">{fv.textValue || <span className="text-gray-text/40 italic">—</span>}</p>
-                        )}
+                        ) : !editing ? (
+                          <p className="text-sm text-gray-light">{formattedValue || <span className="text-gray-text/40 italic">—</span>}</p>
+                        ) : null}
                       </div>
                     );
                   })}
               </div>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* RIGHT — Summary sidebar */}

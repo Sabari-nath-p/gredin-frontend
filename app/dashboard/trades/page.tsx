@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
-import { formatCurrency, formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatDateTime, getTradeNetProfitLoss, getTradeTemplatePreviewItems } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 type TabKey = 'all' | 'open' | 'closed';
@@ -62,7 +62,7 @@ export default function TradesPage() {
   const closedCount = allTrades.filter(t => byAccount(t) && t.status === 'CLOSED').length;
   const allCount    = allTrades.filter(t => byAccount(t)).length;
   const winCount    = filteredTrades.filter(t => t.result === 'PROFIT').length;
-  const totalPL     = filteredTrades.reduce((s, t) => s + (Number(t.realisedProfitLoss) || 0), 0);
+  const totalPL     = filteredTrades.reduce((sum, trade) => sum + (getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0), 0);
 
   if (loading) {
     return (
@@ -201,7 +201,8 @@ export default function TradesPage() {
           <div className="md:hidden space-y-3">
             {filteredTrades.map(trade => {
               const account = accounts.find(a => a.id === trade.tradeAccountId);
-              const pl = Number(trade.realisedProfitLoss);
+              const pl = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge);
+              const templatePreviewItems = getTradeTemplatePreviewItems(trade);
               const isBuy  = trade.direction === 'BUY';
               const isOpen = trade.status === 'OPEN';
               return (
@@ -249,7 +250,7 @@ export default function TradesPage() {
                       >
                         Close <ChevronRight className="w-3 h-3" />
                       </button>
-                    ) : trade.realisedProfitLoss !== null ? (
+                    ) : pl !== null ? (
                       <div className="text-right flex-shrink-0">
                         <p className={`text-lg font-bold number-highlight leading-tight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                           {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
@@ -284,6 +285,16 @@ export default function TradesPage() {
                     <div className="col-span-2 pt-1.5 border-t border-dark-border/20 mt-0.5">
                       <span className="text-gray-text/60">{formatDateTime(trade.entryDateTime)}</span>
                     </div>
+                    {templatePreviewItems.length > 0 && (
+                      <div className="col-span-2 pt-2 border-t border-dark-border/20 mt-1 space-y-1">
+                        {templatePreviewItems.map((item) => (
+                          <div key={`${trade.id}-${item.label}`} className="flex justify-between gap-3">
+                            <span className="text-gray-text truncate">{item.label}</span>
+                            <span className="text-gray-light font-medium truncate max-w-[150px] text-right">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -310,12 +321,24 @@ export default function TradesPage() {
               <tbody>
                 {filteredTrades.map(trade => {
                   const account = accounts.find(a => a.id === trade.tradeAccountId);
-                  const pl = Number(trade.realisedProfitLoss);
+                  const pl = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge);
+                  const templatePreviewItems = getTradeTemplatePreviewItems(trade);
                   return (
                     <tr key={trade.id} onClick={() => router.push(`/dashboard/trades/${trade.id}`)} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors cursor-pointer">
                       <td className="pl-5 pr-3 py-3 text-xs text-gray-text whitespace-nowrap">{formatDateTime(trade.entryDateTime)}</td>
                       <td className="px-3 py-3 text-xs text-gray-text">{account?.accountName || '—'}</td>
-                      <td className="px-3 py-3 text-sm font-bold text-gray-light">{trade.instrument}</td>
+                      <td className="px-3 py-3">
+                        <p className="text-sm font-bold text-gray-light">{trade.instrument}</p>
+                        {templatePreviewItems.length > 0 && (
+                          <div className="mt-1 space-y-0.5">
+                            {templatePreviewItems.map((item) => (
+                              <p key={`${trade.id}-${item.label}`} className="text-[11px] text-gray-text truncate">
+                                <span className="text-gray-text/70">{item.label}:</span> {item.value}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </td>
                       <td className="px-3 py-3">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                           trade.direction === 'BUY' ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
@@ -341,7 +364,7 @@ export default function TradesPage() {
                         }
                       </td>
                       <td className="px-3 py-3 text-right">
-                        {trade.realisedProfitLoss !== null
+                        {pl !== null
                           ? <span className={`text-sm font-bold number-highlight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                               {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                             </span>

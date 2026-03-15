@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeStats, type TradeEntry } from '@/lib/api';
-import { formatCurrency, formatPercentage } from '@/lib/utils';
+import { formatCurrency, formatPercentage, getTradeNetProfitLoss } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 interface AccountWithStats {
@@ -104,12 +104,11 @@ export default function AnalyticsPage() {
     closedTrades.forEach(t => {
       const d = new Date(t.entryDateTime).toISOString().slice(0, 10);
       if (!map[d]) map[d] = { pl: 0, wins: 0, losses: 0, even: 0, trades: [] };
-      const pl = Number(t.realisedProfitLoss) || 0;
-      if (t.result === 'PROFIT') { map[d].pl += pl; map[d].wins++; }
-      else if (t.result === 'LOSS') {
-        map[d].pl -= (Number(t.stopLossAmount) + Number(t.serviceCharge));
-        map[d].losses++;
-      } else { map[d].pl -= Number(t.serviceCharge) || 0; map[d].even++; }
+      const netPl = getTradeNetProfitLoss(t.result, t.realisedProfitLoss, t.serviceCharge) || 0;
+      map[d].pl += netPl;
+      if (t.result === 'PROFIT') { map[d].wins++; }
+      else if (t.result === 'LOSS') { map[d].losses++; }
+      else { map[d].even++; }
       map[d].trades.push(t);
     });
     return map;
@@ -122,12 +121,11 @@ export default function AnalyticsPage() {
       const ins = t.instrument;
       if (!map[ins]) map[ins] = { trades: 0, wins: 0, losses: 0, pl: 0 };
       map[ins].trades++;
+      map[ins].pl += getTradeNetProfitLoss(t.result, t.realisedProfitLoss, t.serviceCharge) || 0;
       if (t.result === 'PROFIT') {
         map[ins].wins++;
-        map[ins].pl += Number(t.realisedProfitLoss) || 0;
       } else if (t.result === 'LOSS') {
         map[ins].losses++;
-        map[ins].pl -= (Number(t.stopLossAmount) + Number(t.serviceCharge));
       }
     });
     return Object.entries(map)

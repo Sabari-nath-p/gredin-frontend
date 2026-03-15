@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
-import { formatCurrency, formatPercentage, formatDateTime } from '@/lib/utils';
+import { formatCurrency, formatPercentage, formatDateTime, getTradeNetProfitLoss } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
@@ -301,7 +301,7 @@ export default function DashboardPage() {
             return (
               <div className="space-y-2">
                 {displayed.map(trade => {
-                  const pl = Number(trade.realisedProfitLoss);
+                  const pl = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge);
                   const isBuy = trade.direction === 'BUY';
                   return (
                     <div
@@ -336,7 +336,7 @@ export default function DashboardPage() {
                           >
                             Close <ChevronRight className="w-3 h-3" />
                           </button>
-                        ) : trade.realisedProfitLoss !== null ? (
+                        ) : pl !== null ? (
                           <p className={`text-sm font-bold number-highlight ${
                             pl >= 0 ? 'text-green-primary' : 'text-red-primary'
                           }`}>

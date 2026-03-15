@@ -99,7 +99,7 @@ export interface UpdateTradeAccountRequest {
 }
 
 // Log Template Types
-export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE';
+export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE' | 'MULTIPLE_CHOICE';
 
 export interface LogTemplateField {
   id: string;
@@ -109,6 +109,7 @@ export interface LogTemplateField {
   fieldOrder: number;
   placeholder: string | null;
   defaultValue: string | null;
+  fieldOptions: string[];
 }
 
 export interface LogTemplate {
@@ -130,6 +131,7 @@ export interface CreateTemplateFieldRequest {
   fieldOrder: number;
   placeholder?: string;
   defaultValue?: string;
+  fieldOptions?: string[];
 }
 
 export interface CreateLogTemplateRequest {
@@ -145,6 +147,7 @@ export interface UpdateTemplateFieldRequest {
   fieldOrder?: number;
   placeholder?: string;
   defaultValue?: string;
+  fieldOptions?: string[];
 }
 
 export interface UpdateLogTemplateRequest {
@@ -219,6 +222,7 @@ export interface UpdateTradeEntryRequest {
   stopLossAmount?: number;
   takeProfitAmount?: number;
   notes?: string;
+  fieldValues?: TradeFieldValueRequest[];
 }
 
 export interface CloseTradeRequest {

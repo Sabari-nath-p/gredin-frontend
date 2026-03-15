@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Layers, Plus, Trash2, GripVertical,
-  Type, AlignLeft, CheckSquare, Image, Loader2, Info
+  Type, AlignLeft, CheckSquare, Image, Loader2, Info, ListChecks
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { logTemplateApi, type FieldType, type CreateTemplateFieldRequest } from '@/lib/api';
@@ -27,10 +27,12 @@ const FIELD_TYPES: { value: FieldType; label: string; icon: React.ElementType; d
   { value: 'LONG_TEXT', label: 'Long Text', icon: AlignLeft, desc: 'Multi-line textarea', color: 'green-primary' },
   { value: 'CHECKBOX', label: 'Checkbox', icon: CheckSquare, desc: 'Yes / No toggle', color: 'yellow-primary' },
   { value: 'IMAGE', label: 'Image', icon: Image, desc: 'Upload image (S3)', color: 'purple-400' },
+  { value: 'MULTIPLE_CHOICE', label: 'Choice', icon: ListChecks, desc: 'Dropdown select', color: 'blue-400' },
 ];
 
 interface FieldItem extends CreateTemplateFieldRequest {
   _key: string;
+  fieldOptions?: string[];
 }
 
 export default function NewTemplatePage() {
@@ -51,6 +53,7 @@ export default function NewTemplatePage() {
         fieldOrder: prev.length,
         placeholder: '',
         defaultValue: '',
+        fieldOptions: [],
       },
     ]);
   };
@@ -102,8 +105,11 @@ export default function NewTemplatePage() {
           fieldName: rest.fieldName,
           fieldType: rest.fieldType,
           fieldOrder: rest.fieldOrder,
-          placeholder: rest.placeholder || undefined,
+          placeholder: rest.fieldType === 'TEXT' || rest.fieldType === 'LONG_TEXT' || rest.fieldType === 'MULTIPLE_CHOICE'
+            ? rest.placeholder || undefined
+            : undefined,
           defaultValue: rest.defaultValue || undefined,
+          fieldOptions: rest.fieldType === 'MULTIPLE_CHOICE' ? rest.fieldOptions?.filter(Boolean) : undefined,
         })),
       };
       await logTemplateApi.create(token, payload);
@@ -328,7 +334,7 @@ export default function NewTemplatePage() {
                               required
                             />
                           </div>
-                          {(field.fieldType === 'TEXT' || field.fieldType === 'LONG_TEXT') && (
+                          {(field.fieldType === 'TEXT' || field.fieldType === 'LONG_TEXT' || field.fieldType === 'MULTIPLE_CHOICE') && (
                             <div>
                               <label className="block text-[10px] font-medium text-gray-text mb-1">Placeholder</label>
                               <input
@@ -352,6 +358,38 @@ export default function NewTemplatePage() {
                                 <option value="true">Checked</option>
                               </select>
                             </div>
+                          )}
+                          {field.fieldType === 'MULTIPLE_CHOICE' && (
+                            <>
+                              <div className="sm:col-span-2">
+                                <label className="block text-[10px] font-medium text-gray-text mb-1">Options</label>
+                                <textarea
+                                  value={(field.fieldOptions || []).join('\n')}
+                                  onChange={(e) => updateField(field._key, {
+                                    fieldOptions: e.target.value
+                                      .split('\n')
+                                      .map((option) => option.trim())
+                                      .filter(Boolean),
+                                  })}
+                                  className="input w-full text-xs py-2"
+                                  rows={4}
+                                  placeholder="One option per line&#10;A+ Setup&#10;B Setup&#10;News Trade"
+                                />
+                              </div>
+                              <div className="sm:col-span-2">
+                                <label className="block text-[10px] font-medium text-gray-text mb-1">Default Option</label>
+                                <select
+                                  value={field.defaultValue || ''}
+                                  onChange={(e) => updateField(field._key, { defaultValue: e.target.value })}
+                                  className="input w-full text-xs py-2"
+                                >
+                                  <option value="">No default</option>
+                                  {(field.fieldOptions || []).map((option) => (
+                                    <option key={option} value={option}>{option}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </>
                           )}
                           {(field.fieldType === 'TEXT' || field.fieldType === 'LONG_TEXT') && (
                             <div className="sm:col-span-2">
