@@ -576,7 +576,7 @@ export default function NewTradePage() {
                         onClick={() => setFormData(prev => ({ 
                           ...prev, 
                           result: 'PROFIT' as const,
-                          realisedProfitLoss: prev.takeProfitAmount || 0 
+                          realisedProfitLoss: prev.takeProfitAmount || ('' as any) 
                         }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
                           formData.result === 'PROFIT'
@@ -591,7 +591,7 @@ export default function NewTradePage() {
                         onClick={() => setFormData(prev => ({ 
                           ...prev, 
                           result: 'LOSS' as const,
-                          realisedProfitLoss: prev.stopLossAmount || 0 
+                          realisedProfitLoss: prev.stopLossAmount || ('' as any) 
                         }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
                           formData.result === 'LOSS'
@@ -626,7 +626,7 @@ export default function NewTradePage() {
                     <input
                       type="number"
                       name="realisedProfitLoss"
-                      value={formData.realisedProfitLoss || ''}
+                      value={formData.realisedProfitLoss === undefined ? '' : formData.realisedProfitLoss}
                       onChange={handleChange}
                       className="input w-full text-sm"
                       placeholder="e.g., 1250 or -450"

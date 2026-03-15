@@ -21,7 +21,7 @@ export default function CloseTradePagePage() {
   const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [formData, setFormData] = useState<CloseTradeRequest>({
     result: 'PROFIT',
-    realisedProfitLoss: 0,
+    realisedProfitLoss: '' as any,
     serviceCharge: 0,
   });
 
@@ -37,6 +37,7 @@ export default function CloseTradePagePage() {
       setFormData(prev => ({
         ...prev,
         serviceCharge: Number(response.data.serviceCharge) || 0,
+        realisedProfitLoss: Number(response.data.takeProfitAmount) || ('' as any),
       }));
       // Load template for this trade's account
       loadTemplateForTrade(response.data);
@@ -295,7 +296,7 @@ export default function CloseTradePagePage() {
                   onClick={() => setFormData(prev => ({ 
                     ...prev, 
                     result: 'PROFIT',
-                    realisedProfitLoss: Number(trade.takeProfitAmount) || 0 
+                    realisedProfitLoss: Number(trade.takeProfitAmount) || ('' as any) 
                   }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${
                     formData.result === 'PROFIT'
@@ -311,7 +312,7 @@ export default function CloseTradePagePage() {
                   onClick={() => setFormData(prev => ({ 
                     ...prev, 
                     result: 'LOSS',
-                    realisedProfitLoss: Number(trade.stopLossAmount) || 0 
+                    realisedProfitLoss: Number(trade.stopLossAmount) || ('' as any) 
                   }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${
                     formData.result === 'LOSS'
@@ -352,7 +353,7 @@ export default function CloseTradePagePage() {
                   <input
                     type="number"
                     name="realisedProfitLoss"
-                    value={formData.realisedProfitLoss}
+                      value={formData.realisedProfitLoss === undefined ? '' : formData.realisedProfitLoss}
                     onChange={handleChange}
                     className="input w-full text-sm pl-7"
                     placeholder="0.00"
