@@ -16,6 +16,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV BACKEND_URL=http://backend:3001
+ENV STANDALONE_BUILD=true
 
 RUN npm run build
 

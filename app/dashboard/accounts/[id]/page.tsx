@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { 
   ArrowLeft, Wallet, TrendingUp, Trash2, DollarSign, BarChart3,
   ArrowUpRight, ArrowDownRight, Target, Activity, Plus, AlertTriangle,
-  Layers, Link2, Link2Off, ChevronDown
+  Layers, Link2, Link2Off, ChevronDown, RefreshCw, X, Server
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
-import { tradeAccountApi, tradeEntryApi, logTemplateApi, type TradeAccount, type TradeEntry, type TradeStats, type LogTemplate } from '@/lib/api';
+import { tradeAccountApi, tradeEntryApi, logTemplateApi, mt5SyncApi, type TradeAccount, type TradeEntry, type TradeStats, type LogTemplate } from '@/lib/api';
 import { formatCurrency, formatDateTime, getTradeNetProfitLoss, getTradeTemplatePreviewItems } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -31,9 +31,27 @@ export default function AccountDetailPage() {
   const [templateLoading, setTemplateLoading] = useState(false);
   const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
 
+  // MT5 state
+  const [showMt5Modal, setShowMt5Modal] = useState(false);
+  const [mt5Form, setMt5Form] = useState({ mt5Login: '', mt5Password: '', mt5Server: '' });
+  const [mt5Loading, setMt5Loading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
+
   useEffect(() => {
     loadAccountData();
   }, [accountId]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (account?.mt5Login && token && accountId) {
+      interval = setInterval(() => {
+        mt5SyncApi.syncAccount(token, accountId)
+          .then(() => loadAccountData())
+          .catch(err => console.error("Auto-sync failed", err));
+      }, 5 * 60 * 1000);
+    }
+    return () => clearInterval(interval);
+  }, [account?.mt5Login, token, accountId]);
 
   const loadAccountData = async () => {
     if (!token || !accountId) return;
@@ -94,6 +112,49 @@ export default function AccountDetailPage() {
 
   const handleCloseTrade = async (tradeId: string) => {
     router.push(`/dashboard/trades/${tradeId}/close`);
+  };
+
+  const handleLinkMt5 = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || !accountId) return;
+    setMt5Loading(true);
+    try {
+      await mt5SyncApi.linkAccount(token, accountId, mt5Form);
+      toast.success('MT5 Account linked successfully');
+      setShowMt5Modal(false);
+      setMt5Form({ mt5Login: '', mt5Password: '', mt5Server: '' });
+      loadAccountData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to link MT5 account');
+    } finally {
+      setMt5Loading(false);
+    }
+  };
+
+  const handleUnlinkMt5 = async () => {
+    if (!token || !accountId) return;
+    if (!confirm('Are you sure you want to unlink MT5? Automatic sync will stop.')) return;
+    try {
+      await mt5SyncApi.unlinkAccount(token, accountId);
+      toast.success('MT5 Account unlinked');
+      loadAccountData();
+    } catch (error: any) {
+      toast.error('Failed to unlink MT5 account');
+    }
+  };
+
+  const handleManualSync = async () => {
+    if (!token || !accountId) return;
+    setSyncLoading(true);
+    try {
+      await mt5SyncApi.syncAccount(token, accountId);
+      toast.success('MT5 Sync triggered successfully');
+      loadAccountData();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to sync MT5 data');
+    } finally {
+      setSyncLoading(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -320,6 +381,62 @@ export default function AccountDetailPage() {
           </div>
         </div>
       )}
+
+      {/* ── MT5 Integration ── */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Server className="w-5 h-5 text-blue-400" />
+            <h2 className="text-lg font-bold text-gray-light">MT5 Integration</h2>
+          </div>
+        </div>
+
+        {account.mt5Login ? (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-blue-900/10 border border-blue-500/20 rounded-xl">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Server className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-light text-sm">Linked to MetaTrader 5</p>
+                <p className="text-xs text-gray-text mt-0.5">
+                  Login: <span className="text-gray-light">{account.mt5Login}</span> • Server: <span className="text-gray-light">{account.mt5Server}</span>
+                </p>
+                {account.lastSyncTime && (
+                  <p className="text-[10px] text-gray-text mt-1">
+                    Last sync: {formatDateTime(account.lastSyncTime.toString())}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={handleManualSync}
+                disabled={syncLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-gray-light hover:border-blue-400/40 transition-colors"
+              >
+                <RefreshCw className={`w-3 h-3 ${syncLoading ? 'animate-spin' : ''}`} /> Sync Now
+              </button>
+              <button
+                onClick={handleUnlinkMt5}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-red-primary/70 hover:text-red-primary hover:border-red-primary/40 transition-colors"
+              >
+                <Link2Off className="w-3 h-3" /> Unlink
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-dashed border-dark-border rounded-xl bg-dark-bg/30">
+            <p className="text-sm text-gray-text">Connect to MetaTrader 5 to automatically sync your trades.</p>
+            <button
+              onClick={() => setShowMt5Modal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-dark-bg border border-dark-border hover:border-blue-500/50 rounded-lg text-sm font-semibold transition-colors"
+            >
+              <Link2 className="w-4 h-4 text-blue-400" /> Connect MT5
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* ── Log Template Assignment ── */}
       <div className="card">
@@ -567,6 +684,73 @@ export default function AccountDetailPage() {
           </div>
         )}
       </div>
+
+      {/* MT5 Modal */}
+      {showMt5Modal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in">
+          <div className="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl shadow-xl overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-dark-border">
+              <h2 className="text-lg font-bold text-gray-light flex items-center gap-2">
+                <Server className="w-5 h-5 text-blue-400" /> Connect MT5
+              </h2>
+              <button onClick={() => setShowMt5Modal(false)} className="text-gray-text hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleLinkMt5} className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">Login</label>
+                <input
+                  type="text"
+                  required
+                  className="input-field w-full"
+                  placeholder="MT5 Account Number"
+                  value={mt5Form.mt5Login}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Login: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">Password</label>
+                <input
+                  type="password"
+                  required
+                  className="input-field w-full"
+                  placeholder="MT5 Password"
+                  value={mt5Form.mt5Password}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Password: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-light mb-1.5">Server</label>
+                <input
+                  type="text"
+                  required
+                  className="input-field w-full"
+                  placeholder="e.g., MetaQuotes-Demo"
+                  value={mt5Form.mt5Server}
+                  onChange={e => setMt5Form({ ...mt5Form, mt5Server: e.target.value })}
+                />
+              </div>
+              <div className="pt-2 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowMt5Modal(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-dark-border font-semibold text-gray-light hover:bg-dark-bg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={mt5Loading}
+                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors disabled:opacity-50"
+                >
+                  {mt5Loading ? 'Connecting...' : 'Connect'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

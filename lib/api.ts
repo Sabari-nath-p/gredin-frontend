@@ -78,6 +78,9 @@ export interface TradeAccount {
   accountType: string;
   isActive: boolean;
   logTemplateId?: string | null;
+  mt5Login?: string | null;
+  mt5Server?: string | null;
+  lastSyncTime?: string | null;
   logTemplate?: { id: string; name: string } | null;
   createdAt: string;
   updatedAt: string;
@@ -385,6 +388,24 @@ export const logTemplateApi = {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.get<LogTemplate | null>(`/log-templates/account/${accountId}/template`);
   },
+};
+
+// MT5 Sync API
+export const mt5SyncApi = {
+  linkAccount: async (token: string, accountId: string, data: { mt5Login: string; mt5Password: string; mt5Server: string }, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.post(`/mt5/link/${accountId}`, data);
+  },
+  
+  unlinkAccount: async (token: string, accountId: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.delete(`/mt5/link/${accountId}`);
+  },
+  
+  syncAccount: async (token: string, accountId: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.post<{ added: number; message: string }>(`/mt5/sync/${accountId}`);
+  }
 };
 
 // Upload API
