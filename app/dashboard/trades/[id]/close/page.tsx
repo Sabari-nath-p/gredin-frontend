@@ -292,7 +292,11 @@ export default function CloseTradePagePage() {
               <div className="grid grid-cols-3 gap-2 mb-4">
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, result: 'PROFIT' }))}
+                  onClick={() => setFormData(prev => ({ 
+                    ...prev, 
+                    result: 'PROFIT',
+                    realisedProfitLoss: Number(trade.takeProfitAmount) || 0 
+                  }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${
                     formData.result === 'PROFIT'
                       ? 'bg-green-primary/10 border-green-primary text-green-primary shadow-glow-green'
@@ -304,7 +308,11 @@ export default function CloseTradePagePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, result: 'LOSS' }))}
+                  onClick={() => setFormData(prev => ({ 
+                    ...prev, 
+                    result: 'LOSS',
+                    realisedProfitLoss: Number(trade.stopLossAmount) || 0 
+                  }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${
                     formData.result === 'LOSS'
                       ? 'bg-red-primary/10 border-red-primary text-red-primary shadow-glow-red'
@@ -316,7 +324,11 @@ export default function CloseTradePagePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, result: 'BREAK_EVEN' }))}
+                  onClick={() => setFormData(prev => ({ 
+                    ...prev, 
+                    result: 'BREAK_EVEN',
+                    realisedProfitLoss: (!trade.entryPrice || Number(trade.entryPrice) === 0) ? ('' as any) : Number(trade.entryPrice)
+                  }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${
                     formData.result === 'BREAK_EVEN'
                       ? 'bg-yellow-primary/10 border-yellow-primary text-yellow-primary'

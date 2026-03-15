@@ -208,9 +208,6 @@ export interface CreateTradeEntryRequest {
   realisedProfitLoss?: number;
   serviceCharge?: number;
   notes?: string;
-  // Optional fields for closed trades
-  exitDateTime?: string;
-  exitPrice?: number;
   fieldValues?: TradeFieldValueRequest[];
 }
 

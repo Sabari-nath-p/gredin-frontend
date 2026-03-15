@@ -31,8 +31,6 @@ export default function NewTradePage() {
     status: 'OPEN',
     serviceCharge: 0,
     notes: '',
-    exitDateTime: undefined,
-    exitPrice: undefined,
     result: undefined,
     realisedProfitLoss: undefined,
   });
@@ -107,7 +105,7 @@ export default function NewTradePage() {
     e.preventDefault();
     if (!token) return;
     if (tradeMode === 'CLOSED') {
-      if (!formData.exitDateTime || !formData.result || formData.realisedProfitLoss === undefined) {
+      if (!formData.result || formData.realisedProfitLoss === undefined) {
         toast.error('Please fill all required fields for closed trade');
         return;
       }
@@ -139,7 +137,7 @@ export default function NewTradePage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const numericFields = ['entryPrice', 'exitPrice', 'positionSize', 'stopLossAmount', 'takeProfitAmount', 'serviceCharge', 'realisedProfitLoss'];
+    const numericFields = ['entryPrice', 'positionSize', 'stopLossAmount', 'takeProfitAmount', 'serviceCharge', 'realisedProfitLoss'];
     setFormData(prev => ({
       ...prev,
       [name]: numericFields.includes(name) ? (value ? parseFloat(value) : undefined) : value
@@ -155,8 +153,6 @@ export default function NewTradePage() {
       ...prev,
       status: mode,
       ...(mode === 'OPEN' && {
-        exitDateTime: undefined,
-        exitPrice: undefined,
         result: undefined,
         realisedProfitLoss: undefined,
       })
@@ -572,40 +568,16 @@ export default function NewTradePage() {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-light mb-1">
-                      Exit Date & Time <span className="text-red-primary">*</span>
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="exitDateTime"
-                      value={formData.exitDateTime || ''}
-                      onChange={handleChange}
-                      className="input w-full text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">Exit Price</label>
-                    <input
-                      type="number"
-                      name="exitPrice"
-                      value={formData.exitPrice || ''}
-                      onChange={handleChange}
-                      className="input w-full text-sm"
-                      placeholder="155.00"
-                      step="0.01"
-                    />
-                  </div>
-
-                  <div className="h-px bg-dark-border" />
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">
                       Result <span className="text-red-primary">*</span>
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, result: 'PROFIT' as const }))}
+                        onClick={() => setFormData(prev => ({ 
+                          ...prev, 
+                          result: 'PROFIT' as const,
+                          realisedProfitLoss: prev.takeProfitAmount || 0 
+                        }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
                           formData.result === 'PROFIT'
                             ? 'bg-green-primary/10 border-green-primary text-green-primary'
@@ -616,7 +588,11 @@ export default function NewTradePage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, result: 'LOSS' as const }))}
+                        onClick={() => setFormData(prev => ({ 
+                          ...prev, 
+                          result: 'LOSS' as const,
+                          realisedProfitLoss: prev.stopLossAmount || 0 
+                        }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
                           formData.result === 'LOSS'
                             ? 'bg-red-primary/10 border-red-primary text-red-primary'
@@ -627,7 +603,11 @@ export default function NewTradePage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, result: 'BREAK_EVEN' as const }))}
+                        onClick={() => setFormData(prev => ({ 
+                          ...prev, 
+                          result: 'BREAK_EVEN' as const,
+                          realisedProfitLoss: (!prev.entryPrice || prev.entryPrice === 0) ? ('' as any) : prev.entryPrice
+                        }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
                           formData.result === 'BREAK_EVEN'
                             ? 'bg-yellow-primary/10 border-yellow-primary text-yellow-primary'
