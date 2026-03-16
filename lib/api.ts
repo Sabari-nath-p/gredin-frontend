@@ -93,6 +93,9 @@ export interface CreateTradeAccountRequest {
   currencyCode?: string;
   initialBalance: number;
   accountType: 'DEMO' | 'LIVE' | 'FUNDED';
+  mt5Login?: string;
+  mt5Password?: string;
+  mt5Server?: string;
 }
 
 export interface UpdateTradeAccountRequest {

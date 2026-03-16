@@ -49,18 +49,17 @@ export default function NewAccountPage() {
 
     setLoading(true);
     try {
-      const res = await tradeAccountApi.create(token, formData);
-      toast.success('Account created successfully!');
+      const payload: CreateTradeAccountRequest = { ...formData };
       
+      // Inject MT5 fields directly into creation payload if toggled
       if (connectMt5 && mt5Form.mt5Login) {
-        try {
-          await mt5SyncApi.linkAccount(token, res.data.id, mt5Form);
-          toast.success('MT5 linked successfully!');
-        } catch (mt5Error: any) {
-          toast.error(mt5Error.response?.data?.message || 'Failed to link MT5 account. You can retry later from the account page.');
-        }
+        payload.mt5Login = mt5Form.mt5Login;
+        payload.mt5Password = mt5Form.mt5Password;
+        payload.mt5Server = mt5Form.mt5Server;
       }
 
+      await tradeAccountApi.create(token, payload);
+      toast.success('Account created successfully!');
       router.push('/dashboard/accounts');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to create account');
