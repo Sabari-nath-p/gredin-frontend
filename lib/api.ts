@@ -1,6 +1,18 @@
 // API Service for SSR and Client-side requests
 import axios, { AxiosInstance } from 'axios';
 
+const handleUnauthorizedClientResponse = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  localStorage.removeItem('auth-storage');
+
+  if (window.location.pathname !== '/login') {
+    window.location.replace('/login');
+  }
+};
+
 // Server-side API client (for SSR)
 export const createServerApiClient = (token?: string): AxiosInstance => {
   const baseURL = process.env.BACKEND_URL || 'http://backend:3001';
@@ -16,13 +28,28 @@ export const createServerApiClient = (token?: string): AxiosInstance => {
 
 // Client-side API client
 export const createClientApiClient = (token?: string): AxiosInstance => {
-  return axios.create({
+  const client = axios.create({
     baseURL: '/api',
     headers: {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   });
+
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const status = error?.response?.status;
+
+      if (status === 401) {
+        handleUnauthorizedClientResponse();
+      }
+
+      return Promise.reject(error);
+    }
+  );
+
+  return client;
 };
 
 // Types
