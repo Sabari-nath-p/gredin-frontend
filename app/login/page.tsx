@@ -107,7 +107,7 @@ export default function LoginPage() {
             <Link href="/" className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#00ff88] to-[#00cc6f] rounded-2xl mb-4 shadow-[0_0_30px_rgba(0,255,136,0.3)]">
               <TrendingUp className="w-8 h-8 text-[#0a0e14]" />
             </Link>
-            <h1 className="text-3xl font-bold gradient-text mb-1">Trade Journal</h1>
+            <h1 className="text-3xl font-bold gradient-text mb-1">Gredin</h1>
             <p className="text-sm text-[#8b92a8]">Professional trade logging</p>
           </div>
 

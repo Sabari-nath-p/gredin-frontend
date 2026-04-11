@@ -8,6 +8,10 @@ import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, mt5SyncApi, type CreateTradeAccountRequest } from '@/lib/api';
 import toast from 'react-hot-toast';
 
+type NewAccountFormData = Omit<CreateTradeAccountRequest, 'initialBalance'> & {
+  initialBalance: string;
+};
+
 const marketSegments = [
   { value: 'STOCK', label: 'Stock Market', icon: '📈' },
   { value: 'AUCTION', label: 'Auction', icon: '🔨' },
@@ -30,13 +34,13 @@ export default function NewAccountPage() {
   const router = useRouter();
   const token = useAuthStore((state) => state.token);
   const [loading, setLoading] = useState(false);
-  
-  const [formData, setFormData] = useState<CreateTradeAccountRequest>({
+
+  const [formData, setFormData] = useState<NewAccountFormData>({
     accountName: '',
     brokerName: '',
     marketSegment: 'STOCK',
     currencyCode: 'USD',
-    initialBalance: 0,
+    initialBalance: '',
     accountType: 'DEMO',
   });
 
@@ -47,10 +51,19 @@ export default function NewAccountPage() {
     e.preventDefault();
     if (!token) return;
 
+    const initialBalance = Number(formData.initialBalance);
+    if (formData.initialBalance.trim() === '' || Number.isNaN(initialBalance) || initialBalance < 0) {
+      toast.error('Please enter a valid initial balance');
+      return;
+    }
+
     setLoading(true);
     try {
-      const payload: CreateTradeAccountRequest = { ...formData };
-      
+      const payload: CreateTradeAccountRequest = {
+        ...formData,
+        initialBalance,
+      };
+
       // Inject MT5 fields directly into creation payload if toggled
       if (connectMt5 && mt5Form.mt5Login) {
         payload.mt5Login = mt5Form.mt5Login;
@@ -70,10 +83,7 @@ export default function NewAccountPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'initialBalance' ? parseFloat(value) || 0 : value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -145,21 +155,19 @@ export default function NewAccountPage() {
                 key={type.value}
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, accountType: type.value }))}
-                className={`p-4 rounded-xl border-2 transition-all text-center ${
-                  formData.accountType === type.value
+                className={`p-4 rounded-xl border-2 transition-all text-center ${formData.accountType === type.value
                     ? type.color === 'green' ? 'border-green-primary bg-green-primary/10' :
                       type.color === 'blue' ? 'border-blue-primary bg-blue-primary/10' :
-                      'border-yellow-primary bg-yellow-primary/10'
+                        'border-yellow-primary bg-yellow-primary/10'
                     : 'border-dark-border hover:border-dark-border-hover'
-                }`}
+                  }`}
               >
-                <span className={`text-sm font-bold ${
-                  formData.accountType === type.value
+                <span className={`text-sm font-bold ${formData.accountType === type.value
                     ? type.color === 'green' ? 'text-green-primary' :
                       type.color === 'blue' ? 'text-blue-primary' :
-                      'text-yellow-primary'
+                        'text-yellow-primary'
                     : 'text-gray-light'
-                }`}>{type.label}</span>
+                  }`}>{type.label}</span>
                 <p className="text-[10px] text-gray-text mt-0.5">{type.desc}</p>
               </button>
             ))}
@@ -216,7 +224,7 @@ export default function NewAccountPage() {
                 onChange={handleChange}
                 className="input w-full"
                 placeholder="10000"
-                step="0.01"
+                step="any"
                 min="0"
                 required
               />
@@ -245,7 +253,7 @@ export default function NewAccountPage() {
               </div>
             </label>
           </div>
-          
+
           {connectMt5 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dark-border animate-fade-in">
               <div>

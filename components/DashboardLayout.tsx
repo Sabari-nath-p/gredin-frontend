@@ -81,7 +81,7 @@ export default function DashboardLayout({
                 <TrendingUp className="w-5 h-5 text-dark-bg" />
               </div>
               <div>
-                <h1 className="text-lg font-bold gradient-text">Trade Journal</h1>
+                <h1 className="text-lg font-bold gradient-text">Gredin</h1>
                 <p className="text-[10px] text-gray-text uppercase tracking-widest">Professional</p>
               </div>
             </Link>
@@ -180,7 +180,7 @@ export default function DashboardLayout({
                 <div className="w-8 h-8 bg-gradient-green rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-dark-bg" />
                 </div>
-                <span className="font-bold gradient-text text-sm">Trade Journal</span>
+                <span className="font-bold gradient-text text-sm">Gredin</span>
               </div>
               {/* Breadcrumb - desktop */}
               <div className="hidden lg:flex items-center gap-2 text-sm">

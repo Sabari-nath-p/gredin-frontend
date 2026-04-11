@@ -1,24 +1,126 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
+import {
   Wallet, TrendingUp, BarChart3, DollarSign,
   ArrowUpRight, ArrowDownRight, Plus, Activity,
   ChevronRight, Sparkles, Clock, CheckCircle2
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
 import { formatCurrency, formatPercentage, formatDateTime, getTradeNetProfitLoss } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
+type ChartRange = '1W' | '1M' | '1Y' | '5Y';
+
+type RangeBucket = {
+  key: string;
+  label: string;
+  startTs: number;
+  endTs: number;
+};
+
+const toLocalDayKey = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+const buildRangeBuckets = (range: ChartRange): RangeBucket[] => {
+  const now = new Date();
+  const buckets: RangeBucket[] = [];
+
+  if (range === '1W' || range === '1M') {
+    const days = range === '1W' ? 7 : 30;
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(now.getDate() - i);
+
+      const startTs = d.getTime();
+      const end = new Date(d);
+      end.setHours(23, 59, 59, 999);
+      const endTs = end.getTime();
+
+      buckets.push({
+        key: toLocalDayKey(d),
+        label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        startTs,
+        endTs,
+      });
+    }
+    return buckets;
+  }
+
+  if (range === '1Y') {
+    for (let i = 11; i >= 0; i--) {
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1, 0, 0, 0, 0);
+      const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      buckets.push({
+        key: `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}`,
+        label: monthStart.toLocaleDateString('en-US', { month: 'short' }),
+        startTs: monthStart.getTime(),
+        endTs: monthEnd.getTime(),
+      });
+    }
+    return buckets;
+  }
+
+  for (let i = 4; i >= 0; i--) {
+    const year = now.getFullYear() - i;
+    const start = new Date(year, 0, 1, 0, 0, 0, 0);
+    const end = new Date(year, 11, 31, 23, 59, 59, 999);
+
+    buckets.push({
+      key: String(year),
+      label: String(year),
+      startTs: start.getTime(),
+      endTs: end.getTime(),
+    });
+  }
+
+  return buckets;
+};
+
+const getTradeBucketKey = (date: Date, range: ChartRange): string => {
+  if (range === '1W' || range === '1M') {
+    return toLocalDayKey(date);
+  }
+
+  if (range === '1Y') {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  return String(date.getFullYear());
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { token, user } = useAuthStore();
   const [accounts, setAccounts] = useState<TradeAccount[]>([]);
+  const [allTrades, setAllTrades] = useState<TradeEntry[]>([]);
   const [recentTrades, setRecentTrades] = useState<TradeEntry[]>([]);
   const [tradeTab, setTradeTab] = useState<'open' | 'closed'>('open');
+  const [equityRange, setEquityRange] = useState<ChartRange>('1M');
+  const [pnlRange, setPnlRange] = useState<ChartRange>('1M');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,11 +138,12 @@ export default function DashboardPage() {
           try {
             const tradesRes = await tradeEntryApi.getByAccount(token, account.id);
             allTrades.push(...tradesRes.data);
-          } catch (error) {}
+          } catch (error) { }
         }
-        const sorted = allTrades.sort((a, b) => 
+        const sorted = allTrades.sort((a, b) =>
           new Date(b.entryDateTime).getTime() - new Date(a.entryDateTime).getTime()
         );
+        setAllTrades(sorted);
         setRecentTrades(sorted.slice(0, 12));
       }
     } catch (error: any) {
@@ -53,9 +156,103 @@ export default function DashboardPage() {
   const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.currentBalance), 0);
   const totalInitialBalance = accounts.reduce((sum, acc) => sum + Number(acc.initialBalance), 0);
   const totalProfitLoss = totalBalance - totalInitialBalance;
-  const profitLossPercentage = totalInitialBalance > 0 
+  const profitLossPercentage = totalInitialBalance > 0
     ? (totalProfitLoss / totalInitialBalance) * 100 : 0;
   const openTrades = recentTrades.filter(t => t.status === 'OPEN').length;
+
+  const closedTrades = useMemo(
+    () => allTrades.filter((trade) => trade.status === 'CLOSED'),
+    [allTrades],
+  );
+
+  const equityCurveData = useMemo(() => {
+    const buckets = buildRangeBuckets(equityRange);
+    const sortedClosed = [...closedTrades].sort(
+      (a, b) => new Date(a.entryDateTime).getTime() - new Date(b.entryDateTime).getTime(),
+    );
+
+    let equity = totalInitialBalance;
+
+    let tradeIndex = 0;
+    return buckets.map((bucket) => {
+      while (tradeIndex < sortedClosed.length) {
+        const tradeTs = new Date(sortedClosed[tradeIndex].entryDateTime).getTime();
+        if (tradeTs > bucket.endTs) {
+          break;
+        }
+        equity += getTradeNetProfitLoss(
+          sortedClosed[tradeIndex].result,
+          sortedClosed[tradeIndex].realisedProfitLoss,
+          sortedClosed[tradeIndex].serviceCharge,
+        ) || 0;
+        tradeIndex++;
+      }
+
+      return {
+        date: bucket.label,
+        equity,
+        profitShade: equity >= totalInitialBalance ? equity : totalInitialBalance,
+        lossShade: equity < totalInitialBalance ? equity : totalInitialBalance,
+      };
+    });
+  }, [closedTrades, totalInitialBalance, equityRange]);
+
+  const dailyPnLData = useMemo(() => {
+    const buckets = buildRangeBuckets(pnlRange);
+    const bucketMap = new Map<string, { date: string; pnl: number; sortTs: number }>();
+
+    for (const bucket of buckets) {
+      bucketMap.set(bucket.key, {
+        date: bucket.label,
+        pnl: 0,
+        sortTs: bucket.startTs,
+      });
+    }
+
+    if (buckets.length === 0) {
+      return [];
+    }
+
+    const minTs = buckets[0].startTs;
+    const maxTs = buckets[buckets.length - 1].endTs;
+
+    for (const trade of closedTrades) {
+      const tradeDate = new Date(trade.entryDateTime);
+      const tradeTs = tradeDate.getTime();
+      if (tradeTs < minTs || tradeTs > maxTs) {
+        continue;
+      }
+
+      const key = getTradeBucketKey(tradeDate, pnlRange);
+      const net = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0;
+
+      const row = bucketMap.get(key);
+      if (!row) {
+        continue;
+      }
+      row.pnl += net;
+    }
+
+    return Array.from(bucketMap.values())
+      .sort((a, b) => a.sortTs - b.sortTs)
+      .map(({ date, pnl }) => ({ date, pnl }));
+  }, [closedTrades, pnlRange]);
+
+  const rangeOptions: Array<{ label: string; value: ChartRange }> = [
+    { label: '1W', value: '1W' },
+    { label: '1M', value: '1M' },
+    { label: '1Y', value: '1Y' },
+    { label: '5Y', value: '5Y' },
+  ];
+
+  const winLossPieData = useMemo(() => {
+    const wins = closedTrades.filter((trade) => trade.result === 'PROFIT').length;
+    const losses = closedTrades.filter((trade) => trade.result === 'LOSS').length;
+    return [
+      { name: 'Wins', value: wins, color: '#00ff88' },
+      { name: 'Losses', value: losses, color: '#ff4d6d' },
+    ];
+  }, [closedTrades]);
 
   if (loading) {
     return (
@@ -88,8 +285,8 @@ export default function DashboardPage() {
             </h1>
             <p className="text-gray-text text-sm">Here&apos;s your trading overview for today</p>
           </div>
-          <Link 
-            href="/dashboard/trades/new" 
+          <Link
+            href="/dashboard/trades/new"
             className="hidden md:flex btn-primary items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -117,26 +314,23 @@ export default function DashboardPage() {
 
         <div className={`stat-card ${totalProfitLoss >= 0 ? 'stat-card-green' : 'stat-card-red'} animate-fade-in stagger-2`}>
           <div className="flex items-start justify-between mb-4">
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
-              totalProfitLoss >= 0 ? 'bg-green-primary/10' : 'bg-red-primary/10'
-            }`}>
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${totalProfitLoss >= 0 ? 'bg-green-primary/10' : 'bg-red-primary/10'
+              }`}>
               {totalProfitLoss >= 0 ? (
                 <ArrowUpRight className="w-5 h-5 text-green-primary" />
               ) : (
                 <ArrowDownRight className="w-5 h-5 text-red-primary" />
               )}
             </div>
-            <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-              totalProfitLoss >= 0 
-                ? 'text-green-primary bg-green-primary/10' 
+            <span className={`text-xs font-bold px-2 py-1 rounded-md ${totalProfitLoss >= 0
+                ? 'text-green-primary bg-green-primary/10'
                 : 'text-red-primary bg-red-primary/10'
-            }`}>
+              }`}>
               {totalProfitLoss >= 0 ? '+' : ''}{formatPercentage(profitLossPercentage)}
             </span>
           </div>
-          <h3 className={`text-2xl font-bold mb-1 number-highlight ${
-            totalProfitLoss >= 0 ? 'text-green-primary' : 'text-red-primary'
-          }`}>
+          <h3 className={`text-2xl font-bold mb-1 number-highlight ${totalProfitLoss >= 0 ? 'text-green-primary' : 'text-red-primary'
+            }`}>
             {totalProfitLoss >= 0 ? '+' : ''}{formatCurrency(totalProfitLoss)}
           </h3>
           <p className="text-xs text-gray-text">
@@ -170,6 +364,180 @@ export default function DashboardPage() {
           </div>
           <h3 className="text-2xl font-bold text-gray-light mb-1">{recentTrades.length}</h3>
           <p className="text-xs text-gray-text">Recent Trades</p>
+        </div>
+      </div>
+
+      <div className="card animate-fade-in stagger-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles className="w-5 h-5 text-green-primary" />
+          <h2 className="text-lg font-bold text-gray-light">Quick Actions</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Link
+            href="/dashboard/trades/new"
+            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-green-primary/20 hover:border-green-primary/40 hover:bg-green-primary/5 transition-all group"
+          >
+            <div className="w-10 h-10 bg-green-primary/10 rounded-xl flex items-center justify-center group-hover:bg-green-primary/15 transition-colors">
+              <Plus className="w-5 h-5 text-green-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-light text-sm">New Trade</h3>
+              <p className="text-xs text-gray-text">Log a trade entry</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/dashboard/accounts/new"
+            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-blue-primary/30 hover:bg-blue-primary/5 transition-all group"
+          >
+            <div className="w-10 h-10 bg-blue-primary/10 rounded-xl flex items-center justify-center group-hover:bg-blue-primary/15 transition-colors">
+              <Wallet className="w-5 h-5 text-blue-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-light text-sm">New Account</h3>
+              <p className="text-xs text-gray-text">Create trading account</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/dashboard/analytics"
+            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-yellow-primary/30 hover:bg-yellow-primary/5 transition-all group"
+          >
+            <div className="w-10 h-10 bg-yellow-primary/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-primary/15 transition-colors">
+              <BarChart3 className="w-5 h-5 text-yellow-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-light text-sm">Analytics</h3>
+              <p className="text-xs text-gray-text">Performance metrics</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="card md:col-span-2 animate-fade-in stagger-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-light">Equity Curve</h2>
+            <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1">
+              {rangeOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setEquityRange(option.value)}
+                  className={`px-2 py-1 text-[11px] font-semibold rounded-md transition-colors ${equityRange === option.value
+                      ? 'bg-green-primary/20 text-green-primary'
+                      : 'text-gray-text hover:text-gray-light'
+                    }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={equityCurveData}
+                margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
+                <Tooltip
+                  contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                  formatter={(value: number) => formatCurrency(Number(value))}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="equity"
+                  stroke="#00ff88"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="card animate-fade-in stagger-3">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-light">Win vs Loss</h2>
+            <span className="text-xs text-gray-text">Closed trades</span>
+          </div>
+
+          {closedTrades.length === 0 ? (
+            <div className="h-72 flex items-center justify-center text-sm text-gray-text">
+              No closed trades yet.
+            </div>
+          ) : (
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={winLossPieData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={62}
+                    outerRadius={95}
+                    paddingAngle={4}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {winLossPieData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                    formatter={(value: number) => [value, 'Trades']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card animate-fade-in stagger-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-light">Daily P&L</h2>
+          <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1">
+            {rangeOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setPnlRange(option.value)}
+                className={`px-2 py-1 text-[11px] font-semibold rounded-md transition-colors ${pnlRange === option.value
+                    ? 'bg-green-primary/20 text-green-primary'
+                    : 'text-gray-text hover:text-gray-light'
+                  }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={dailyPnLData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
+              <Tooltip
+                contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                formatter={(value: number) => formatCurrency(Number(value))}
+              />
+              <Bar dataKey="pnl" radius={[6, 6, 0, 0]}>
+                {dailyPnLData.map((entry, index) => (
+                  <Cell key={`${entry.date}-${index}`} fill={entry.pnl >= 0 ? '#00ff88' : '#ff4d6d'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -242,29 +610,25 @@ export default function DashboardPage() {
           <div className="flex bg-dark-bg rounded-xl p-1 mb-4 gap-0.5">
             <button
               onClick={() => setTradeTab('open')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                tradeTab === 'open' ? 'bg-blue-primary/15 text-blue-primary' : 'text-gray-text hover:text-gray-light'
-              }`}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'open' ? 'bg-blue-primary/15 text-blue-primary' : 'text-gray-text hover:text-gray-light'
+                }`}
             >
               <Clock className="w-3 h-3" />
               Open
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                tradeTab === 'open' ? 'bg-blue-primary/20 text-blue-primary' : 'bg-dark-card text-gray-text'
-              }`}>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'open' ? 'bg-blue-primary/20 text-blue-primary' : 'bg-dark-card text-gray-text'
+                }`}>
                 {recentTrades.filter(t => t.status === 'OPEN').length}
               </span>
             </button>
             <button
               onClick={() => setTradeTab('closed')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                tradeTab === 'closed' ? 'bg-green-primary/15 text-green-primary' : 'text-gray-text hover:text-gray-light'
-              }`}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'closed' ? 'bg-green-primary/15 text-green-primary' : 'text-gray-text hover:text-gray-light'
+                }`}
             >
               <CheckCircle2 className="w-3 h-3" />
               Closed
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                tradeTab === 'closed' ? 'bg-green-primary/20 text-green-primary' : 'bg-dark-card text-gray-text'
-              }`}>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'closed' ? 'bg-green-primary/20 text-green-primary' : 'bg-dark-card text-gray-text'
+                }`}>
                 {recentTrades.filter(t => t.status === 'CLOSED').length}
               </span>
             </button>
@@ -306,15 +670,13 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={trade.id}
-                      className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${
-                        trade.status === 'OPEN'
+                      className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${trade.status === 'OPEN'
                           ? 'bg-blue-primary/5 border-blue-primary/15 hover:border-blue-primary/30'
                           : 'bg-dark-bg/60 border-dark-border/50 hover:border-dark-border'
-                      }`}
+                        }`}
                     >
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        isBuy ? 'bg-green-primary/10' : 'bg-red-primary/10'
-                      }`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isBuy ? 'bg-green-primary/10' : 'bg-red-primary/10'
+                        }`}>
                         {isBuy
                           ? <ArrowUpRight className="w-4 h-4 text-green-primary" />
                           : <ArrowDownRight className="w-4 h-4 text-red-primary" />}
@@ -322,9 +684,8 @@ export default function DashboardPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="font-bold text-gray-light text-sm">{trade.instrument}</span>
-                          <span className={`text-[10px] px-1 py-0.5 rounded font-bold ${
-                            isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
-                          }`}>{trade.direction}</span>
+                          <span className={`text-[10px] px-1 py-0.5 rounded font-bold ${isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
+                            }`}>{trade.direction}</span>
                         </div>
                         <p className="text-xs text-gray-text/70">{formatDateTime(trade.entryDateTime)}</p>
                       </div>
@@ -337,9 +698,8 @@ export default function DashboardPage() {
                             Close <ChevronRight className="w-3 h-3" />
                           </button>
                         ) : pl !== null ? (
-                          <p className={`text-sm font-bold number-highlight ${
-                            pl >= 0 ? 'text-green-primary' : 'text-red-primary'
-                          }`}>
+                          <p className={`text-sm font-bold number-highlight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'
+                            }`}>
                             {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                           </p>
                         ) : null}
@@ -350,54 +710,6 @@ export default function DashboardPage() {
               </div>
             );
           })()}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="card animate-fade-in stagger-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-5 h-5 text-green-primary" />
-          <h2 className="text-lg font-bold text-gray-light">Quick Actions</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Link
-            href="/dashboard/trades/new"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-green-primary/20 hover:border-green-primary/40 hover:bg-green-primary/5 transition-all group"
-          >
-            <div className="w-10 h-10 bg-green-primary/10 rounded-xl flex items-center justify-center group-hover:bg-green-primary/15 transition-colors">
-              <Plus className="w-5 h-5 text-green-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-light text-sm">New Trade</h3>
-              <p className="text-xs text-gray-text">Log a trade entry</p>
-            </div>
-          </Link>
-
-          <Link
-            href="/dashboard/accounts/new"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-blue-primary/30 hover:bg-blue-primary/5 transition-all group"
-          >
-            <div className="w-10 h-10 bg-blue-primary/10 rounded-xl flex items-center justify-center group-hover:bg-blue-primary/15 transition-colors">
-              <Wallet className="w-5 h-5 text-blue-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-light text-sm">New Account</h3>
-              <p className="text-xs text-gray-text">Create trading account</p>
-            </div>
-          </Link>
-
-          <Link
-            href="/dashboard/analytics"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-yellow-primary/30 hover:bg-yellow-primary/5 transition-all group"
-          >
-            <div className="w-10 h-10 bg-yellow-primary/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-primary/15 transition-colors">
-              <BarChart3 className="w-5 h-5 text-yellow-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-light text-sm">Analytics</h3>
-              <p className="text-xs text-gray-text">Performance metrics</p>
-            </div>
-          </Link>
         </div>
       </div>
     </div>

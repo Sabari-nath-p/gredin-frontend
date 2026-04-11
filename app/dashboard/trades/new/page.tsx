@@ -16,9 +16,10 @@ export default function NewTradePage() {
   const [accounts, setAccounts] = useState<TradeAccount[]>([]);
   const [tradeMode, setTradeMode] = useState<'OPEN' | 'CLOSED'>('OPEN');
   const [template, setTemplate] = useState<LogTemplate | null>(null);
-  const [fieldValues, setFieldValues] = useState<Record<string, { textValue?: string; booleanValue?: boolean; imageUrl?: string }>>({}); 
+  const [fieldValues, setFieldValues] = useState<Record<string, { textValue?: string; booleanValue?: boolean; imageUrl?: string }>>({});
   const [uploadingField, setUploadingField] = useState<string | null>(null);
-  
+  const [positionSizeInput, setPositionSizeInput] = useState('');
+
   const [formData, setFormData] = useState<CreateTradeEntryRequest>({
     tradeAccountId: searchParams.get('accountId') || '',
     entryDateTime: new Date().toISOString().slice(0, 16),
@@ -137,6 +138,16 @@ export default function NewTradePage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'positionSize') {
+      setPositionSizeInput(value);
+      setFormData(prev => ({
+        ...prev,
+        positionSize: value === '' || Number.isNaN(Number(value)) ? undefined : Number(value),
+      }));
+      return;
+    }
+
     const numericFields = ['entryPrice', 'positionSize', 'stopLossAmount', 'takeProfitAmount', 'serviceCharge', 'realisedProfitLoss'];
     setFormData(prev => ({
       ...prev,
@@ -162,9 +173,9 @@ export default function NewTradePage() {
   const selectedAccount = accounts.find(a => a.id === formData.tradeAccountId);
 
   return (
-    <div className="w-full animate-fade-in">
+    <div className="w-full animate-fade-in pb-6">
       {/* Compact Header Bar */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3 mb-5">
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/trades"
@@ -182,15 +193,14 @@ export default function NewTradePage() {
         </div>
 
         {/* Trade Mode Toggle — inline in header */}
-        <div className="flex items-center bg-dark-card border border-dark-border rounded-xl p-1 gap-1">
+        <div className="flex items-center bg-dark-card border border-dark-border rounded-xl p-1 gap-1 w-full xl:w-auto overflow-x-auto">
           <button
             type="button"
             onClick={() => handleModeChange('OPEN')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-              tradeMode === 'OPEN'
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${tradeMode === 'OPEN'
                 ? 'bg-blue-primary/15 text-blue-primary border border-blue-primary/30'
                 : 'text-gray-text hover:text-gray-light'
-            }`}
+              }`}
           >
             <Unlock className="w-3.5 h-3.5" />
             Open Trade
@@ -198,11 +208,10 @@ export default function NewTradePage() {
           <button
             type="button"
             onClick={() => handleModeChange('CLOSED')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
-              tradeMode === 'CLOSED'
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${tradeMode === 'CLOSED'
                 ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
                 : 'text-gray-text hover:text-gray-light'
-            }`}
+              }`}
           >
             <Lock className="w-3.5 h-3.5" />
             Completed Trade
@@ -212,10 +221,10 @@ export default function NewTradePage() {
 
       {/* Form — Full-width multi-column layout */}
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-12 gap-4">
+        <div className="grid grid-cols-12 gap-5">
 
           {/* ────── LEFT COLUMN: Account, Instrument, Direction ────── */}
-          <div className="col-span-12 lg:col-span-4 space-y-4">
+          <div className="col-span-12 lg:col-span-5 space-y-4">
 
             {/* Account & Instrument Card */}
             <div className="card">
@@ -250,33 +259,35 @@ export default function NewTradePage() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-light mb-1">
-                    Instrument <span className="text-red-primary">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="instrument"
-                    value={formData.instrument}
-                    onChange={handleChange}
-                    className="input w-full text-sm"
-                    placeholder="e.g., AAPL, EURUSD"
-                    required
-                  />
-                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-light mb-1">
+                      Instrument <span className="text-red-primary">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="instrument"
+                      value={formData.instrument}
+                      onChange={handleChange}
+                      className="input w-full text-sm"
+                      placeholder="e.g., AAPL, EURUSD"
+                      required
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-light mb-1">
-                    Entry Date & Time <span className="text-red-primary">*</span>
-                  </label>
-                  <input
-                    type="datetime-local"
-                    name="entryDateTime"
-                    value={formData.entryDateTime}
-                    onChange={handleChange}
-                    className="input w-full text-sm"
-                    required
-                  />
+                  <div>
+                    <label className="block text-xs font-medium text-gray-light mb-1">
+                      Entry Date & Time <span className="text-red-primary">*</span>
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="entryDateTime"
+                      value={formData.entryDateTime}
+                      onChange={handleChange}
+                      className="input w-full text-sm"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -290,11 +301,10 @@ export default function NewTradePage() {
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, direction: 'BUY' }))}
-                  className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${
-                    formData.direction === 'BUY'
+                  className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${formData.direction === 'BUY'
                       ? 'bg-green-primary/10 border-green-primary'
                       : 'border-dark-border hover:border-green-primary/50'
-                  }`}
+                    }`}
                 >
                   <ArrowUpCircle className={`w-4 h-4 ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-gray-text'}`} />
                   <span className={`font-semibold text-xs ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-gray-light'}`}>
@@ -304,11 +314,10 @@ export default function NewTradePage() {
                 <button
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, direction: 'SELL' }))}
-                  className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${
-                    formData.direction === 'SELL'
+                  className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${formData.direction === 'SELL'
                       ? 'bg-red-primary/10 border-red-primary'
                       : 'border-dark-border hover:border-red-primary/50'
-                  }`}
+                    }`}
                 >
                   <ArrowDownCircle className={`w-4 h-4 ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-gray-text'}`} />
                   <span className={`font-semibold text-xs ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-gray-light'}`}>
@@ -329,7 +338,7 @@ export default function NewTradePage() {
                 value={formData.notes}
                 onChange={handleChange}
                 className="input w-full text-sm"
-                rows={3}
+                rows={4}
                 placeholder="Strategy, rationale, conditions..."
               />
             </div>
@@ -348,96 +357,96 @@ export default function NewTradePage() {
                   {template.fields
                     .sort((a, b) => a.fieldOrder - b.fieldOrder)
                     .map(field => (
-                    <div key={field.id}>
-                      {field.fieldType === 'TEXT' && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
-                          <input
-                            type="text"
-                            value={fieldValues[field.id]?.textValue || ''}
-                            onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
-                            className="input w-full text-sm"
-                            placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
-                          />
-                        </div>
-                      )}
-                      {field.fieldType === 'LONG_TEXT' && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
-                          <textarea
-                            value={fieldValues[field.id]?.textValue || ''}
-                            onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
-                            className="input w-full text-sm"
-                            rows={3}
-                            placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
-                          />
-                        </div>
-                      )}
-                      {field.fieldType === 'MULTIPLE_CHOICE' && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
-                          <select
-                            value={fieldValues[field.id]?.textValue || ''}
-                            onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
-                            className="input w-full text-sm"
-                          >
-                            <option value="">Select an option</option>
-                            {(field.fieldOptions || []).map((option) => (
-                              <option key={option} value={option}>{option}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                      {field.fieldType === 'CHECKBOX' && (
-                        <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={fieldValues[field.id]?.booleanValue || false}
-                            onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
-                            className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
-                          />
-                          <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
-                        </label>
-                      )}
-                      {field.fieldType === 'IMAGE' && (
-                        <div>
-                          <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
-                          {fieldValues[field.id]?.imageUrl ? (
-                            <div className="relative rounded-xl overflow-hidden border border-dark-border">
-                              <img src={fieldValues[field.id].imageUrl} alt={field.fieldName} className="w-full h-32 object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => setFieldValues(prev => ({ ...prev, [field.id]: { imageUrl: '' } }))}
-                                className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ) : (
-                            <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleImageUpload(field.id, file);
-                                }}
-                              />
-                              {uploadingField === field.id ? (
-                                <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
-                              ) : (
-                                <>
-                                  <Image className="w-5 h-5 text-gray-text mb-1" />
-                                  <span className="text-[10px] text-gray-text">Click to upload</span>
-                                </>
-                              )}
-                            </label>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      <div key={field.id}>
+                        {field.fieldType === 'TEXT' && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <input
+                              type="text"
+                              value={fieldValues[field.id]?.textValue || ''}
+                              onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                              className="input w-full text-sm"
+                              placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
+                            />
+                          </div>
+                        )}
+                        {field.fieldType === 'LONG_TEXT' && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <textarea
+                              value={fieldValues[field.id]?.textValue || ''}
+                              onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                              className="input w-full text-sm"
+                              rows={3}
+                              placeholder={field.placeholder || `Enter ${field.fieldName.toLowerCase()}...`}
+                            />
+                          </div>
+                        )}
+                        {field.fieldType === 'MULTIPLE_CHOICE' && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <select
+                              value={fieldValues[field.id]?.textValue || ''}
+                              onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
+                              className="input w-full text-sm"
+                            >
+                              <option value="">Select an option</option>
+                              {(field.fieldOptions || []).map((option) => (
+                                <option key={option} value={option}>{option}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                        {field.fieldType === 'CHECKBOX' && (
+                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
+                            <input
+                              type="checkbox"
+                              checked={fieldValues[field.id]?.booleanValue || false}
+                              onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
+                              className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                            />
+                            <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
+                          </label>
+                        )}
+                        {field.fieldType === 'IMAGE' && (
+                          <div>
+                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            {fieldValues[field.id]?.imageUrl ? (
+                              <div className="relative rounded-xl overflow-hidden border border-dark-border">
+                                <img src={fieldValues[field.id].imageUrl} alt={field.fieldName} className="w-full h-32 object-cover" />
+                                <button
+                                  type="button"
+                                  onClick={() => setFieldValues(prev => ({ ...prev, [field.id]: { imageUrl: '' } }))}
+                                  className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleImageUpload(field.id, file);
+                                  }}
+                                />
+                                {uploadingField === field.id ? (
+                                  <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
+                                ) : (
+                                  <>
+                                    <Image className="w-5 h-5 text-gray-text mb-1" />
+                                    <span className="text-[10px] text-gray-text">Click to upload</span>
+                                  </>
+                                )}
+                              </label>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -452,7 +461,7 @@ export default function NewTradePage() {
               </div>
 
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-light mb-1">Entry Price</label>
                     <input
@@ -462,7 +471,7 @@ export default function NewTradePage() {
                       onChange={handleChange}
                       className="input w-full text-sm"
                       placeholder="150.00"
-                      step="0.01"
+                      step="any"
                     />
                   </div>
                   <div>
@@ -470,11 +479,11 @@ export default function NewTradePage() {
                     <input
                       type="number"
                       name="positionSize"
-                      value={formData.positionSize || ''}
+                      value={positionSizeInput}
                       onChange={handleChange}
                       className="input w-full text-sm"
-                      placeholder="100"
-                      step="1"
+                      placeholder="0.0012"
+                      step="any"
                     />
                   </div>
                 </div>
@@ -492,7 +501,7 @@ export default function NewTradePage() {
                     onChange={handleChange}
                     className="input w-full text-sm"
                     placeholder="500.00"
-                    step="0.01"
+                    step="any"
                     required={tradeMode === 'OPEN'}
                   />
                   <p className="text-[10px] text-gray-text mt-0.5">Max loss you accept</p>
@@ -509,7 +518,7 @@ export default function NewTradePage() {
                     onChange={handleChange}
                     className="input w-full text-sm"
                     placeholder="1000.00"
-                    step="0.01"
+                    step="any"
                     required={tradeMode === 'OPEN'}
                   />
                   <p className="text-[10px] text-gray-text mt-0.5">Your profit target</p>
@@ -526,7 +535,7 @@ export default function NewTradePage() {
                     onChange={handleChange}
                     className="input w-full text-sm"
                     placeholder="0.00"
-                    step="0.01"
+                    step="any"
                   />
                 </div>
 
@@ -556,7 +565,7 @@ export default function NewTradePage() {
           </div>
 
           {/* ────── RIGHT COLUMN: Exit/Results (if closed) + Submit ────── */}
-          <div className="col-span-12 lg:col-span-4 space-y-4">
+          <div className="col-span-12 lg:col-span-3 space-y-4 lg:sticky lg:top-20 h-fit">
 
             {tradeMode === 'CLOSED' ? (
               <div className="card border-green-primary/20">
@@ -573,46 +582,43 @@ export default function NewTradePage() {
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ 
-                          ...prev, 
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
                           result: 'PROFIT' as const,
-                          realisedProfitLoss: prev.takeProfitAmount || ('' as any) 
+                          realisedProfitLoss: prev.takeProfitAmount || ('' as any)
                         }))}
-                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
-                          formData.result === 'PROFIT'
+                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'PROFIT'
                             ? 'bg-green-primary/10 border-green-primary text-green-primary'
                             : 'border-dark-border text-gray-text hover:border-dark-border-hover'
-                        }`}
+                          }`}
                       >
                         Profit
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ 
-                          ...prev, 
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
                           result: 'LOSS' as const,
-                          realisedProfitLoss: prev.stopLossAmount || ('' as any) 
+                          realisedProfitLoss: prev.stopLossAmount || ('' as any)
                         }))}
-                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
-                          formData.result === 'LOSS'
+                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'LOSS'
                             ? 'bg-red-primary/10 border-red-primary text-red-primary'
                             : 'border-dark-border text-gray-text hover:border-dark-border-hover'
-                        }`}
+                          }`}
                       >
                         Loss
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFormData(prev => ({ 
-                          ...prev, 
+                        onClick={() => setFormData(prev => ({
+                          ...prev,
                           result: 'BREAK_EVEN' as const,
                           realisedProfitLoss: (!prev.entryPrice || prev.entryPrice === 0) ? ('' as any) : prev.entryPrice
                         }))}
-                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
-                          formData.result === 'BREAK_EVEN'
+                        className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'BREAK_EVEN'
                             ? 'bg-yellow-primary/10 border-yellow-primary text-yellow-primary'
                             : 'border-dark-border text-gray-text hover:border-dark-border-hover'
-                        }`}
+                          }`}
                       >
                         Even
                       </button>
@@ -630,7 +636,7 @@ export default function NewTradePage() {
                       onChange={handleChange}
                       className="input w-full text-sm"
                       placeholder="e.g., 1250 or -450"
-                      step="0.01"
+                      step="any"
                       required
                     />
                     <p className="text-[10px] text-gray-text mt-0.5">
@@ -668,11 +674,10 @@ export default function NewTradePage() {
                     <p className="text-[10px] text-gray-text uppercase tracking-wider mb-1.5">Trade Preview</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-bold text-gray-light">{formData.instrument || '—'}</span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                        formData.direction === 'BUY'
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${formData.direction === 'BUY'
                           ? 'bg-green-primary/10 text-green-primary'
                           : 'bg-red-primary/10 text-red-primary'
-                      }`}>
+                        }`}>
                         {formData.direction}
                       </span>
                     </div>
@@ -698,11 +703,10 @@ export default function NewTradePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-                  tradeMode === 'OPEN'
+                className={`w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all ${tradeMode === 'OPEN'
                     ? 'bg-blue-primary hover:bg-blue-primary/90 text-white'
                     : 'btn-primary'
-                }`}
+                  }`}
               >
                 {loading ? (
                   <>
@@ -710,7 +714,7 @@ export default function NewTradePage() {
                     Processing...
                   </>
                 ) : (
-                  tradeMode === 'OPEN' ? '📊 Log Open Trade' : '✓ Log Completed Trade'
+                  tradeMode === 'OPEN' ? 'Log Open Trade' : '✓ Log Completed Trade'
                 )}
               </button>
               <Link

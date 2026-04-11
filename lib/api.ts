@@ -15,8 +15,8 @@ const handleUnauthorizedClientResponse = () => {
 
 // Server-side API client (for SSR)
 export const createServerApiClient = (token?: string): AxiosInstance => {
-  const baseURL = process.env.BACKEND_URL || 'http://backend:3001';
-  
+  const baseURL = process.env.BACKEND_URL || 'http://localhost:3000';
+
   return axios.create({
     baseURL,
     headers: {
@@ -286,7 +286,7 @@ export const authApi = {
     const api = isClient ? createClientApiClient() : createServerApiClient();
     return api.post('/auth/send-otp', data);
   },
-  
+
   verifyOtp: async (data: VerifyOtpRequest, isClient = true) => {
     const api = isClient ? createClientApiClient() : createServerApiClient();
     return api.post<AuthResponse>('/auth/verify-otp', data);
@@ -299,7 +299,7 @@ export const userApi = {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.get<User>('/users/profile');
   },
-  
+
   updateProfile: async (token: string, data: UpdateProfileRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.put<User>('/users/profile', data);
@@ -314,22 +314,22 @@ export const tradeAccountApi = {
     // Return compatible format - data is the array, meta is available
     return { data: res.data.data, meta: res.data.meta };
   },
-  
+
   getById: async (token: string, id: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.get<TradeAccount>(`/trade-accounts/${id}`);
   },
-  
+
   create: async (token: string, data: CreateTradeAccountRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.post<TradeAccount>('/trade-accounts', data);
   },
-  
+
   update: async (token: string, id: string, data: UpdateTradeAccountRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.put<TradeAccount>(`/trade-accounts/${id}`, data);
   },
-  
+
   delete: async (token: string, id: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.delete(`/trade-accounts/${id}`);
@@ -344,32 +344,32 @@ export const tradeEntryApi = {
     // Return compatible format - data is the array, meta is available
     return { data: res.data.data, meta: res.data.meta };
   },
-  
+
   getStats: async (token: string, accountId: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.get<TradeStats>(`/trade-entries/account/${accountId}/stats`);
   },
-  
+
   getById: async (token: string, id: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.get<TradeEntry>(`/trade-entries/${id}`);
   },
-  
+
   create: async (token: string, data: CreateTradeEntryRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.post<TradeEntry>('/trade-entries', data);
   },
-  
+
   update: async (token: string, id: string, data: UpdateTradeEntryRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.put<TradeEntry>(`/trade-entries/${id}`, data);
   },
-  
+
   close: async (token: string, id: string, data: CloseTradeRequest, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.put<TradeEntry>(`/trade-entries/${id}/close`, data);
   },
-  
+
   delete: async (token: string, id: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.delete(`/trade-entries/${id}`);
@@ -426,12 +426,12 @@ export const mt5SyncApi = {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.post(`/mt5/link/${accountId}`, data);
   },
-  
+
   unlinkAccount: async (token: string, accountId: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.delete(`/mt5/link/${accountId}`);
   },
-  
+
   syncAccount: async (token: string, accountId: string, isClient = true) => {
     const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
     return api.post<{ added: number; message: string }>(`/mt5/sync/${accountId}`);

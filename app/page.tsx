@@ -9,10 +9,10 @@ import {
 } from 'lucide-react';
 import LandingCTAButton from '@/components/LandingCTAButton';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tradejournal.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://gredin.app';
 
 export const metadata: Metadata = {
-  title: 'Trade Journal — Professional Trading Journal & Performance Tracker',
+  title: 'Gredin — Professional Trading Journal & Performance Tracker',
   description:
     'The #1 professional trading journal for stocks, forex, crypto & options traders. Log trades, analyze performance, track win rates, manage multiple accounts & custom templates. Free to use.',
   keywords: [
@@ -24,21 +24,21 @@ export const metadata: Metadata = {
     'trading diary', 'online trading journal', 'free trading journal',
     'professional trading journal', 'trade entry log', 'trading discipline',
   ],
-  authors: [{ name: 'Trade Journal' }],
+  authors: [{ name: 'Gredin' }],
   robots: { index: true, follow: true },
   alternates: { canonical: SITE_URL },
   openGraph: {
     type: 'website',
     url: SITE_URL,
-    siteName: 'Trade Journal',
-    title: 'Trade Journal — Professional Trading Journal & Performance Tracker',
+    siteName: 'Gredin',
+    title: 'Gredin — Professional Trading Journal & Performance Tracker',
     description:
       'Log every trade, analyse your performance, and level up your strategy. The professional trading journal for serious traders.',
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: 'Trade Journal Dashboard Preview' }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: 'Gredin Dashboard Preview' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Trade Journal — Professional Trading Journal',
+    title: 'Gredin — Professional Trading Journal',
     description: 'The #1 free trading journal. Track stocks, forex, crypto & options with powerful analytics.',
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -50,7 +50,7 @@ const jsonLd = {
   '@graph': [
     {
       '@type': 'SoftwareApplication',
-      name: 'Trade Journal',
+      name: 'Gredin',
       url: SITE_URL,
       applicationCategory: 'FinanceApplication',
       operatingSystem: 'Web Browser',
@@ -68,7 +68,7 @@ const jsonLd = {
     {
       '@type': 'WebSite',
       url: SITE_URL,
-      name: 'Trade Journal',
+      name: 'Gredin',
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
@@ -78,7 +78,7 @@ const jsonLd = {
     {
       '@type': 'HowTo',
       name: 'How to Start a Professional Trading Journal',
-      description: 'Step-by-step guide to setting up and using Trade Journal to track and improve your trading performance.',
+      description: 'Step-by-step guide to setting up and using Gredin to track and improve your trading performance.',
       totalTime: 'PT5M',
       step: [
         { '@type': 'HowToStep', position: 1, name: 'Create Your Account', text: 'Sign up for free using your email address. No credit card required.' },
@@ -90,11 +90,11 @@ const jsonLd = {
     {
       '@type': 'FAQPage',
       mainEntity: [
-        { '@type': 'Question', name: 'What is a trading journal?', acceptedAnswer: { '@type': 'Answer', text: 'A trading journal is a record of all your trades that helps you track performance, identify patterns, enforce discipline, and improve your strategy over time. Trade Journal provides a digital, analytics-powered journal for stocks, forex, crypto, and options traders.' } },
-        { '@type': 'Question', name: 'Is Trade Journal free to use?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Trade Journal is completely free. Sign up with your email and start logging trades immediately — no credit card, no limits.' } },
-        { '@type': 'Question', name: 'Does Trade Journal work for forex, stocks, crypto, and options?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Trade Journal is market-agnostic. You can log trades for any instrument — stocks, ETFs, futures, forex pairs, cryptocurrencies, or options — across multiple accounts.' } },
-        { '@type': 'Question', name: 'Can I use Trade Journal for funded accounts like FTMO?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many funded traders use Trade Journal to maintain discipline and meet challenge requirements. Create a dedicated account for each funded programme and track drawdown, daily loss, and profit targets.' } },
-        { '@type': 'Question', name: 'What analytics does Trade Journal provide?', acceptedAnswer: { '@type': 'Answer', text: 'Trade Journal tracks win rate, profit factor, total P&L, best and worst trades, average risk/reward ratio, performance by symbol and time-of-day, and equity curve over time.' } },
+        { '@type': 'Question', name: 'What is a trading journal?', acceptedAnswer: { '@type': 'Answer', text: 'A trading journal is a record of all your trades that helps you track performance, identify patterns, enforce discipline, and improve your strategy over time. Gredin provides a digital, analytics-powered journal for stocks, forex, crypto, and options traders.' } },
+        { '@type': 'Question', name: 'Is Gredin free to use?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Gredin is completely free. Sign up with your email and start logging trades immediately — no credit card, no limits.' } },
+        { '@type': 'Question', name: 'Does Gredin work for forex, stocks, crypto, and options?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Gredin is market-agnostic. You can log trades for any instrument — stocks, ETFs, futures, forex pairs, cryptocurrencies, or options — across multiple accounts.' } },
+        { '@type': 'Question', name: 'Can I use Gredin for funded accounts like FTMO?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Many funded traders use Gredin to maintain discipline and meet challenge requirements. Create a dedicated account for each funded programme and track drawdown, daily loss, and profit targets.' } },
+        { '@type': 'Question', name: 'What analytics does Gredin provide?', acceptedAnswer: { '@type': 'Answer', text: 'Gredin tracks win rate, profit factor, total P&L, best and worst trades, average risk/reward ratio, performance by symbol and time-of-day, and equity curve over time.' } },
         { '@type': 'Question', name: 'What are custom log templates?', acceptedAnswer: { '@type': 'Answer', text: 'Custom log templates let you add extra fields to your trade entries — text notes, checkboxes, long descriptions, or images. Assign templates to specific accounts so every trade in that account captures the information most relevant to your strategy.' } },
       ],
     },
@@ -129,15 +129,15 @@ const useCases = [
 
 const faqs: { q: string; a: string }[] = [
   { q: 'What is a trading journal and why do I need one?', a: 'A trading journal is a systematic record of your trades, emotions, strategy notes, and outcomes. Research consistently shows that traders who journal perform significantly better over time — they identify edge, eliminate repeating mistakes, and build the discipline needed for consistent profitability.' },
-  { q: 'What should I track in my trading journal?', a: 'At minimum: instrument, direction (long/short), entry price, exit price, position size, and net P&L. Advanced traders also record: setup type, risk/reward ratio, market conditions, emotional state, screenshots of entry/exit, and adherence to their trading plan. Trade Journal\'s custom templates let you capture all of this.' },
-  { q: 'Is Trade Journal free to use?', a: 'Yes — completely free. Create an account with just your email address and start logging trades immediately. No subscription, no credit card, no hidden fees.' },
-  { q: 'Does Trade Journal work for forex, stocks, crypto, and options?', a: 'Yes. Trade Journal is instrument-agnostic. Log trades for any market — equities, ETFs, futures, forex pairs, cryptocurrencies, and options contracts. You can manage separate accounts per market so analytics stay clean.' },
-  { q: 'Can I use Trade Journal for funded account challenges (FTMO, MyFundedFX, etc.)?', a: 'Absolutely. Create a dedicated account for each funded programme. Track your current drawdown and daily loss in real-time so you never accidentally breach the rules of your challenge.' },
-  { q: 'What analytics and performance metrics does Trade Journal calculate?', a: 'Trade Journal tracks: win rate %, profit factor, total net P&L, gross profit & loss, average winner vs average loser, R-multiple, maximum drawdown, Sharpe approximation, best/worst trade, performance by symbol, and equity curve over selectable time ranges.' },
+  { q: 'What should I track in my trading journal?', a: 'At minimum: instrument, direction (long/short), entry price, exit price, position size, and net P&L. Advanced traders also record: setup type, risk/reward ratio, market conditions, emotional state, screenshots of entry/exit, and adherence to their trading plan. Gredin\'s custom templates let you capture all of this.' },
+  { q: 'Is Gredin free to use?', a: 'Yes — completely free. Create an account with just your email address and start logging trades immediately. No subscription, no credit card, no hidden fees.' },
+  { q: 'Does Gredin work for forex, stocks, crypto, and options?', a: 'Yes. Gredin is instrument-agnostic. Log trades for any market — equities, ETFs, futures, forex pairs, cryptocurrencies, and options contracts. You can manage separate accounts per market so analytics stay clean.' },
+  { q: 'Can I use Gredin for funded account challenges (FTMO, MyFundedFX, etc.)?', a: 'Absolutely. Create a dedicated account for each funded programme. Track your current drawdown and daily loss in real-time so you never accidentally breach the rules of your challenge.' },
+  { q: 'What analytics and performance metrics does Gredin calculate?', a: 'Gredin tracks: win rate %, profit factor, total net P&L, gross profit & loss, average winner vs average loser, R-multiple, maximum drawdown, Sharpe approximation, best/worst trade, performance by symbol, and equity curve over selectable time ranges.' },
   { q: 'How do custom log templates work?', a: 'You create a template with any combination of fields: short text, long-form notes, checkboxes, and image uploads. You then assign that template to one or more of your trading accounts. Every time you log a trade on that account, the extra template fields appear automatically — none are mandatory.' },
-  { q: 'How does Trade Journal handle chart screenshots?', a: 'Use the image field type in a custom log template. When logging a trade, click Upload Image to attach a chart screenshot. Images are stored securely in Amazon S3 and displayed inline when reviewing that trade.' },
+  { q: 'How does Gredin handle chart screenshots?', a: 'Use the image field type in a custom log template. When logging a trade, click Upload Image to attach a chart screenshot. Images are stored securely in Amazon S3 and displayed inline when reviewing that trade.' },
   { q: 'Is my trading data private and secure?', a: 'Yes. All data is stored in an encrypted database. Access is protected by OTP email authentication. We do not sell, share, or analyse your personal trading data with any third party.' },
-  { q: 'How do I start improving my win rate with Trade Journal?', a: 'Use the Analytics dashboard to identify which setups, sessions, and instruments produce positive expectancy. Filter losing trades to find common mistakes. Over weeks and months, your equity curve and profit factor will reveal whether your edge is improving — objectively, without guesswork.' },
+  { q: 'How do I start improving my win rate with Gredin?', a: 'Use the Analytics dashboard to identify which setups, sessions, and instruments produce positive expectancy. Filter losing trades to find common mistakes. Over weeks and months, your equity curve and profit factor will reveal whether your edge is improving — objectively, without guesswork.' },
 ];
 
 // ────────────────────────────── Page ─────────────────────────────────────────
@@ -155,7 +155,7 @@ export default function LandingPage() {
         {/* ── NAVIGATION ── */}
         <nav className="sticky top-0 z-50 bg-[#0a0e14]/90 backdrop-blur-md border-b border-[#1e2936]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2.5 group" aria-label="Trade Journal home">
+            <Link href="/" className="flex items-center gap-2.5 group" aria-label="Gredin home">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00ff88] to-[#00cc6a] flex items-center justify-center shadow-[0_0_12px_rgba(0,255,136,0.3)]">
                 <TrendingUp className="w-4.5 h-4.5 text-[#0a0e14]" />
               </div>
@@ -224,7 +224,7 @@ export default function LandingPage() {
                 <span className="w-3 h-3 rounded-full bg-[#ff4757]" />
                 <span className="w-3 h-3 rounded-full bg-[#ffd93d]" />
                 <span className="w-3 h-3 rounded-full bg-[#00ff88]" />
-                <span className="ml-4 text-xs text-[#8b92a8] font-mono">tradejournal.app/dashboard</span>
+                <span className="ml-4 text-xs text-[#8b92a8] font-mono">gredin.app/dashboard</span>
               </div>
               <div className="p-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
                 {[
@@ -310,7 +310,7 @@ export default function LandingPage() {
             <div className="text-center mb-16">
               <p className="text-[#3b82f6] text-sm font-semibold tracking-widest uppercase mb-3">Get Started in Minutes</p>
               <h2 id="hiw-heading" className="text-3xl sm:text-4xl font-extrabold text-[#c9d1d9] mb-4">
-                How Trade Journal works
+                How Gredin works
               </h2>
               <p className="text-[#8b92a8] max-w-xl mx-auto">
                 From sign-up to your first analytics insight in under five minutes.
@@ -427,12 +427,11 @@ export default function LandingPage() {
                     <div key={f.label} className="bg-[#0d1520] border border-[#1e2936] rounded-xl p-3.5">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-xs font-medium text-[#c9d1d9]">{f.label}</span>
-                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
-                          f.type === 'IMAGE' ? 'bg-[#ff4757]/10 text-[#ff4757]' :
-                          f.type === 'CHECKBOX' ? 'bg-[#00ff88]/10 text-[#00ff88]' :
-                          f.type === 'LONG_TEXT' ? 'bg-[#a78bfa]/10 text-[#a78bfa]' :
-                          'bg-[#3b82f6]/10 text-[#3b82f6]'
-                        }`}>{f.type}</span>
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${f.type === 'IMAGE' ? 'bg-[#ff4757]/10 text-[#ff4757]' :
+                            f.type === 'CHECKBOX' ? 'bg-[#00ff88]/10 text-[#00ff88]' :
+                              f.type === 'LONG_TEXT' ? 'bg-[#a78bfa]/10 text-[#a78bfa]' :
+                                'bg-[#3b82f6]/10 text-[#3b82f6]'
+                          }`}>{f.type}</span>
                       </div>
                       {f.type === 'CHECKBOX' ? (
                         <div className="flex items-center gap-2 mt-1">
@@ -496,7 +495,7 @@ export default function LandingPage() {
                 Built for every type of trader
               </h2>
               <p className="text-[#8b92a8] max-w-xl mx-auto">
-                Whether you trade equities before the open bell or Bitcoin at midnight, Trade Journal adapts to your workflow.
+                Whether you trade equities before the open bell or Bitcoin at midnight, Gredin adapts to your workflow.
               </p>
             </div>
 
@@ -601,7 +600,7 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-lg text-[#8b92a8] mb-10 leading-relaxed">
-              Join thousands of traders who use Trade Journal to stay disciplined, spot their real edge,
+              Join thousands of traders who use Gredin to stay disciplined, spot their real edge,
               and grow their accounts consistently — starting with their very next trade.
             </p>
             <LandingCTAButton size="lg" />
@@ -659,7 +658,7 @@ export default function LandingPage() {
 
             <div className="border-t border-[#1e2936] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-xs text-[#8b92a8]">
-                &copy; {new Date().getFullYear()} Trade Journal. All rights reserved.
+                &copy; {new Date().getFullYear()} Gredin. All rights reserved.
               </p>
               <div className="flex items-center gap-6 text-xs text-[#8b92a8]">
                 <span className="flex items-center gap-1.5"><Lock className="w-3 h-3" /> Encrypted</span>

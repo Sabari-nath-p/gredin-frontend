@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tradejournal.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gredin.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: 'Gredin',
   title: {
-    default: 'Trade Journal — Professional Trading Journal & Performance Tracker',
-    template: '%s | Trade Journal',
+    default: 'Gredin — Professional Trading Journal & Performance Tracker',
+    template: '%s | Gredin',
   },
   description:
     'The #1 professional trading journal app. Log trades, track performance, and analyze win rates for stocks, forex, crypto, options & funded accounts. Start free today.',
@@ -39,9 +40,9 @@ export const metadata: Metadata = {
     'trading discipline',
     'trade entry log',
   ],
-  authors: [{ name: 'Trade Journal' }],
-  creator: 'Trade Journal',
-  publisher: 'Trade Journal',
+  authors: [{ name: 'Gredin' }],
+  creator: 'Gredin',
+  publisher: 'Gredin',
   robots: {
     index: true,
     follow: true,
@@ -57,8 +58,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    siteName: 'Trade Journal',
-    title: 'Trade Journal — Professional Trading Journal & Performance Tracker',
+    siteName: 'Gredin',
+    title: 'Gredin — Professional Trading Journal & Performance Tracker',
     description:
       'Log every trade, analyze your performance, and improve your win rate. Works for stocks, forex, crypto, options & funded accounts.',
     images: [
@@ -66,13 +67,13 @@ export const metadata: Metadata = {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'Trade Journal — Professional Trading Journal App',
+        alt: 'Gredin — Professional Trading Journal App',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Trade Journal — Professional Trading Journal',
+    title: 'Gredin — Professional Trading Journal',
     description:
       'Track trades, analyze performance, and improve your win rate. Free professional trading journal for all markets.',
     images: [`${siteUrl}/og-image.png`],
@@ -80,6 +81,12 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: siteUrl,
+  },
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    title: 'Gredin',
+    statusBarStyle: 'black-translucent',
   },
   category: 'finance',
 };
