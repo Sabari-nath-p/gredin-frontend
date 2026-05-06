@@ -14,8 +14,7 @@ export async function connectSocket(token?: string): Promise<Socket> {
   const mod = await import('socket.io-client');
   const io = mod.io ?? mod.default ?? mod;
 
-  socket = io(window.location.origin, {
-    namespace: '/chat',
+  socket = io(`${window.location.origin}/chat`, {
     auth: { token },
     reconnection: true,
     reconnectionDelay: 1000,
