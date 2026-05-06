@@ -147,12 +147,21 @@ export default function ChatPage() {
 
         socket.on('connect', () => {
           setSocketConnected(true);
-          console.log('✓ Chat socket connected');
+          console.log('✓ Chat socket connected', socket.id);
         });
 
-        socket.on('disconnect', () => {
+        socket.on('disconnect', (reason: string) => {
           setSocketConnected(false);
-          console.log('✗ Chat socket disconnected');
+          console.warn('✗ Chat socket disconnected:', reason);
+        });
+
+        socket.on('connect_error', (error: any) => {
+          console.error('Socket connection error:', error);
+          setSocketConnected(false);
+        });
+
+        socket.on('error', (error: any) => {
+          console.error('Socket error:', error);
         });
 
         socket.on('chat.status', (payload: any) => {
@@ -189,6 +198,7 @@ export default function ChatPage() {
         });
       } catch (err) {
         console.error('Socket connection failed:', err);
+        setSocketConnected(false);
       }
     })();
 

@@ -15,9 +15,8 @@ export async function connectSocket(token?: string): Promise<Socket> {
   const io = mod.io ?? mod.default ?? mod;
 
   socket = io(window.location.origin, {
-    path: '/chat',
+    namespace: '/chat',
     auth: { token },
-    transports: ['websocket'],
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
