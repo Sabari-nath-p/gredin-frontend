@@ -128,14 +128,20 @@ export default function ChatPage() {
 
   // Socket
   const [socketConnected, setSocketConnected] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const socketRef = useRef<any>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  // ── Hydration check ──
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
   // ── Load sessions & accounts ──
   useEffect(() => {
-    if (!token) return;
+    if (!token || !isHydrated) return;
     loadSessions();
     loadAccounts();
 
@@ -205,7 +211,7 @@ export default function ChatPage() {
     return () => {
       disconnectSocket();
     };
-  }, [token, activeSessionId]);
+  }, [token, activeSessionId, isHydrated]);
 
   const loadSessions = async () => {
     if (!token) return;
@@ -319,6 +325,10 @@ export default function ChatPage() {
   };
 
   const activeAccount = accounts.find(a => a.id === selectedAccountId);
+
+  if (!isHydrated) {
+    return <div className="flex h-[calc(100vh-57px)] items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="flex h-[calc(100vh-57px)] -m-4 lg:-m-8 overflow-hidden">

@@ -14,7 +14,10 @@ export async function connectSocket(token?: string): Promise<Socket> {
   const mod = await import('socket.io-client');
   const io = mod.io ?? mod.default ?? mod;
 
-  socket = io(`${window.location.origin}/chat`, {
+  // Determine backend URL
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+  socket = io(`${backendUrl}/chat`, {
     auth: { token },
     reconnection: true,
     reconnectionDelay: 1000,
