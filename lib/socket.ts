@@ -16,8 +16,14 @@ function resolveBackendUrl() {
     try {
       const parsedUrl = new URL(explicitUrl);
       const isExplicitLocalhost = parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1';
+      const isDifferentHost = parsedUrl.hostname !== window.location.hostname;
 
       if (!isLocalhost && isExplicitLocalhost) {
+        return window.location.origin;
+      }
+
+      // In production, prefer same-origin unless API host is the same host.
+      if (!isLocalhost && isDifferentHost) {
         return window.location.origin;
       }
 
@@ -44,6 +50,7 @@ export async function connectSocket(token?: string): Promise<Socket> {
 
   socket = io(`${backendUrl}/chat`, {
     auth: { token },
+    transports: ['websocket'],
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,

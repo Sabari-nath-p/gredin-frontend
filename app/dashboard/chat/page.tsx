@@ -364,9 +364,17 @@ export default function ChatPage() {
               </div>
             ) : (
               sessions.map(session => (
-                <button
+                <div
                   key={session.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => loadSession(session.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      loadSession(session.id);
+                    }
+                  }}
                   className={`w-full group flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all ${
                     activeSessionId === session.id
                       ? 'bg-green-primary/10 border border-green-primary/20'
@@ -394,7 +402,7 @@ export default function ChatPage() {
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
-                </button>
+                </div>
               ))
             )}
           </div>
