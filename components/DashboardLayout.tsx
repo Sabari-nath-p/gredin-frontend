@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
+import ChatWidget from './ChatWidget';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -236,6 +237,7 @@ export default function DashboardLayout({
           })}
         </div>
       </nav>
+      <ChatWidget />
     </div>
   );
 }
