@@ -49,8 +49,10 @@ export async function connectSocket(token?: string): Promise<Socket> {
   const backendUrl = resolveBackendUrl();
 
   socket = io(`${backendUrl}/chat`, {
+    path: '/api/socket.io',
     auth: { token },
     transports: ['websocket'],
+    timeout: 12000,
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
