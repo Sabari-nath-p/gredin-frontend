@@ -21,6 +21,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  ReferenceLine,
 } from 'recharts';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
@@ -188,11 +189,11 @@ export default function DashboardPage() {
         tradeIndex++;
       }
 
+      const cumulativePnl = equity - totalInitialBalance;
+
       return {
         date: bucket.label,
-        equity,
-        profitShade: equity >= totalInitialBalance ? equity : totalInitialBalance,
-        lossShade: equity < totalInitialBalance ? equity : totalInitialBalance,
+        pnl: cumulativePnl,
       };
     });
   }, [closedTrades, totalInitialBalance, equityRange]);
@@ -418,7 +419,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card md:col-span-2 animate-fade-in stagger-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-light">Equity Curve</h2>
+            <h2 className="text-lg font-bold text-gray-light">Cumulative P&amp;L</h2>
             <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1">
               {rangeOptions.map((option) => (
                 <button
@@ -444,14 +445,21 @@ export default function DashboardPage() {
               >
                 <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
                 <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
+                <YAxis
+                  tick={{ fill: '#9ca3af', fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={80}
+                  domain={[(dataMin: number) => Math.min(0, Math.floor(dataMin)), (dataMax: number) => Math.max(0, Math.ceil(dataMax))]}
+                />
+                <ReferenceLine y={0} stroke="#374151" strokeDasharray="4 4" />
                 <Tooltip
                   contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
                   formatter={(value: number) => formatCurrency(Number(value))}
                 />
                 <Line
                   type="monotone"
-                  dataKey="equity"
+                  dataKey="pnl"
                   stroke="#00ff88"
                   strokeWidth={2.5}
                   dot={false}

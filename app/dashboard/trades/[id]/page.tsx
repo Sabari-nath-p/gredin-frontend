@@ -156,7 +156,7 @@ export default function TradeDetailPage() {
         payload.instrument = form.instrument.trim();
         payload.entryDateTime = form.entryDateTime ? new Date(form.entryDateTime).toISOString() : undefined;
         payload.entryPrice = form.entryPrice ? parseFloat(form.entryPrice) : undefined;
-        payload.positionSize = form.positionSize ? parseInt(form.positionSize) : undefined;
+        payload.positionSize = form.positionSize ? parseFloat(form.positionSize) : undefined;
         payload.stopLossAmount = parseFloat(form.stopLossAmount || '0');
         payload.takeProfitAmount = parseFloat(form.takeProfitAmount || '0');
       }
@@ -432,7 +432,7 @@ export default function TradeDetailPage() {
                 <label className="block text-xs font-medium text-gray-text mb-1.5">Position Size</label>
                 {canEditCoreFields ? (
                   <input
-                    type="number" step="1"
+                    type="number" step="any"
                     className="input w-full text-sm"
                     value={form.positionSize}
                     onChange={e => setForm(p => ({ ...p, positionSize: e.target.value }))}
