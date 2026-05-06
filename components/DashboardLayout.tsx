@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Wallet, 
-  TrendingUp, 
-  User, 
+import {
+  LayoutDashboard,
+  Wallet,
+  TrendingUp,
+  User,
   LogOut,
   Menu,
   X,
@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
-import ChatWidget from './ChatWidget';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -117,7 +116,7 @@ export default function DashboardLayout({
               Menu
             </p>
             {navigation.map((item) => {
-              const isActive = pathname === item.href || 
+              const isActive = pathname === item.href ||
                 (item.href !== '/dashboard' && pathname.startsWith(item.href));
               return (
                 <Link
@@ -237,7 +236,6 @@ export default function DashboardLayout({
           })}
         </div>
       </nav>
-      <ChatWidget />
     </div>
   );
 }

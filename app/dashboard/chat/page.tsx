@@ -13,6 +13,7 @@ import {
   type ChatSession, type ChatMessage as ChatMsg, type TradeAccount,
 } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { connectSocket, disconnectSocket, getSocket } from '@/lib/socket';
 
 // ── Simple markdown-ish renderer (bold, lists, code) ──
 function renderMarkdown(text: string) {
@@ -104,6 +105,7 @@ function processInline(text: string): React.ReactNode {
 
 export default function ChatPage() {
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
 
   // Sessions
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -124,6 +126,10 @@ export default function ChatPage() {
   const [loadingSessions, setLoadingSessions] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
+  // Socket
+  const [socketConnected, setSocketConnected] = useState(false);
+  const socketRef = useRef<any>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -132,7 +138,64 @@ export default function ChatPage() {
     if (!token) return;
     loadSessions();
     loadAccounts();
-  }, [token]);
+
+    // ── Initialize WebSocket ──
+    (async () => {
+      try {
+        const socket = await connectSocket(token);
+        socketRef.current = socket;
+
+        socket.on('connect', () => {
+          setSocketConnected(true);
+          console.log('✓ Chat socket connected');
+        });
+
+        socket.on('disconnect', () => {
+          setSocketConnected(false);
+          console.log('✗ Chat socket disconnected');
+        });
+
+        socket.on('chat.status', (payload: any) => {
+          if (payload.status === 'done') {
+            setSending(false);
+          }
+        });
+
+        socket.on('chat.assistantMessage', (payload: any) => {
+          const text = payload?.assistant?.content ?? payload?.assistant?.message ?? payload?.assistant ?? '';
+          if (text) {
+            const assistantMsg: ChatMsg = {
+              id: `asst-${Date.now()}`,
+              sessionId: activeSessionId || '',
+              role: 'ASSISTANT',
+              content: text,
+              createdAt: new Date().toISOString(),
+              sqlQuery: payload?.assistant?.sqlQuery,
+            };
+            setMessages(m => [...m, assistantMsg]);
+            setSending(false);
+
+            // If new session, update sidebar
+            if (!activeSessionId) {
+              loadSessions();
+            }
+          }
+        });
+
+        socket.on('chat.error', (payload: any) => {
+          const errMsg = payload?.message || 'Chat failed';
+          toast.error(errMsg);
+          setSending(false);
+        });
+      } catch (err) {
+        console.error('Socket connection failed:', err);
+      }
+    })();
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [token, activeSessionId]);
 
   const loadSessions = async () => {
     if (!token) return;
@@ -186,7 +249,7 @@ export default function ChatPage() {
 
   // ── Send message ──
   const handleSend = async () => {
-    if (!token || !input.trim() || sending) return;
+    if (!token || !input.trim() || sending || !socketConnected) return;
 
     const userText = input.trim();
     setInput('');
@@ -203,40 +266,20 @@ export default function ChatPage() {
     setMessages(prev => [...prev, tempUserMsg]);
 
     try {
-      const res = await chatApi.sendMessage(token, {
+      const socket = getSocket();
+      if (!socket) throw new Error('Socket not connected');
+
+      // Emit via WebSocket
+      socket.emit('chat.send', {
+        userId: user?.id,
         message: userText,
         sessionId: activeSessionId || undefined,
         tradeAccountId: selectedAccountId || undefined,
       });
-
-      const { sessionId, userMessage, assistantMessage } = res.data;
-
-      // Replace temp user message with real one & add assistant reply
-      setMessages(prev => [
-        ...prev.filter(m => m.id !== tempUserMsg.id),
-        userMessage,
-        assistantMessage,
-      ]);
-
-      // If this was a new chat, set the session and refresh sidebar
-      if (!activeSessionId) {
-        setActiveSessionId(sessionId);
-        loadSessions();
-      } else {
-        // Update session in sidebar (move to top)
-        setSessions(prev => {
-          const updated = prev.map(s =>
-            s.id === sessionId ? { ...s, updatedAt: new Date().toISOString() } : s
-          );
-          return updated.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-        });
-      }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to send message');
-      // Remove optimistic message
+      toast.error(err?.message || 'Failed to send message');
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id));
       setInput(userText);
-    } finally {
       setSending(false);
     }
   };
@@ -356,11 +399,19 @@ export default function ChatPage() {
             </div>
             <div>
               <h2 className="text-sm font-semibold text-gray-light">Trading AI Assistant</h2>
-              <p className="text-[10px] text-gray-text">Powered by Gemini · Analyses your trade data</p>
+              <p className="text-[10px] text-gray-text">Powered by NVIDIA · Real-time WebSocket Analysis</p>
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-3">
+            {/* Socket Connection Status */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium">
+              <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-green-primary' : 'bg-red-primary/50'}`}></div>
+              <span className={socketConnected ? 'text-green-primary' : 'text-gray-text'}>
+                {socketConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
+
             {/* Account Picker */}
             <div className="relative">
               <button
@@ -539,9 +590,10 @@ export default function ChatPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about your trading performance..."
+                placeholder={socketConnected ? "Ask about your trading performance..." : "Connecting to chat service..."}
+                disabled={!socketConnected}
                 rows={1}
-                className="w-full resize-none bg-dark-bg/80 border border-dark-border rounded-xl px-4 py-3 pr-12 text-sm text-gray-light placeholder:text-gray-text/40 focus:outline-none focus:border-green-primary/50 transition-colors"
+                className="w-full resize-none bg-dark-bg/80 border border-dark-border rounded-xl px-4 py-3 pr-12 text-sm text-gray-light placeholder:text-gray-text/40 focus:outline-none focus:border-green-primary/50 transition-colors disabled:opacity-50"
                 style={{ minHeight: '44px', maxHeight: '120px' }}
                 onInput={(e) => {
                   const el = e.target as HTMLTextAreaElement;
@@ -552,7 +604,7 @@ export default function ChatPage() {
             </div>
             <button
               onClick={handleSend}
-              disabled={sending || !input.trim()}
+              disabled={sending || !input.trim() || !socketConnected}
               className="w-10 h-10 rounded-xl bg-green-primary text-dark-bg flex items-center justify-center hover:bg-green-primary/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex-shrink-0"
             >
               {sending ? (

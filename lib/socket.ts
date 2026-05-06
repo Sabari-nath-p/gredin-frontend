@@ -9,14 +9,19 @@ export async function connectSocket(token?: string): Promise<Socket> {
     throw new Error('Socket can only be used in the browser');
   }
 
-  if (socket) return socket;
+  if (socket && socket.connected) return socket;
 
   const mod = await import('socket.io-client');
   const io = mod.io ?? mod.default ?? mod;
 
-  socket = io(window.location.origin + '/chat', {
+  socket = io(window.location.origin, {
+    path: '/chat',
     auth: { token },
     transports: ['websocket'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
   }) as Socket;
 
   return socket;
