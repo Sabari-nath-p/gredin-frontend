@@ -16,14 +16,15 @@ function resolveBackendUrl() {
     try {
       const parsedUrl = new URL(explicitUrl);
       const isExplicitLocalhost = parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1';
-      const isDifferentHost = parsedUrl.hostname !== window.location.hostname;
+      const isExplicitHttp = parsedUrl.protocol === 'http:';
+      const isPageHttps = window.location.protocol === 'https:';
 
       if (!isLocalhost && isExplicitLocalhost) {
         return window.location.origin;
       }
 
-      // In production, prefer same-origin unless API host is the same host.
-      if (!isLocalhost && isDifferentHost) {
+      // Avoid mixed-content: https page must not call http API.
+      if (isPageHttps && isExplicitHttp) {
         return window.location.origin;
       }
 
