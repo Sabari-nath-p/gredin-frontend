@@ -130,6 +130,7 @@ export default function ChatPage() {
   const [socketConnected, setSocketConnected] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const socketRef = useRef<any>(null);
+  const sendTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -173,15 +174,24 @@ export default function ChatPage() {
         socket.on('chat.status', (payload: any) => {
           if (payload.status === 'done') {
             setSending(false);
+            if (sendTimeoutRef.current) {
+              clearTimeout(sendTimeoutRef.current);
+              sendTimeoutRef.current = null;
+            }
           }
         });
 
         socket.on('chat.assistantMessage', (payload: any) => {
           const text = payload?.assistant?.content ?? payload?.assistant?.message ?? payload?.assistant ?? '';
           if (text) {
+            // If this was a brand new chat, adopt the created sessionId
+            if (!activeSessionId && payload?.sessionId) {
+              setActiveSessionId(payload.sessionId);
+            }
+
             const assistantMsg: ChatMsg = {
               id: `asst-${Date.now()}`,
-              sessionId: activeSessionId || '',
+              sessionId: payload?.sessionId || activeSessionId || '',
               role: 'ASSISTANT',
               content: text,
               createdAt: new Date().toISOString(),
@@ -189,6 +199,11 @@ export default function ChatPage() {
             };
             setMessages(m => [...m, assistantMsg]);
             setSending(false);
+
+            if (sendTimeoutRef.current) {
+              clearTimeout(sendTimeoutRef.current);
+              sendTimeoutRef.current = null;
+            }
 
             // If new session, update sidebar
             if (!activeSessionId) {
@@ -201,6 +216,11 @@ export default function ChatPage() {
           const errMsg = payload?.message || 'Chat failed';
           toast.error(errMsg);
           setSending(false);
+
+          if (sendTimeoutRef.current) {
+            clearTimeout(sendTimeoutRef.current);
+            sendTimeoutRef.current = null;
+          }
         });
       } catch (err) {
         console.error('Socket connection failed:', err);
@@ -271,6 +291,15 @@ export default function ChatPage() {
     setInput('');
     setSending(true);
 
+    if (sendTimeoutRef.current) {
+      clearTimeout(sendTimeoutRef.current);
+    }
+    // Failsafe: never let UI stay stuck "thinking" forever
+    sendTimeoutRef.current = setTimeout(() => {
+      setSending(false);
+      toast.error('Chat is taking too long. Please try again.');
+    }, 60000);
+
     // Optimistic: show user message immediately
     const tempUserMsg: ChatMsg = {
       id: `temp-${Date.now()}`,
@@ -297,6 +326,11 @@ export default function ChatPage() {
       setMessages(prev => prev.filter(m => m.id !== tempUserMsg.id));
       setInput(userText);
       setSending(false);
+
+      if (sendTimeoutRef.current) {
+        clearTimeout(sendTimeoutRef.current);
+        sendTimeoutRef.current = null;
+      }
     }
   };
 
