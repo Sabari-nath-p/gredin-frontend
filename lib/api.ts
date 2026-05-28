@@ -15,7 +15,7 @@ const handleUnauthorizedClientResponse = () => {
 
 // Server-side API client (for SSR)
 export const createServerApiClient = (token?: string): AxiosInstance => {
-  const baseURL = process.env.BACKEND_URL || 'http://localhost:3000';
+  const baseURL = process.env.BACKEND_URL || 'http://localhost:3000/api';
 
   return axios.create({
     baseURL,
