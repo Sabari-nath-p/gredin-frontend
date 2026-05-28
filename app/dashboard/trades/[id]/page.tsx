@@ -552,6 +552,25 @@ export default function TradeDetailPage() {
                             ))}
                           </select>
                         )}
+                        {editing && field.fieldType === 'SCORECARD' && (
+                          <div className="space-y-2">
+                            {(field.scorecard?.options || []).map((opt) => (
+                              <label
+                                key={opt.label}
+                                className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors"
+                              >
+                                <input
+                                  type="radio"
+                                  name={`scorecard_${field.id}`}
+                                  checked={(fieldValue?.textValue || '') === opt.label}
+                                  onChange={() => setFieldValues((prev) => ({ ...prev, [field.id]: { textValue: opt.label } }))}
+                                  className="w-4 h-4 border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                                />
+                                <span className="text-xs font-medium text-gray-light">{opt.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
                         {editing && field.fieldType === 'CHECKBOX' && (
                           <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
                             <input

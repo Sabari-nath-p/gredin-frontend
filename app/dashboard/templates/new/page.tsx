@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Layers, Plus, Trash2, GripVertical,
-  Type, AlignLeft, CheckSquare, Image, Loader2, Info, ListChecks
+  Type, AlignLeft, CheckSquare, Image, Loader2, Info, ListChecks, BarChart3
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { logTemplateApi, type FieldType, type CreateTemplateFieldRequest } from '@/lib/api';
@@ -28,11 +28,22 @@ const FIELD_TYPES: { value: FieldType; label: string; icon: React.ElementType; d
   { value: 'CHECKBOX', label: 'Checkbox', icon: CheckSquare, desc: 'Yes / No toggle', color: 'yellow-primary' },
   { value: 'IMAGE', label: 'Image', icon: Image, desc: 'Upload image (S3)', color: 'purple-400' },
   { value: 'MULTIPLE_CHOICE', label: 'Choice', icon: ListChecks, desc: 'Dropdown select', color: 'blue-400' },
+  { value: 'SCORECARD', label: 'Scorecard', icon: BarChart3, desc: 'Weighted radio score', color: 'green-primary' },
 ];
 
-interface FieldItem extends CreateTemplateFieldRequest {
+interface ScorecardOptionItem {
+  _key: string;
+  label: string;
+  score: string; // 0-100
+}
+
+interface FieldItem extends Omit<CreateTemplateFieldRequest, 'scorecard'> {
   _key: string;
   fieldOptions?: string[];
+  scorecard?: {
+    weight: string; // optional
+    options: ScorecardOptionItem[];
+  };
 }
 
 export default function NewTemplatePage() {
@@ -54,6 +65,17 @@ export default function NewTemplatePage() {
         placeholder: '',
         defaultValue: '',
         fieldOptions: [],
+        ...(type === 'SCORECARD'
+          ? {
+              scorecard: {
+                weight: '',
+                options: [
+                  { _key: genKey(), label: '', score: '0' },
+                  { _key: genKey(), label: '', score: '0' },
+                ],
+              },
+            }
+          : {}),
       },
     ]);
   };
@@ -96,6 +118,52 @@ export default function NewTemplatePage() {
       }
     }
 
+    const scorecardFields = fields.filter((f) => f.fieldType === 'SCORECARD');
+    if (scorecardFields.length > 0) {
+      for (const f of scorecardFields) {
+        const rawOpts = f.scorecard?.options || [];
+        const cleaned = rawOpts
+          .map((o) => ({ label: o.label.trim(), score: Number(o.score) }))
+          .filter((o) => o.label.length > 0);
+
+        if (cleaned.length < 2) {
+          toast.error('Scorecard questions need at least 2 options');
+          return;
+        }
+
+        const seen = new Set<string>();
+        for (const o of cleaned) {
+          if (!Number.isFinite(o.score) || o.score < 0 || o.score > 100) {
+            toast.error('Scorecard option scores must be 0-100');
+            return;
+          }
+          const k = o.label.toLowerCase();
+          if (seen.has(k)) {
+            toast.error('Scorecard option labels must be unique');
+            return;
+          }
+          seen.add(k);
+        }
+      }
+
+      const weights = scorecardFields.map((f) => (f.scorecard?.weight ?? '').trim());
+      const defined = weights.filter((w) => w.length > 0);
+
+      if (defined.length !== 0 && defined.length !== weights.length) {
+        toast.error('Either set weights for all scorecard questions or leave all weights empty');
+        return;
+      }
+
+      if (defined.length === weights.length) {
+        const sum = defined.reduce((acc, w) => acc + Number(w), 0);
+        const rounded = Math.round((sum + Number.EPSILON) * 100) / 100;
+        if (rounded !== 100) {
+          toast.error('Scorecard weights must total exactly 100%');
+          return;
+        }
+      }
+    }
+
     setLoading(true);
     try {
       const payload = {
@@ -110,6 +178,16 @@ export default function NewTemplatePage() {
             : undefined,
           defaultValue: rest.defaultValue || undefined,
           fieldOptions: rest.fieldType === 'MULTIPLE_CHOICE' ? rest.fieldOptions?.filter(Boolean) : undefined,
+          scorecard: rest.fieldType === 'SCORECARD'
+            ? {
+                ...(rest.scorecard?.weight?.trim()
+                  ? { weight: Number(rest.scorecard.weight) }
+                  : {}),
+                options: (rest.scorecard?.options || [])
+                  .map((o) => ({ label: o.label.trim(), score: Number(o.score) }))
+                  .filter((o) => o.label.length > 0),
+              }
+            : undefined,
         })),
       };
       await logTemplateApi.create(token, payload);
@@ -402,6 +480,102 @@ export default function NewTemplatePage() {
                                 placeholder="Optional default..."
                               />
                             </div>
+                          )}
+
+                          {field.fieldType === 'SCORECARD' && (
+                            <>
+                              <div>
+                                <label className="block text-[10px] font-medium text-gray-text mb-1">Weight % (optional)</label>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={100}
+                                  step="any"
+                                  value={field.scorecard?.weight ?? ''}
+                                  onChange={(e) => updateField(field._key, {
+                                    scorecard: {
+                                      weight: e.target.value,
+                                      options: field.scorecard?.options || [],
+                                    },
+                                  })}
+                                  className="input w-full text-xs py-2"
+                                  placeholder="e.g., 25"
+                                />
+                                <p className="text-[10px] text-gray-text mt-1">If left empty for all scorecard questions, weights auto-distribute to 100%.</p>
+                              </div>
+
+                              <div className="sm:col-span-2">
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="block text-[10px] font-medium text-gray-text">Answer Options</label>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const prevOpts = field.scorecard?.options || [];
+                                      updateField(field._key, {
+                                        scorecard: {
+                                          weight: field.scorecard?.weight ?? '',
+                                          options: [...prevOpts, { _key: genKey(), label: '', score: '0' }],
+                                        },
+                                      });
+                                    }}
+                                    className="text-[10px] font-semibold text-green-primary hover:text-green-primary/80 transition-colors"
+                                  >
+                                    + Add option
+                                  </button>
+                                </div>
+
+                                <div className="space-y-2">
+                                  {(field.scorecard?.options || []).map((opt, optIdx) => (
+                                    <div key={opt._key} className="grid grid-cols-12 gap-2 items-center">
+                                      <div className="col-span-7">
+                                        <input
+                                          type="text"
+                                          value={opt.label}
+                                          onChange={(e) => {
+                                            const opts = (field.scorecard?.options || []).map((o) =>
+                                              o._key === opt._key ? { ...o, label: e.target.value } : o
+                                            );
+                                            updateField(field._key, { scorecard: { weight: field.scorecard?.weight ?? '', options: opts } });
+                                          }}
+                                          className="input w-full text-xs py-2"
+                                          placeholder={`Option ${optIdx + 1} label`}
+                                        />
+                                      </div>
+                                      <div className="col-span-3">
+                                        <input
+                                          type="number"
+                                          min={0}
+                                          max={100}
+                                          step="any"
+                                          value={opt.score}
+                                          onChange={(e) => {
+                                            const opts = (field.scorecard?.options || []).map((o) =>
+                                              o._key === opt._key ? { ...o, score: e.target.value } : o
+                                            );
+                                            updateField(field._key, { scorecard: { weight: field.scorecard?.weight ?? '', options: opts } });
+                                          }}
+                                          className="input w-full text-xs py-2"
+                                          placeholder="Score"
+                                        />
+                                      </div>
+                                      <div className="col-span-2 flex justify-end">
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const nextOpts = (field.scorecard?.options || []).filter((o) => o._key !== opt._key);
+                                            updateField(field._key, { scorecard: { weight: field.scorecard?.weight ?? '', options: nextOpts } });
+                                          }}
+                                          className="text-gray-text hover:text-red-primary transition-colors text-xs px-2 py-1"
+                                          title="Remove option"
+                                        >
+                                          Remove
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>

@@ -132,7 +132,17 @@ export interface UpdateTradeAccountRequest {
 }
 
 // Log Template Types
-export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE' | 'MULTIPLE_CHOICE';
+export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE' | 'MULTIPLE_CHOICE' | 'SCORECARD';
+
+export interface ScorecardOption {
+  label: string;
+  score: number; // 0-100
+}
+
+export interface ScorecardConfig {
+  weight?: number; // optional; when omitted for all questions, backend auto-distributes to 100%
+  options: ScorecardOption[];
+}
 
 export interface LogTemplateField {
   id: string;
@@ -143,6 +153,7 @@ export interface LogTemplateField {
   placeholder: string | null;
   defaultValue: string | null;
   fieldOptions: string[];
+  scorecard?: ScorecardConfig | null;
 }
 
 export interface LogTemplate {
@@ -165,6 +176,7 @@ export interface CreateTemplateFieldRequest {
   placeholder?: string;
   defaultValue?: string;
   fieldOptions?: string[];
+  scorecard?: ScorecardConfig;
 }
 
 export interface CreateLogTemplateRequest {
@@ -181,6 +193,7 @@ export interface UpdateTemplateFieldRequest {
   placeholder?: string;
   defaultValue?: string;
   fieldOptions?: string[];
+  scorecard?: ScorecardConfig;
 }
 
 export interface UpdateLogTemplateRequest {
@@ -197,6 +210,10 @@ export interface TradeFieldValue {
   textValue: string | null;
   booleanValue: boolean | null;
   imageUrl: string | null;
+  selectedOption?: string | null;
+  selectedScore?: number | null;
+  questionWeight?: number | null;
+  contribution?: number | null;
   field?: LogTemplateField;
 }
 
@@ -222,6 +239,7 @@ export interface TradeEntry {
   realisedProfitLoss: number | null;
   serviceCharge: number;
   notes: string | null;
+  tradeScore?: number | null;
   fieldValues?: TradeFieldValue[];
   createdAt: string;
   updatedAt: string;
