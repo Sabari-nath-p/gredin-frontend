@@ -465,6 +465,61 @@ export default function CloseTradePagePage() {
                             </div>
                           </div>
                         )}
+                        {field.fieldType === 'SCORED_CHOICE' && (() => {
+                          const allOpts = field.scorecard?.options || [];
+                          let selected: string[] = [];
+                          try { selected = JSON.parse(fieldValues[field.id]?.textValue || '[]'); } catch { selected = []; }
+                          const totalScore = allOpts
+                            .filter(o => selected.includes(o.label))
+                            .reduce((sum, o) => sum + o.score, 0);
+                          const toggleOpt = (label: string) => {
+                            const next = selected.includes(label)
+                              ? selected.filter(l => l !== label)
+                              : [...selected, label];
+                            setFieldValues(prev => ({ ...prev, [field.id]: { textValue: JSON.stringify(next) } }));
+                          };
+                          return (
+                            <div>
+                              <div className="flex items-center justify-between mb-2">
+                                <label className="text-xs font-medium text-gray-light">{field.fieldName}</label>
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                                  totalScore === 100 ? 'bg-green-primary/10 text-green-primary' :
+                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-dark-bg text-gray-text'
+                                }`}>{totalScore} / 100</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-dark-border rounded-full mb-3 overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-300"
+                                  style={{
+                                    width: `${Math.min(totalScore, 100)}%`,
+                                    background: totalScore === 100 ? 'var(--color-green-primary)' : totalScore > 0 ? '#a78bfa' : 'transparent',
+                                  }}
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                {allOpts.map((opt) => (
+                                  <label
+                                    key={opt.label}
+                                    className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors ${
+                                      selected.includes(opt.label)
+                                        ? 'bg-purple-400/10 border-purple-400/30'
+                                        : 'bg-dark-bg/50 border-dark-border hover:border-purple-400/20'
+                                    }`}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={selected.includes(opt.label)}
+                                      onChange={() => toggleOpt(opt.label)}
+                                      className="w-4 h-4 rounded border-dark-border text-purple-400 focus:ring-purple-400 bg-dark-bg"
+                                    />
+                                    <span className="text-xs font-medium text-gray-light flex-1">{opt.label}</span>
+                                    <span className="text-[10px] font-bold text-purple-400/70">+{opt.score}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
                         {field.fieldType === 'CHECKBOX' && (
                           <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
                             <input

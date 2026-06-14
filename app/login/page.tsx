@@ -61,7 +61,7 @@ export default function LoginPage() {
         <div className="animate-fade-in">
           <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-[#00ff88]/10 border border-[#00ff88]/20 rounded-full text-[#00ff88] text-sm font-medium mb-8 hover:bg-[#00ff88]/15 transition-colors">
             <Sparkles className="w-4 h-4" />
-            Professional Trading Journal
+            Gredin.in
           </Link>
 
           <h1 className="text-5xl xl:text-6xl font-bold text-[#c9d1d9] mb-6 leading-tight tracking-tight">
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
           <p className="text-lg text-[#8b92a8] mb-12 max-w-lg leading-relaxed">
             Track every trade, analyze your performance, and build consistent profitability
-            with our professional trading journal platform.
+            with Gredin.in.
           </p>
 
           <div className="space-y-4">

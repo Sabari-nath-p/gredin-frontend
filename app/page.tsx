@@ -160,7 +160,7 @@ export default function LandingPage() {
                 <TrendingUp className="w-4.5 h-4.5 text-[#0a0e14]" />
               </div>
               <span className="text-[#c9d1d9] font-bold text-lg tracking-tight group-hover:text-[#00ff88] transition-colors">
-                Trade<span className="text-[#00ff88]">Journal</span>
+                Gredin<span className="text-[#00ff88]">.in</span>
               </span>
             </Link>
 
@@ -619,7 +619,7 @@ export default function LandingPage() {
                   <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00ff88] to-[#00cc6a] flex items-center justify-center">
                     <TrendingUp className="w-4 h-4 text-[#0a0e14]" />
                   </div>
-                  <span className="font-bold text-[#c9d1d9]">Trade<span className="text-[#00ff88]">Journal</span></span>
+                  <span className="font-bold text-[#c9d1d9]">Gredin<span className="text-[#00ff88]">.in</span></span>
                 </Link>
                 <p className="text-xs text-[#8b92a8] leading-relaxed">
                   The professional trading journal for serious traders. Log smarter, analyse deeper, improve faster.

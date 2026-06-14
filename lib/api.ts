@@ -132,7 +132,7 @@ export interface UpdateTradeAccountRequest {
 }
 
 // Log Template Types
-export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE' | 'MULTIPLE_CHOICE' | 'SCORECARD';
+export type FieldType = 'TEXT' | 'LONG_TEXT' | 'CHECKBOX' | 'IMAGE' | 'MULTIPLE_CHOICE' | 'SCORECARD' | 'SCORED_CHOICE';
 
 export interface ScorecardOption {
   label: string;

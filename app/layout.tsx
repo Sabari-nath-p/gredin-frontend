@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     description:
       'Track trades, analyze performance, and improve your win rate. Free professional trading journal for all markets.',
     images: [`${siteUrl}/og-image.png`],
-    creator: '@tradejournal',
+    creator: '@gredin',
   },
   alternates: {
     canonical: siteUrl,

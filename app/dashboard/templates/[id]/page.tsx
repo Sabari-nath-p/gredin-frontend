@@ -35,6 +35,7 @@ const FIELD_TYPES: { value: FieldType; label: string; icon: React.ElementType; d
   { value: 'IMAGE', label: 'Image', icon: Image, desc: 'Upload image (S3)', color: 'purple-400' },
   { value: 'MULTIPLE_CHOICE', label: 'Choice', icon: ListChecks, desc: 'Dropdown select', color: 'blue-400' },
   { value: 'SCORECARD', label: 'Scorecard', icon: BarChart3, desc: 'Weighted radio score', color: 'green-primary' },
+  { value: 'SCORED_CHOICE', label: 'Score Choice', icon: BarChart3, desc: 'Multi-select with scores', color: 'purple-400' },
 ];
 
 interface ScorecardOptionItem {
@@ -102,9 +103,9 @@ export default function EditTemplatePage() {
             placeholder: f.placeholder || '',
             defaultValue: f.defaultValue || '',
             fieldOptions: f.fieldOptions || [],
-            scorecard: f.fieldType === 'SCORECARD'
+            scorecard: f.fieldType === 'SCORECARD' || f.fieldType === 'SCORED_CHOICE'
               ? {
-                  weight: f.scorecard?.weight === undefined || f.scorecard?.weight === null ? '' : String(f.scorecard.weight),
+                  weight: (f.fieldType === 'SCORECARD' && (f.scorecard?.weight === undefined || f.scorecard?.weight === null)) ? '' : (f.fieldType === 'SCORECARD' ? String(f.scorecard?.weight) : ''),
                   options: (f.scorecard?.options || []).length
                     ? (f.scorecard?.options || []).map((o) => ({ _key: genKey(), label: o.label, score: String(o.score) }))
                     : [
@@ -143,7 +144,7 @@ export default function EditTemplatePage() {
         placeholder: '',
         defaultValue: '',
         fieldOptions: [],
-        ...(type === 'SCORECARD'
+        ...(type === 'SCORECARD' || type === 'SCORED_CHOICE'
           ? {
               scorecard: {
                 weight: '',
@@ -233,6 +234,43 @@ export default function EditTemplatePage() {
       }
     }
 
+    const scoredChoiceFields = fields.filter((f) => f.fieldType === 'SCORED_CHOICE');
+    if (scoredChoiceFields.length > 0) {
+      for (const f of scoredChoiceFields) {
+        const rawOpts = f.scorecard?.options || [];
+        const cleaned = rawOpts
+          .map((o) => ({ label: o.label.trim(), score: Number(o.score) }))
+          .filter((o) => o.label.length > 0);
+
+        if (cleaned.length < 2) {
+          toast.error('Score Choice fields need at least 2 options');
+          return;
+        }
+
+        let totalScore = 0;
+        const seen = new Set<string>();
+        for (const o of cleaned) {
+          if (!Number.isFinite(o.score) || o.score < 0) {
+            toast.error('Score Choice option scores must be 0 or more');
+            return;
+          }
+          totalScore += o.score;
+          const k = o.label.toLowerCase();
+          if (seen.has(k)) {
+            toast.error('Score Choice option labels must be unique');
+            return;
+          }
+          seen.add(k);
+        }
+
+        const rounded = Math.round((totalScore + Number.EPSILON) * 100) / 100;
+        if (rounded !== 100) {
+          toast.error(`Score Choice option scores must sum to exactly 100 (currently ${rounded})`);
+          return;
+        }
+      }
+    }
+
     setSaving(true);
     try {
       const payload = {
@@ -249,9 +287,9 @@ export default function EditTemplatePage() {
             : undefined,
           defaultValue: f.defaultValue || undefined,
           fieldOptions: f.fieldType === 'MULTIPLE_CHOICE' ? f.fieldOptions.filter(Boolean) : undefined,
-          scorecard: f.fieldType === 'SCORECARD'
+          scorecard: f.fieldType === 'SCORECARD' || f.fieldType === 'SCORED_CHOICE'
             ? {
-                ...(f.scorecard?.weight?.trim()
+                ...(f.fieldType === 'SCORECARD' && f.scorecard?.weight?.trim()
                   ? { weight: Number(f.scorecard.weight) }
                   : {}),
                 options: (f.scorecard?.options || [])
@@ -677,31 +715,47 @@ export default function EditTemplatePage() {
                             </div>
                           )}
 
-                          {field.fieldType === 'SCORECARD' && (
+                          {(field.fieldType === 'SCORECARD' || field.fieldType === 'SCORED_CHOICE') && (
                             <>
-                              <div>
-                                <label className="block text-[10px] font-medium text-gray-text mb-1">Weight % (optional)</label>
-                                <input
-                                  type="number"
-                                  min={0}
-                                  max={100}
-                                  step="any"
-                                  value={field.scorecard?.weight ?? ''}
-                                  onChange={(e) => updateField(field._key, {
-                                    scorecard: {
-                                      weight: e.target.value,
-                                      options: field.scorecard?.options || [],
-                                    },
-                                  })}
-                                  className="input w-full text-xs py-2"
-                                  placeholder="e.g., 25"
-                                />
-                                <p className="text-[10px] text-gray-text mt-1">If left empty for all scorecard questions, weights auto-distribute to 100%.</p>
-                              </div>
+                              {field.fieldType === 'SCORECARD' && (
+                                <div>
+                                  <label className="block text-[10px] font-medium text-gray-text mb-1">Weight % (optional)</label>
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    max={100}
+                                    step="any"
+                                    value={field.scorecard?.weight ?? ''}
+                                    onChange={(e) => updateField(field._key, {
+                                      scorecard: {
+                                        weight: e.target.value,
+                                        options: field.scorecard?.options || [],
+                                      },
+                                    })}
+                                    className="input w-full text-xs py-2"
+                                    placeholder="e.g., 25"
+                                  />
+                                  <p className="text-[10px] text-gray-text mt-1">If left empty for all scorecard questions, weights auto-distribute to 100%.</p>
+                                </div>
+                              )}
+
+                              {field.fieldType === 'SCORED_CHOICE' && (() => {
+                                const opts = field.scorecard?.options || [];
+                                const total = opts.reduce((sum, o) => sum + (Number(o.score) || 0), 0);
+                                const rounded = Math.round((total + Number.EPSILON) * 100) / 100;
+                                return (
+                                  <div className="sm:col-span-2 flex items-center gap-2 p-2.5 rounded-xl bg-purple-400/5 border border-purple-400/20">
+                                    <span className="text-[10px] text-gray-text">Total score of all options:</span>
+                                    <span className={`text-xs font-bold ml-auto ${rounded === 100 ? 'text-green-primary' : 'text-red-primary'}`}>{rounded} / 100</span>
+                                  </div>
+                                );
+                              })()}
 
                               <div className="sm:col-span-2">
                                 <div className="flex items-center justify-between mb-1">
-                                  <label className="block text-[10px] font-medium text-gray-text">Answer Options</label>
+                                  <label className="block text-[10px] font-medium text-gray-text">
+                                    {field.fieldType === 'SCORED_CHOICE' ? 'Options & Scores (must total 100)' : 'Answer Options'}
+                                  </label>
                                   <button
                                     type="button"
                                     onClick={() => {
