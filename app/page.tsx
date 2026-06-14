@@ -7,6 +7,7 @@ import {
   Award, Filter, Bell, ChevronRight, Star, Tag, Camera,
   RefreshCw, Database, Clock, BarChart2,
 } from 'lucide-react';
+import Image from 'next/image';
 import LandingCTAButton from '@/components/LandingCTAButton';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://gredin.app';
@@ -150,12 +151,7 @@ export default function LandingPage() {
         <nav className="sticky top-0 z-50 bg-[#07090d]/95 backdrop-blur-sm border-b border-white/[0.06]">
           <div className="max-w-6xl mx-auto px-5 h-15 flex items-center justify-between" style={{ height: '60px' }}>
             <Link href="/" className="flex items-center gap-2.5" aria-label="Gredin home">
-              <div className="w-8 h-8 rounded-lg bg-[#00ff88] flex items-center justify-center">
-                <TrendingUp className="w-4 h-4 text-[#07090d]" strokeWidth={2.5} />
-              </div>
-              <span className="font-bold text-[17px] text-white tracking-tight">
-                Gredin<span className="text-[#00ff88]">.in</span>
-              </span>
+              <Image src="/logo.png" alt="Gredin Logo" width={100} height={28} className="h-7 w-auto" />
             </Link>
 
             <div className="hidden md:flex items-center gap-7 text-[13px] text-white/50">
@@ -592,10 +588,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-4">
-                  <div className="w-7 h-7 rounded-lg bg-[#00ff88] flex items-center justify-center">
-                    <TrendingUp className="w-3.5 h-3.5 text-[#07090d]" strokeWidth={2.5} />
-                  </div>
-                  <span className="font-bold text-white text-[15px]">Gredin<span className="text-[#00ff88]">.in</span></span>
+                  <Image src="/logo.png" alt="Gredin Logo" width={90} height={24} className="h-6 w-auto" />
                 </Link>
                 <p className="text-[12px] text-white/30 leading-relaxed">
                   The professional trading journal for serious traders. Log smarter, analyse deeper, improve faster.

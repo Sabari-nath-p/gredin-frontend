@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -76,14 +77,8 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between p-5 border-b border-dark-border">
-            <Link href="/dashboard" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-green rounded-xl flex items-center justify-center shadow-glow-green group-hover:shadow-lg transition-shadow">
-                <TrendingUp className="w-5 h-5 text-dark-bg" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold gradient-text">Gredin</h1>
-                <p className="text-[10px] text-gray-text uppercase tracking-widest">Professional</p>
-              </div>
+            <Link href="/dashboard" className="flex items-center group">
+              <Image src="/logo.png" alt="Gredin Logo" width={120} height={34} className="h-8 w-auto" />
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -176,11 +171,8 @@ export default function DashboardLayout({
                 <Menu className="w-5 h-5" />
               </button>
               {/* Mobile logo */}
-              <div className="flex lg:hidden items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-green rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-dark-bg" />
-                </div>
-                <span className="font-bold gradient-text text-sm">Gredin</span>
+              <div className="flex lg:hidden items-center">
+                <Image src="/logo.png" alt="Gredin Logo" width={100} height={28} className="h-7 w-auto" />
               </div>
               {/* Breadcrumb - desktop */}
               <div className="hidden lg:flex items-center gap-2 text-sm">

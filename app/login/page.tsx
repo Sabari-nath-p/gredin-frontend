@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { authApi } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
@@ -103,11 +104,10 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-6 lg:p-16 relative">
         <div className="w-full max-w-md animate-slide-up">
           {/* Mobile Logo */}
-          <div className="text-center mb-10 lg:hidden">
-            <Link href="/" className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#00ff88] to-[#00cc6f] rounded-2xl mb-4 shadow-[0_0_30px_rgba(0,255,136,0.3)]">
-              <TrendingUp className="w-8 h-8 text-[#0a0e14]" />
+          <div className="text-center mb-10 lg:hidden flex flex-col items-center">
+            <Link href="/" className="inline-block mb-4">
+              <Image src="/logo.png" alt="Gredin Logo" width={140} height={40} className="w-auto h-10" />
             </Link>
-            <h1 className="text-3xl font-bold gradient-text mb-1">Gredin</h1>
             <p className="text-sm text-[#8b92a8]">Professional trade logging</p>
           </div>
 
