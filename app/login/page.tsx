@@ -106,7 +106,7 @@ export default function LoginPage() {
           {/* Mobile Logo */}
           <div className="text-center mb-10 lg:hidden flex flex-col items-center">
             <Link href="/" className="inline-block mb-4">
-              <Image src="/logo.png" alt="Gredin Logo" width={140} height={40} className="w-auto h-10" />
+              <Image src="/logo.png" alt="Gredin Logo" width={200} height={56} className="w-auto h-14" />
             </Link>
             <p className="text-sm text-[#8b92a8]">Professional trade logging</p>
           </div>

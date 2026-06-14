@@ -151,7 +151,7 @@ export default function LandingPage() {
         <nav className="sticky top-0 z-50 bg-[#07090d]/95 backdrop-blur-sm border-b border-white/[0.06]">
           <div className="max-w-6xl mx-auto px-5 h-15 flex items-center justify-between" style={{ height: '60px' }}>
             <Link href="/" className="flex items-center gap-2.5" aria-label="Gredin home">
-              <Image src="/logo.png" alt="Gredin Logo" width={100} height={28} className="h-7 w-auto" />
+              <Image src="/logo.png" alt="Gredin Logo" width={160} height={45} className="h-11 w-auto" />
             </Link>
 
             <div className="hidden md:flex items-center gap-7 text-[13px] text-white/50">
@@ -588,7 +588,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-4">
-                  <Image src="/logo.png" alt="Gredin Logo" width={90} height={24} className="h-6 w-auto" />
+                  <Image src="/logo.png" alt="Gredin Logo" width={140} height={40} className="h-10 w-auto" />
                 </Link>
                 <p className="text-[12px] text-white/30 leading-relaxed">
                   The professional trading journal for serious traders. Log smarter, analyse deeper, improve faster.

@@ -78,7 +78,7 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="flex items-center justify-between p-5 border-b border-dark-border">
             <Link href="/dashboard" className="flex items-center group">
-              <Image src="/logo.png" alt="Gredin Logo" width={120} height={34} className="h-8 w-auto" />
+              <Image src="/logo.png" alt="Gredin Logo" width={160} height={45} className="h-11 w-auto" />
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
@@ -172,7 +172,7 @@ export default function DashboardLayout({
               </button>
               {/* Mobile logo */}
               <div className="flex lg:hidden items-center">
-                <Image src="/logo.png" alt="Gredin Logo" width={100} height={28} className="h-7 w-auto" />
+                <Image src="/logo.png" alt="Gredin Logo" width={140} height={40} className="h-10 w-auto" />
               </div>
               {/* Breadcrumb - desktop */}
               <div className="hidden lg:flex items-center gap-2 text-sm">
