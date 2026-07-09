@@ -49,11 +49,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#0a0e14] relative overflow-hidden">
+    <div className="min-h-screen flex bg-slate-50 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute w-[600px] h-[600px] bg-[#047857] opacity-[0.03] rounded-full blur-[120px] -top-64 -left-64" />
-        <div className="absolute w-[400px] h-[400px] bg-[#3b82f6] opacity-[0.03] rounded-full blur-[100px] bottom-32 right-32" />
+        <div className="absolute w-[400px] h-[400px] bg-[#059669] opacity-[0.03] rounded-full blur-[100px] bottom-32 right-32" />
         <div className="absolute w-[300px] h-[300px] bg-[#047857] opacity-[0.02] rounded-full blur-[80px] top-1/2 left-1/3" />
       </div>
 
@@ -65,13 +65,13 @@ export default function LoginPage() {
             Gredin.in
           </Link>
 
-          <h1 className="text-5xl xl:text-6xl font-bold text-[#c9d1d9] mb-6 leading-tight tracking-tight">
+          <h1 className="text-5xl xl:text-6xl font-bold text-slate-900 mb-6 leading-tight tracking-tight">
             Master Your
             <br />
             <span className="gradient-text">Trading Journey</span>
           </h1>
 
-          <p className="text-lg text-[#8b92a8] mb-12 max-w-lg leading-relaxed">
+          <p className="text-lg text-slate-600 mb-12 max-w-lg leading-relaxed">
             Track every trade, analyze your performance, and build consistent profitability
             with Gredin.in.
           </p>
@@ -85,14 +85,14 @@ export default function LoginPage() {
             ].map((f, i) => (
               <div
                 key={f.title}
-                className={`flex items-start gap-4 p-4 rounded-xl bg-[#111822]/50 border border-[#1e2936]/50 animate-fade-in stagger-${i + 2}`}
+                className={`flex items-start gap-4 p-4 rounded-xl bg-white border border-slate-200 shadow-sm animate-fade-in stagger-${i + 2}`}
               >
                 <div className="w-10 h-10 rounded-lg bg-[#047857]/10 flex items-center justify-center flex-shrink-0 text-lg">
                   {f.emoji}
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[#c9d1d9] mb-0.5">{f.title}</h3>
-                  <p className="text-sm text-[#8b92a8]">{f.desc}</p>
+                  <h3 className="text-sm font-semibold text-slate-900 mb-0.5">{f.title}</h3>
+                  <p className="text-sm text-slate-600">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -108,7 +108,7 @@ export default function LoginPage() {
             <Link href="/" className="inline-block mb-4">
               <Image src="/logo.png" alt="Gredin Logo" width={220} height={60} priority />
             </Link>
-            <p className="text-sm text-[#8b92a8]">Professional trade logging</p>
+            <p className="text-sm text-slate-600">Professional trade logging</p>
           </div>
 
           <div className="card glass-effect p-8">
@@ -117,11 +117,11 @@ export default function LoginPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <div className="hidden lg:flex w-10 h-10 bg-gradient-to-br from-[#047857] to-[#059669] rounded-xl items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-[#0a0e14]" />
+                      <TrendingUp className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-[#c9d1d9]">Welcome Back</h2>
-                      <p className="text-sm text-[#8b92a8]">Enter your email to continue</p>
+                      <h2 className="text-2xl font-bold text-slate-900">Welcome Back</h2>
+                      <p className="text-sm text-slate-600">Enter your email to continue</p>
                     </div>
                   </div>
                 </div>
@@ -129,11 +129,11 @@ export default function LoginPage() {
                 <div className="divider-green" />
 
                 <div>
-                  <label className="block text-sm font-medium text-[#c9d1d9] mb-2">
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a8]" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
                     <input
                       type="email"
                       value={email}
@@ -148,21 +148,21 @@ export default function LoginPage() {
 
                 <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2">
                   {loading ? (
-                    <div className="w-5 h-5 border-2 border-[#0a0e14] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <>Continue <ArrowRight className="w-4 h-4" /></>
                   )}
                 </button>
 
-                <p className="text-center text-sm text-[#8b92a8]">
+                <p className="text-center text-sm text-slate-600">
                   New here? Account created automatically ✨
                 </p>
               </form>
             ) : (
               <form onSubmit={handleVerifyOtp} className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-[#c9d1d9] mb-1">Enter OTP</h2>
-                  <p className="text-sm text-[#8b92a8]">
+                  <h2 className="text-2xl font-bold text-slate-900 mb-1">Enter OTP</h2>
+                  <p className="text-sm text-slate-600">
                     Code sent to <span className="text-[#047857] font-medium">{email}</span>
                   </p>
                 </div>
@@ -170,11 +170,11 @@ export default function LoginPage() {
                 <div className="divider-green" />
 
                 <div>
-                  <label className="block text-sm font-medium text-[#c9d1d9] mb-2">
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
                     One-Time Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b92a8]" />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
                     <input
                       type="text"
                       value={otp}
@@ -190,7 +190,7 @@ export default function LoginPage() {
 
                 <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2">
                   {loading ? (
-                    <div className="w-5 h-5 border-2 border-[#0a0e14] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <>Verify &amp; Login <ArrowRight className="w-4 h-4" /></>
                   )}
@@ -204,7 +204,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6 text-center">
-            <Link href="/" className="text-xs text-[#8b92a8]/60 hover:text-[#047857] transition-colors">
+            <Link href="/" className="text-xs text-slate-600/60 hover:text-[#047857] transition-colors">
               ← Back to homepage
             </Link>
           </div>
