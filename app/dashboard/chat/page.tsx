@@ -24,9 +24,9 @@ function renderMarkdown(text: string) {
   for (const line of lines) {
     key++;
     if (line.startsWith('### ')) {
-      elements.push(<h4 key={key} className="text-sm font-bold text-gray-light mt-3 mb-1">{processInline(line.slice(4))}</h4>);
+      elements.push(<h4 key={key} className="text-sm font-bold text-slate-900 mt-3 mb-1">{processInline(line.slice(4))}</h4>);
     } else if (line.startsWith('## ')) {
-      elements.push(<h3 key={key} className="text-base font-bold text-gray-light mt-3 mb-1">{processInline(line.slice(3))}</h3>);
+      elements.push(<h3 key={key} className="text-base font-bold text-slate-900 mt-3 mb-1">{processInline(line.slice(3))}</h3>);
     } else if (line.startsWith('- ') || line.startsWith('* ')) {
       elements.push(
         <div key={key} className="flex gap-2 ml-1">
@@ -74,14 +74,14 @@ function processInline(text: string): React.ReactNode {
       candidates.push({
         idx: boldMatch.index,
         len: boldMatch[0].length,
-        node: <strong key={`b${k}`} className="font-semibold text-gray-light">{boldMatch[1]}</strong>,
+        node: <strong key={`b${k}`} className="font-semibold text-slate-900">{boldMatch[1]}</strong>,
       });
     }
     if (codeMatch && codeMatch.index !== undefined) {
       candidates.push({
         idx: codeMatch.index,
         len: codeMatch[0].length,
-        node: <code key={`c${k}`} className="px-1.5 py-0.5 rounded bg-dark-bg/80 text-green-primary text-[11px] font-mono">{codeMatch[1]}</code>,
+        node: <code key={`c${k}`} className="px-1.5 py-0.5 rounded bg-slate-50/80 text-green-primary text-[11px] font-mono">{codeMatch[1]}</code>,
       });
     }
 
@@ -371,11 +371,11 @@ export default function ChatPage() {
       <div
         className={`${
           sidebarOpen ? 'w-[280px]' : 'w-0'
-        } flex-shrink-0 transition-all duration-300 overflow-hidden border-r border-dark-border bg-dark-card/50`}
+        } flex-shrink-0 transition-all duration-300 overflow-hidden border-r border-slate-300 bg-white/50`}
       >
         <div className="w-[280px] h-full flex flex-col">
           {/* Sidebar header */}
-          <div className="p-3 border-b border-dark-border">
+          <div className="p-3 border-b border-slate-300">
             <button
               onClick={startNewChat}
               className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-green-primary/30 text-green-primary hover:bg-green-primary/5 transition-all text-sm font-medium"
@@ -389,12 +389,12 @@ export default function ChatPage() {
           <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
             {loadingSessions ? (
               <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-5 h-5 text-gray-text animate-spin" />
+                <Loader2 className="w-5 h-5 text-slate-600 animate-spin" />
               </div>
             ) : sessions.length === 0 ? (
               <div className="text-center py-10 px-4">
-                <MessageSquare className="w-8 h-8 text-gray-text/30 mx-auto mb-2" />
-                <p className="text-xs text-gray-text">No conversations yet</p>
+                <MessageSquare className="w-8 h-8 text-slate-600/30 mx-auto mb-2" />
+                <p className="text-xs text-slate-600">No conversations yet</p>
               </div>
             ) : (
               sessions.map(session => (
@@ -412,27 +412,27 @@ export default function ChatPage() {
                   className={`w-full group flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all ${
                     activeSessionId === session.id
                       ? 'bg-green-primary/10 border border-green-primary/20'
-                      : 'hover:bg-dark-bg/60 border border-transparent'
+                      : 'hover:bg-slate-50 border border-transparent'
                   }`}
                 >
                   <MessageSquare className={`w-3.5 h-3.5 flex-shrink-0 ${
-                    activeSessionId === session.id ? 'text-green-primary' : 'text-gray-text/50'
+                    activeSessionId === session.id ? 'text-green-primary' : 'text-slate-600/50'
                   }`} />
                   <div className="flex-1 min-w-0">
                     <p className={`text-xs font-medium truncate ${
-                      activeSessionId === session.id ? 'text-green-primary' : 'text-gray-light'
+                      activeSessionId === session.id ? 'text-green-primary' : 'text-slate-900'
                     }`}>
                       {session.title}
                     </p>
                     {session.tradeAccount && (
-                      <p className="text-[10px] text-gray-text truncate">
+                      <p className="text-[10px] text-slate-600 truncate">
                         {session.tradeAccount.accountName}
                       </p>
                     )}
                   </div>
                   <button
                     onClick={(e) => handleDeleteSession(session.id, e)}
-                    className="opacity-0 group-hover:opacity-100 p-1 text-gray-text hover:text-red-primary transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-1 text-slate-600 hover:text-red-primary transition-all"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -447,10 +447,10 @@ export default function ChatPage() {
       <div className="flex-1 flex flex-col min-w-0">
 
         {/* ── Chat header ── */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-dark-border bg-dark-card/30">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-300 bg-white/30">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1.5 rounded-lg hover:bg-dark-bg/60 text-gray-text hover:text-gray-light transition-colors"
+            className="p-1.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors"
           >
             {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
           </button>
@@ -460,8 +460,8 @@ export default function ChatPage() {
               <Bot className="w-4 h-4 text-green-primary" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-gray-light">Trading AI Assistant</h2>
-              <p className="text-[10px] text-gray-text">Powered by NVIDIA · Real-time WebSocket Analysis</p>
+              <h2 className="text-sm font-semibold text-slate-900">Trading AI Assistant</h2>
+              <p className="text-[10px] text-slate-600">Powered by NVIDIA · Real-time WebSocket Analysis</p>
             </div>
           </div>
 
@@ -469,7 +469,7 @@ export default function ChatPage() {
             {/* Socket Connection Status */}
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium">
               <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-green-primary' : 'bg-red-primary/50'}`}></div>
-              <span className={socketConnected ? 'text-green-primary' : 'text-gray-text'}>
+              <span className={socketConnected ? 'text-green-primary' : 'text-slate-600'}>
                 {socketConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
@@ -481,7 +481,7 @@ export default function ChatPage() {
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
                   selectedAccountId
                     ? 'border-green-primary/30 bg-green-primary/5 text-green-primary'
-                    : 'border-dark-border bg-dark-bg/50 text-gray-text hover:border-dark-border-hover'
+                    : 'border-slate-300 bg-slate-50 text-slate-600 hover:border-slate-300'
                 }`}
               >
                 <Wallet className="w-3.5 h-3.5" />
@@ -494,28 +494,28 @@ export default function ChatPage() {
               {showAccountPicker && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setShowAccountPicker(false)} />
-                  <div className="absolute right-0 top-full mt-1 z-20 w-56 bg-dark-card border border-dark-border rounded-xl shadow-2xl overflow-hidden">
+                  <div className="absolute right-0 top-full mt-1 z-20 w-56 bg-white border border-slate-300 rounded-xl shadow-2xl overflow-hidden">
                     <button
                       onClick={() => { setSelectedAccountId(''); setShowAccountPicker(false); }}
-                      className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs text-left hover:bg-dark-bg/60 transition-colors ${
-                        !selectedAccountId ? 'text-green-primary bg-green-primary/5' : 'text-gray-light'
+                      className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs text-left hover:bg-slate-50 transition-colors ${
+                        !selectedAccountId ? 'text-green-primary bg-green-primary/5' : 'text-slate-900'
                       }`}
                     >
-                      <Database className="w-3.5 h-3.5 text-gray-text" />
+                      <Database className="w-3.5 h-3.5 text-slate-600" />
                       All Accounts
                     </button>
                     {accounts.map(acc => (
                       <button
                         key={acc.id}
                         onClick={() => { setSelectedAccountId(acc.id); setShowAccountPicker(false); }}
-                        className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs text-left hover:bg-dark-bg/60 transition-colors ${
-                          selectedAccountId === acc.id ? 'text-green-primary bg-green-primary/5' : 'text-gray-light'
+                        className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs text-left hover:bg-slate-50 transition-colors ${
+                          selectedAccountId === acc.id ? 'text-green-primary bg-green-primary/5' : 'text-slate-900'
                         }`}
                       >
-                        <Wallet className="w-3.5 h-3.5 text-gray-text" />
+                        <Wallet className="w-3.5 h-3.5 text-slate-600" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate">{acc.accountName}</p>
-                          <p className="text-[10px] text-gray-text">{acc.brokerName} · {acc.marketSegment}</p>
+                          <p className="text-[10px] text-slate-600">{acc.brokerName} · {acc.marketSegment}</p>
                         </div>
                       </button>
                     ))}
@@ -533,8 +533,8 @@ export default function ChatPage() {
               <div className="w-20 h-20 bg-green-primary/5 rounded-3xl flex items-center justify-center mb-6 border border-green-primary/10">
                 <Sparkles className="w-10 h-10 text-green-primary/60" />
               </div>
-              <h3 className="text-lg font-bold text-gray-light mb-2">Trading AI Assistant</h3>
-              <p className="text-sm text-gray-text max-w-md mb-8">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Trading AI Assistant</h3>
+              <p className="text-sm text-slate-600 max-w-md mb-8">
                 Ask me anything about your trading performance. I can analyse your trades,
                 calculate win rates, find patterns, and provide insights.
               </p>
@@ -548,7 +548,7 @@ export default function ChatPage() {
                   <button
                     key={q}
                     onClick={() => { setInput(q); inputRef.current?.focus(); }}
-                    className="text-left px-4 py-3 rounded-xl border border-dark-border hover:border-green-primary/30 hover:bg-green-primary/5 transition-all text-xs text-gray-text hover:text-gray-light"
+                    className="text-left px-4 py-3 rounded-xl border border-slate-300 hover:border-green-primary/30 hover:bg-green-primary/5 transition-all text-xs text-slate-600 hover:text-slate-900"
                   >
                     &ldquo;{q}&rdquo;
                   </button>
@@ -568,7 +568,7 @@ export default function ChatPage() {
                     <div className="flex justify-end mb-4">
                       <div className="max-w-[80%] flex items-start gap-2.5">
                         <div className="bg-green-primary/10 border border-green-primary/20 rounded-2xl rounded-tr-md px-4 py-3">
-                          <p className="text-sm text-gray-light whitespace-pre-wrap">{msg.content}</p>
+                          <p className="text-sm text-slate-900 whitespace-pre-wrap">{msg.content}</p>
                         </div>
                         <div className="w-7 h-7 bg-green-primary/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                           <User className="w-3.5 h-3.5 text-green-primary" />
@@ -579,22 +579,22 @@ export default function ChatPage() {
                     /* ── Assistant bubble ── */
                     <div className="flex justify-start mb-4">
                       <div className="max-w-[85%] flex items-start gap-2.5">
-                        <div className="w-7 h-7 bg-dark-card border border-dark-border rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <div className="w-7 h-7 bg-white border border-slate-300 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Bot className="w-3.5 h-3.5 text-green-primary" />
                         </div>
                         <div className="space-y-2">
-                          <div className="bg-dark-card/80 border border-dark-border/50 rounded-2xl rounded-tl-md px-4 py-3">
-                            <div className="text-sm text-gray-text/90 space-y-1 leading-relaxed">
+                          <div className="bg-white/80 border border-slate-300 rounded-2xl rounded-tl-md px-4 py-3">
+                            <div className="text-sm text-slate-600/90 space-y-1 leading-relaxed">
                               {renderMarkdown(msg.content)}
                             </div>
                           </div>
                           {msg.sqlQuery && (
                             <details className="group">
-                              <summary className="flex items-center gap-1.5 text-[10px] text-gray-text/50 cursor-pointer hover:text-gray-text transition-colors ml-1">
+                              <summary className="flex items-center gap-1.5 text-[10px] text-slate-600/50 cursor-pointer hover:text-slate-600 transition-colors ml-1">
                                 <Database className="w-3 h-3" />
                                 SQL query used
                               </summary>
-                              <div className="mt-1 ml-1 p-2.5 rounded-lg bg-dark-bg/80 border border-dark-border/30">
+                              <div className="mt-1 ml-1 p-2.5 rounded-lg bg-slate-50/80 border border-slate-300">
                                 <pre className="text-[10px] text-green-primary/70 font-mono whitespace-pre-wrap break-all">{msg.sqlQuery}</pre>
                               </div>
                             </details>
@@ -610,13 +610,13 @@ export default function ChatPage() {
               {sending && (
                 <div className="flex justify-start mb-4">
                   <div className="flex items-start gap-2.5">
-                    <div className="w-7 h-7 bg-dark-card border border-dark-border rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-7 h-7 bg-white border border-slate-300 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Bot className="w-3.5 h-3.5 text-green-primary" />
                     </div>
-                    <div className="bg-dark-card/80 border border-dark-border/50 rounded-2xl rounded-tl-md px-4 py-3">
+                    <div className="bg-white/80 border border-slate-300 rounded-2xl rounded-tl-md px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Loader2 className="w-3.5 h-3.5 text-green-primary animate-spin" />
-                        <span className="text-xs text-gray-text">Analysing your data...</span>
+                        <span className="text-xs text-slate-600">Analysing your data...</span>
                       </div>
                     </div>
                   </div>
@@ -629,10 +629,10 @@ export default function ChatPage() {
         </div>
 
         {/* ── Input bar ── */}
-        <div className="border-t border-dark-border bg-dark-card/30 p-3">
+        <div className="border-t border-slate-300 bg-white/30 p-3">
           {selectedAccountId && activeAccount && (
             <div className="flex items-center gap-2 mb-2 ml-1">
-              <span className="text-[10px] text-gray-text">Scoped to:</span>
+              <span className="text-[10px] text-slate-600">Scoped to:</span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-green-primary/10 border border-green-primary/20 text-[10px] text-green-primary font-medium">
                 <Wallet className="w-2.5 h-2.5" />
                 {activeAccount.accountName}
@@ -655,7 +655,7 @@ export default function ChatPage() {
                 placeholder={socketConnected ? "Ask about your trading performance..." : "Connecting to chat service..."}
                 disabled={!socketConnected}
                 rows={1}
-                className="w-full resize-none bg-dark-bg/80 border border-dark-border rounded-xl px-4 py-3 pr-12 text-sm text-gray-light placeholder:text-gray-text/40 focus:outline-none focus:border-green-primary/50 transition-colors disabled:opacity-50"
+                className="w-full resize-none bg-slate-50/80 border border-slate-300 rounded-xl px-4 py-3 pr-12 text-sm text-slate-900 placeholder:text-slate-600/40 focus:outline-none focus:border-green-primary/50 transition-colors disabled:opacity-50"
                 style={{ minHeight: '44px', maxHeight: '120px' }}
                 onInput={(e) => {
                   const el = e.target as HTMLTextAreaElement;
@@ -676,7 +676,7 @@ export default function ChatPage() {
               )}
             </button>
           </div>
-          <p className="text-center text-[10px] text-gray-text/30 mt-2">
+          <p className="text-center text-[10px] text-slate-600/30 mt-2">
             AI may make mistakes. Always verify data-driven insights.
           </p>
         </div>

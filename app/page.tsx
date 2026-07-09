@@ -149,9 +149,9 @@ export default function LandingPage() {
 
         {/* ── NAV ── */}
         <nav className="sticky top-0 z-50 bg-[#07090d]/95 backdrop-blur-sm border-b border-white/[0.06]">
-          <div className="max-w-6xl mx-auto px-5 h-15 flex items-center justify-between" style={{ height: '60px' }}>
+          <div className="max-w-6xl mx-auto px-5 h-24 flex items-center justify-between" style={{ height: '100px' }}>
             <Link href="/" className="flex items-center gap-2.5" aria-label="Gredin home">
-              <Image src="/logo.png" alt="Gredin Logo" width={160} height={45} className="h-11 w-auto" />
+              <Image src="/logo.png" alt="Gredin Logo" width={180} height={50} priority />
             </Link>
 
             <div className="hidden md:flex items-center gap-7 text-[13px] text-white/50">
@@ -177,14 +177,14 @@ export default function LandingPage() {
         <section className="pt-20 pb-24 px-5" aria-label="Hero">
           <div className="max-w-3xl mx-auto text-center">
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#00ff88]/20 rounded-full text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-10">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88] inline-block" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 border border-[#047857]/20 rounded-full text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-10">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#047857] inline-block" />
               Free for all traders — no credit card needed
             </div>
 
             <h1 className="text-[42px] sm:text-[56px] lg:text-[64px] font-extrabold text-white leading-[1.08] tracking-[-0.03em] mb-6">
               The trading journal that{' '}
-              <span className="text-[#00ff88]">actually improves</span>{' '}
+              <span className="text-[#047857]">actually improves</span>{' '}
               your results
             </h1>
 
@@ -224,7 +224,7 @@ export default function LandingPage() {
                 ].map((s) => (
                   <div key={s.label} className="bg-[#0a0d12] rounded-xl p-4 border border-white/[0.05]">
                     <p className="text-[10px] text-white/35 mb-1.5 uppercase tracking-widest">{s.label}</p>
-                    <p className={`text-[22px] font-bold leading-none ${s.green ? 'text-[#00ff88]' : 'text-white'}`}>{s.value}</p>
+                    <p className={`text-[22px] font-bold leading-none ${s.green ? 'text-[#047857]' : 'text-white'}`}>{s.value}</p>
                     <p className="text-[10px] text-white/30 mt-1.5">{s.delta}</p>
                   </div>
                 ))}
@@ -244,7 +244,7 @@ export default function LandingPage() {
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-white/40 font-mono">{r.dir}</span>
                       </div>
                     </div>
-                    <p className={`text-[14px] font-bold ${r.win ? 'text-[#00ff88]' : 'text-red-400'}`}>{r.pnl}</p>
+                    <p className={`text-[14px] font-bold ${r.win ? 'text-[#047857]' : 'text-red-400'}`}>{r.pnl}</p>
                   </div>
                 ))}
               </div>
@@ -262,7 +262,7 @@ export default function LandingPage() {
               { value: '4.9/5', label: 'Average rating' },
             ].map((s) => (
               <div key={s.label}>
-                <p className="text-[28px] font-extrabold text-[#00ff88] mb-1 tracking-tight">{s.value}</p>
+                <p className="text-[28px] font-extrabold text-[#047857] mb-1 tracking-tight">{s.value}</p>
                 <p className="text-[13px] text-white/40">{s.label}</p>
               </div>
             ))}
@@ -273,7 +273,7 @@ export default function LandingPage() {
         <section id="features" className="py-24 px-5" aria-labelledby="features-heading">
           <div className="max-w-5xl mx-auto">
             <div className="mb-14">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Everything you need</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Everything you need</p>
               <h2 id="features-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-4">
                 A complete trading journal platform
               </h2>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                   key={f.title}
                   className="bg-[#07090d] p-7 hover:bg-[#0d1017] transition-colors"
                 >
-                  <f.icon className="w-5 h-5 text-[#00ff88] mb-5" strokeWidth={1.5} />
+                  <f.icon className="w-5 h-5 text-[#047857] mb-5" strokeWidth={1.5} />
                   <h3 className="text-[15px] font-semibold text-white mb-2">{f.title}</h3>
                   <p className="text-[13px] text-white/45 leading-relaxed">{f.desc}</p>
                 </article>
@@ -302,7 +302,7 @@ export default function LandingPage() {
         <section id="how-it-works" className="py-24 px-5 border-t border-white/[0.06]" aria-labelledby="hiw-heading">
           <div className="max-w-5xl mx-auto">
             <div className="mb-14">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Get started in minutes</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Get started in minutes</p>
               <h2 id="hiw-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-4">
                 How Gredin works
               </h2>
@@ -319,7 +319,7 @@ export default function LandingPage() {
                   )}
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl border border-white/[0.08] bg-[#0d1017] flex items-center justify-center flex-shrink-0">
-                      <s.icon className="w-4.5 h-4.5 text-[#00ff88]" strokeWidth={1.5} style={{ width: '18px', height: '18px' }} />
+                      <s.icon className="w-4.5 h-4.5 text-[#047857]" strokeWidth={1.5} style={{ width: '18px', height: '18px' }} />
                     </div>
                     <span className="text-[11px] text-white/20 font-mono font-bold">{s.n}</span>
                   </div>
@@ -339,7 +339,7 @@ export default function LandingPage() {
         <section className="py-24 px-5 border-t border-white/[0.06]" aria-labelledby="analytics-heading">
           <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
             <div>
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Analytics</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Analytics</p>
               <h2 id="analytics-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-5">
                 Performance metrics that drive real improvement
               </h2>
@@ -359,7 +359,7 @@ export default function LandingPage() {
                   'Filtered views by account or date range',
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[13px] text-white/50">
-                    <CheckCircle className="w-4 h-4 text-[#00ff88] flex-shrink-0 mt-0.5" strokeWidth={2} />
+                    <CheckCircle className="w-4 h-4 text-[#047857] flex-shrink-0 mt-0.5" strokeWidth={2} />
                     {item}
                   </li>
                 ))}
@@ -370,18 +370,18 @@ export default function LandingPage() {
             <div className="rounded-2xl border border-white/[0.08] bg-[#0d1017] p-6">
               <div className="flex items-center justify-between mb-5">
                 <p className="text-[13px] font-semibold text-white">Equity curve — last 30 trades</p>
-                <span className="text-[12px] px-2.5 py-1 rounded-lg bg-[#00ff88]/10 text-[#00ff88] font-mono font-semibold">+$4,820</span>
+                <span className="text-[12px] px-2.5 py-1 rounded-lg bg-[#047857]/10 text-[#047857] font-mono font-semibold">+$4,820</span>
               </div>
               <svg viewBox="0 0 360 100" className="w-full h-28 mb-5" aria-label="Equity curve showing upward trend">
                 <defs>
                   <linearGradient id="eq" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00ff88" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#00ff88" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#047857" stopOpacity="0.15" />
+                    <stop offset="100%" stopColor="#047857" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 <path
                   d="M0,90 L20,84 L40,87 L60,72 L80,68 L100,74 L120,60 L140,64 L160,48 L180,42 L200,53 L220,37 L240,33 L260,40 L280,25 L300,18 L320,23 L340,11 L360,6"
-                  stroke="#00ff88" strokeWidth="2" fill="none" strokeLinecap="round"
+                  stroke="#047857" strokeWidth="2" fill="none" strokeLinecap="round"
                 />
                 <path
                   d="M0,90 L20,84 L40,87 L60,72 L80,68 L100,74 L120,60 L140,64 L160,48 L180,42 L200,53 L220,37 L240,33 L260,40 L280,25 L300,18 L320,23 L340,11 L360,6 L360,100 L0,100 Z"
@@ -395,7 +395,7 @@ export default function LandingPage() {
                   { label: 'Max drawdown', val: '4.2%', green: false },
                 ].map((m) => (
                   <div key={m.label} className="text-center bg-[#0a0d12] rounded-xl p-3 border border-white/[0.05]">
-                    <p className={`text-[16px] font-bold ${m.green ? 'text-[#00ff88]' : 'text-red-400'}`}>{m.val}</p>
+                    <p className={`text-[16px] font-bold ${m.green ? 'text-[#047857]' : 'text-red-400'}`}>{m.val}</p>
                     <p className="text-[10px] text-white/30 mt-1">{m.label}</p>
                   </div>
                 ))}
@@ -412,7 +412,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-2.5 mb-6">
                 <Layers className="w-4 h-4 text-white/40" strokeWidth={1.5} />
                 <p className="text-[13px] font-semibold text-white">Forex setup template</p>
-                <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[#00ff88]/10 text-[#00ff88] font-semibold">Active</span>
+                <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-[#047857]/10 text-[#047857] font-semibold">Active</span>
               </div>
               <div className="space-y-3">
                 {[
@@ -425,15 +425,15 @@ export default function LandingPage() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[12px] font-medium text-white">{f.label}</span>
                       <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold ${f.type === 'IMAGE' ? 'bg-red-500/10 text-red-400' :
-                          f.type === 'CHECKBOX' ? 'bg-[#00ff88]/10 text-[#00ff88]' :
+                          f.type === 'CHECKBOX' ? 'bg-[#047857]/10 text-[#047857]' :
                             f.type === 'LONG_TEXT' ? 'bg-purple-500/10 text-purple-400' :
                               'bg-blue-500/10 text-blue-400'
                         }`}>{f.type}</span>
                     </div>
                     {f.type === 'CHECKBOX' ? (
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded border border-[#00ff88]/40 bg-[#00ff88]/10 flex items-center justify-center">
-                          <CheckCircle className="w-3 h-3 text-[#00ff88]" />
+                        <div className="w-4 h-4 rounded border border-[#047857]/40 bg-[#047857]/10 flex items-center justify-center">
+                          <CheckCircle className="w-3 h-3 text-[#047857]" />
                         </div>
                         <span className="text-[12px] text-white/40">Yes</span>
                       </div>
@@ -451,7 +451,7 @@ export default function LandingPage() {
             </div>
 
             <div className="order-1 lg:order-2">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Custom templates</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Custom templates</p>
               <h2 id="templates-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-5">
                 Your journal, your fields
               </h2>
@@ -468,7 +468,7 @@ export default function LandingPage() {
                 ].map((item) => (
                   <li key={item.label} className="flex items-start gap-4">
                     <div className="w-8 h-8 rounded-lg border border-white/[0.08] bg-[#0d1017] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <item.icon className="w-3.5 h-3.5 text-[#00ff88]" strokeWidth={1.5} />
+                      <item.icon className="w-3.5 h-3.5 text-[#047857]" strokeWidth={1.5} />
                     </div>
                     <div>
                       <p className="text-[13px] font-semibold text-white mb-1">{item.label}</p>
@@ -485,7 +485,7 @@ export default function LandingPage() {
         <section id="use-cases" className="py-24 px-5 border-t border-white/[0.06]" aria-labelledby="usecases-heading">
           <div className="max-w-5xl mx-auto">
             <div className="mb-14">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Who it's for</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Who it's for</p>
               <h2 id="usecases-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-4">
                 Built for every type of trader
               </h2>
@@ -497,7 +497,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
               {useCases.map((u) => (
                 <article key={u.label} className="bg-[#07090d] p-6 hover:bg-[#0d1017] transition-colors">
-                  <u.icon className="w-5 h-5 text-[#00ff88] mb-4" strokeWidth={1.5} />
+                  <u.icon className="w-5 h-5 text-[#047857] mb-4" strokeWidth={1.5} />
                   <h3 className="text-[14px] font-semibold text-white mb-1.5">{u.label}</h3>
                   <p className="text-[12px] text-white/40 leading-relaxed">{u.desc}</p>
                 </article>
@@ -510,7 +510,7 @@ export default function LandingPage() {
         <section className="py-24 px-5 border-t border-white/[0.06]" aria-labelledby="checklist-heading">
           <div className="max-w-3xl mx-auto">
             <div className="mb-12">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">Full feature list</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">Full feature list</p>
               <h2 id="checklist-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight">
                 Everything included. Nothing locked away.
               </h2>
@@ -519,7 +519,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-0">
               {allFeatures.map((item) => (
                 <div key={item} className="flex items-center gap-3 py-3 border-b border-white/[0.05]">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#00ff88] flex-shrink-0" strokeWidth={2.5} />
+                  <CheckCircle className="w-3.5 h-3.5 text-[#047857] flex-shrink-0" strokeWidth={2.5} />
                   <span className="text-[13px] text-white/55">{item}</span>
                 </div>
               ))}
@@ -536,7 +536,7 @@ export default function LandingPage() {
         <section id="faq" className="py-24 px-5 border-t border-white/[0.06]" aria-labelledby="faq-heading">
           <div className="max-w-2xl mx-auto">
             <div className="mb-12">
-              <p className="text-[#00ff88] text-[11px] font-semibold tracking-widest uppercase mb-3">FAQ</p>
+              <p className="text-[#047857] text-[11px] font-semibold tracking-widest uppercase mb-3">FAQ</p>
               <h2 id="faq-heading" className="text-[32px] sm:text-[40px] font-extrabold text-white tracking-tight leading-tight mb-4">
                 Common questions about trading journals
               </h2>
@@ -569,7 +569,7 @@ export default function LandingPage() {
           <div className="max-w-xl mx-auto text-center">
             <h2 id="cta-heading" className="text-[36px] sm:text-[48px] font-extrabold text-white tracking-tight leading-tight mb-5">
               Ready to trade with{' '}
-              <span className="text-[#00ff88]">real clarity?</span>
+              <span className="text-[#047857]">real clarity?</span>
             </h2>
             <p className="text-[16px] text-white/45 mb-10 leading-relaxed">
               Join thousands of traders who use Gredin to stay disciplined, find their real edge,
@@ -588,7 +588,7 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-4">
-                  <Image src="/logo.png" alt="Gredin Logo" width={140} height={40} className="h-10 w-auto" />
+                  <Image src="/logo.png" alt="Gredin Logo" width={180} height={50} />
                 </Link>
                 <p className="text-[12px] text-white/30 leading-relaxed">
                   The professional trading journal for serious traders. Log smarter, analyse deeper, improve faster.

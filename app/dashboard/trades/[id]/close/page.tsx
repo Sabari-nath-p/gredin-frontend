@@ -142,7 +142,7 @@ export default function CloseTradePagePage() {
       <div className="flex items-center justify-center h-96 animate-fade-in">
         <div className="text-center">
           <div className="w-12 h-12 border-3 border-green-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-sm text-gray-text">Loading trade details...</p>
+          <p className="text-sm text-slate-600">Loading trade details...</p>
         </div>
       </div>
     );
@@ -158,22 +158,22 @@ export default function CloseTradePagePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="w-9 h-9 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-green-primary/50 transition-colors"
+            className="w-9 h-9 rounded-xl bg-white border border-slate-300 flex items-center justify-center hover:border-green-primary/50 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-text" />
+            <ArrowLeft className="w-4 h-4 text-slate-600" />
           </button>
           <div className="w-10 h-10 bg-red-primary/10 rounded-xl flex items-center justify-center">
             <TrendingDown className="w-5 h-5 text-red-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-light tracking-tight">Close Trade</h1>
-            <p className="text-xs text-gray-text">Finalize and record the outcome</p>
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Close Trade</h1>
+            <p className="text-xs text-slate-600">Finalize and record the outcome</p>
           </div>
         </div>
 
         {/* Trade badge — quick glance */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-gray-light">{trade.instrument}</span>
+          <span className="text-sm font-bold text-slate-900">{trade.instrument}</span>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trade.direction === 'BUY'
               ? 'bg-green-primary/10 text-green-primary'
               : 'bg-red-primary/10 text-red-primary'
@@ -195,13 +195,13 @@ export default function CloseTradePagePage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-3">
                 <Tag className="w-4 h-4 text-green-primary" />
-                <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Trade Details</h3>
+                <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Trade Details</h3>
               </div>
 
               {/* Instrument header */}
-              <div className="p-3 rounded-xl bg-dark-bg/60 border border-dark-border mb-3">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-300 mb-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg font-bold text-gray-light">{trade.instrument}</span>
+                  <span className="text-lg font-bold text-slate-900">{trade.instrument}</span>
                   <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg ${trade.direction === 'BUY'
                       ? 'bg-green-primary/10 text-green-primary'
                       : 'bg-red-primary/10 text-red-primary'
@@ -213,7 +213,7 @@ export default function CloseTradePagePage() {
                     {trade.direction}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-gray-text">
+                <div className="flex items-center gap-1 text-[10px] text-slate-600">
                   <Clock className="w-3 h-3" />
                   {entryDate} at {entryTime}
                 </div>
@@ -221,26 +221,26 @@ export default function CloseTradePagePage() {
 
               {/* Stats grid */}
               <div className="grid grid-cols-2 gap-2">
-                <div className="p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
-                  <p className="text-[10px] text-gray-text mb-0.5">Entry Price</p>
-                  <p className="text-sm font-bold text-gray-light">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300">
+                  <p className="text-[10px] text-slate-600 mb-0.5">Entry Price</p>
+                  <p className="text-sm font-bold text-slate-900">
                     {trade.entryPrice ? `$${Number(trade.entryPrice).toFixed(2)}` : '—'}
                   </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
-                  <p className="text-[10px] text-gray-text mb-0.5">Qty / Size</p>
-                  <p className="text-sm font-bold text-gray-light">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300">
+                  <p className="text-[10px] text-slate-600 mb-0.5">Qty / Size</p>
+                  <p className="text-sm font-bold text-slate-900">
                     {trade.positionSize || '—'}
                   </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
-                  <p className="text-[10px] text-gray-text mb-0.5">Stop Loss</p>
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300">
+                  <p className="text-[10px] text-slate-600 mb-0.5">Stop Loss</p>
                   <p className="text-sm font-bold text-red-primary">
                     ${Number(trade.stopLossAmount).toFixed(2)}
                   </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
-                  <p className="text-[10px] text-gray-text mb-0.5">Take Profit</p>
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300">
+                  <p className="text-[10px] text-slate-600 mb-0.5">Take Profit</p>
                   <p className="text-sm font-bold text-green-primary">
                     ${Number(trade.takeProfitAmount).toFixed(2)}
                   </p>
@@ -249,10 +249,10 @@ export default function CloseTradePagePage() {
 
               {/* Risk/Reward bar */}
               {Number(trade.stopLossAmount) > 0 && Number(trade.takeProfitAmount) > 0 && (
-                <div className="mt-3 p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
+                <div className="mt-3 p-2.5 rounded-lg bg-slate-50 border border-slate-300">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] text-gray-text uppercase tracking-wider">Risk / Reward</span>
-                    <span className="text-xs font-bold text-gray-light">
+                    <span className="text-[10px] text-slate-600 uppercase tracking-wider">Risk / Reward</span>
+                    <span className="text-xs font-bold text-slate-900">
                       1 : {(Number(trade.takeProfitAmount) / Number(trade.stopLossAmount)).toFixed(1)}
                     </span>
                   </div>
@@ -271,9 +271,9 @@ export default function CloseTradePagePage() {
 
               {/* Notes if any */}
               {trade.notes && (
-                <div className="mt-3 p-2.5 rounded-lg bg-dark-bg/40 border border-dark-border">
-                  <p className="text-[10px] text-gray-text uppercase tracking-wider mb-1">Notes</p>
-                  <p className="text-xs text-gray-light leading-relaxed">{trade.notes}</p>
+                <div className="mt-3 p-2.5 rounded-lg bg-slate-50 border border-slate-300">
+                  <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">Notes</p>
+                  <p className="text-xs text-slate-900 leading-relaxed">{trade.notes}</p>
                 </div>
               )}
             </div>
@@ -284,7 +284,7 @@ export default function CloseTradePagePage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-3">
                 <BarChart3 className="w-4 h-4 text-green-primary" />
-                <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Trade Result</h3>
+                <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Trade Result</h3>
               </div>
 
               {/* Result Buttons — large and clear */}
@@ -298,7 +298,7 @@ export default function CloseTradePagePage() {
                   }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${formData.result === 'PROFIT'
                       ? 'bg-green-primary/10 border-green-primary text-green-primary shadow-glow-green'
-                      : 'border-dark-border text-gray-text hover:border-green-primary/40'
+                      : 'border-slate-300 text-slate-600 hover:border-green-primary/40'
                     }`}
                 >
                   <CheckCircle className={`w-6 h-6 ${formData.result === 'PROFIT' ? '' : 'opacity-50'}`} />
@@ -313,7 +313,7 @@ export default function CloseTradePagePage() {
                   }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${formData.result === 'LOSS'
                       ? 'bg-red-primary/10 border-red-primary text-red-primary shadow-glow-red'
-                      : 'border-dark-border text-gray-text hover:border-red-primary/40'
+                      : 'border-slate-300 text-slate-600 hover:border-red-primary/40'
                     }`}
                 >
                   <XCircle className={`w-6 h-6 ${formData.result === 'LOSS' ? '' : 'opacity-50'}`} />
@@ -328,7 +328,7 @@ export default function CloseTradePagePage() {
                   }))}
                   className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl border-2 transition-all ${formData.result === 'BREAK_EVEN'
                       ? 'bg-yellow-primary/10 border-yellow-primary text-yellow-primary'
-                      : 'border-dark-border text-gray-text hover:border-yellow-primary/40'
+                      : 'border-slate-300 text-slate-600 hover:border-yellow-primary/40'
                     }`}
                 >
                   <MinusCircle className={`w-6 h-6 ${formData.result === 'BREAK_EVEN' ? '' : 'opacity-50'}`} />
@@ -340,11 +340,11 @@ export default function CloseTradePagePage() {
 
               {/* Realised P/L */}
               <div className="mb-3">
-                <label className="block text-xs font-medium text-gray-light mb-1">
+                <label className="block text-xs font-medium text-slate-900 mb-1">
                   Realised Profit / Loss <span className="text-red-primary">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-text font-bold">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 font-bold">$</span>
                   <input
                     type="number"
                     name="realisedProfitLoss"
@@ -356,7 +356,7 @@ export default function CloseTradePagePage() {
                     required
                   />
                 </div>
-                <p className="text-[10px] text-gray-text mt-1">
+                <p className="text-[10px] text-slate-600 mt-1">
                   {formData.result === 'PROFIT' && 'Enter the profit amount (positive)'}
                   {formData.result === 'LOSS' && 'Enter the loss amount only. The system will apply the negative sign for you.'}
                   {formData.result === 'BREAK_EVEN' && 'Enter 0. Only charges will affect the final result.'}
@@ -365,11 +365,11 @@ export default function CloseTradePagePage() {
 
               {/* Service Charge */}
               <div>
-                <label className="block text-xs font-medium text-gray-light mb-1">
+                <label className="block text-xs font-medium text-slate-900 mb-1">
                   Service Charge / Exit Fee
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-text font-bold">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-600 font-bold">$</span>
                   <input
                     type="number"
                     name="serviceCharge"
@@ -388,14 +388,14 @@ export default function CloseTradePagePage() {
               <div className="card border-green-primary/10">
                 <div className="flex items-center gap-2 mb-3">
                   <Layers className="w-4 h-4 text-green-primary" />
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Close Log Template
                   </h3>
-                  <span className="text-[10px] text-gray-text/60 ml-auto">{template.fields.length} field{template.fields.length === 1 ? '' : 's'}</span>
+                  <span className="text-[10px] text-slate-600/60 ml-auto">{template.fields.length} field{template.fields.length === 1 ? '' : 's'}</span>
                 </div>
                 <div className="mb-3 rounded-xl border border-green-primary/15 bg-green-primary/5 px-3 py-2.5">
                   <p className="text-[11px] font-semibold text-green-primary">Assigned template: {template.name}</p>
-                  <p className="text-[10px] text-gray-text mt-1">
+                  <p className="text-[10px] text-slate-600 mt-1">
                     Fill these account-specific fields now so the extra data is saved directly into this closed trade log.
                   </p>
                 </div>
@@ -406,7 +406,7 @@ export default function CloseTradePagePage() {
                       <div key={field.id}>
                         {field.fieldType === 'TEXT' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <input
                               type="text"
                               value={fieldValues[field.id]?.textValue || ''}
@@ -418,7 +418,7 @@ export default function CloseTradePagePage() {
                         )}
                         {field.fieldType === 'LONG_TEXT' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <textarea
                               value={fieldValues[field.id]?.textValue || ''}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
@@ -430,7 +430,7 @@ export default function CloseTradePagePage() {
                         )}
                         {field.fieldType === 'MULTIPLE_CHOICE' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <select
                               value={fieldValues[field.id]?.textValue || ''}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
@@ -445,21 +445,21 @@ export default function CloseTradePagePage() {
                         )}
                         {field.fieldType === 'SCORECARD' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-2">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-2">{field.fieldName}</label>
                             <div className="space-y-2">
                               {(field.scorecard?.options || []).map((opt) => (
                                 <label
                                   key={opt.label}
-                                  className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors"
+                                  className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors"
                                 >
                                   <input
                                     type="radio"
                                     name={`scorecard_${field.id}`}
                                     checked={(fieldValues[field.id]?.textValue || '') === opt.label}
                                     onChange={() => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: opt.label } }))}
-                                    className="w-4 h-4 border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                                    className="w-4 h-4 border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                                   />
-                                  <span className="text-xs font-medium text-gray-light">{opt.label}</span>
+                                  <span className="text-xs font-medium text-slate-900">{opt.label}</span>
                                 </label>
                               ))}
                             </div>
@@ -481,10 +481,10 @@ export default function CloseTradePagePage() {
                           return (
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <label className="text-xs font-medium text-gray-light">{field.fieldName}</label>
+                                <label className="text-xs font-medium text-slate-900">{field.fieldName}</label>
                                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                                   totalScore === 100 ? 'bg-green-primary/10 text-green-primary' :
-                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-dark-bg text-gray-text'
+                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-slate-50 text-slate-600'
                                 }`}>{totalScore} / 100</span>
                               </div>
                               <div className="w-full h-1.5 bg-dark-border rounded-full mb-3 overflow-hidden">
@@ -503,16 +503,16 @@ export default function CloseTradePagePage() {
                                     className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors ${
                                       selected.includes(opt.label)
                                         ? 'bg-purple-400/10 border-purple-400/30'
-                                        : 'bg-dark-bg/50 border-dark-border hover:border-purple-400/20'
+                                        : 'bg-slate-50 border-slate-300 hover:border-purple-400/20'
                                     }`}
                                   >
                                     <input
                                       type="checkbox"
                                       checked={selected.includes(opt.label)}
                                       onChange={() => toggleOpt(opt.label)}
-                                      className="w-4 h-4 rounded border-dark-border text-purple-400 focus:ring-purple-400 bg-dark-bg"
+                                      className="w-4 h-4 rounded border-slate-300 text-purple-400 focus:ring-purple-400 bg-slate-50"
                                     />
-                                    <span className="text-xs font-medium text-gray-light flex-1">{opt.label}</span>
+                                    <span className="text-xs font-medium text-slate-900 flex-1">{opt.label}</span>
                                     <span className="text-[10px] font-bold text-purple-400/70">+{opt.score}</span>
                                   </label>
                                 ))}
@@ -521,32 +521,32 @@ export default function CloseTradePagePage() {
                           );
                         })()}
                         {field.fieldType === 'CHECKBOX' && (
-                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
+                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors">
                             <input
                               type="checkbox"
                               checked={fieldValues[field.id]?.booleanValue || false}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
-                              className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                              className="w-4 h-4 rounded border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                             />
-                            <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
+                            <span className="text-xs font-medium text-slate-900">{field.fieldName}</span>
                           </label>
                         )}
                         {field.fieldType === 'IMAGE' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             {fieldValues[field.id]?.imageUrl ? (
-                              <div className="relative rounded-xl overflow-hidden border border-dark-border">
+                              <div className="relative rounded-xl overflow-hidden border border-slate-300">
                                 <img src={fieldValues[field.id].imageUrl} alt={field.fieldName} className="w-full h-32 object-cover" />
                                 <button
                                   type="button"
                                   onClick={() => setFieldValues(prev => ({ ...prev, [field.id]: { imageUrl: '' } }))}
-                                  className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
+                                  className="absolute top-2 right-2 p-1 bg-slate-50/80 rounded-lg text-slate-600 hover:text-red-primary transition-colors"
                                 >
                                   ✕
                                 </button>
                               </div>
                             ) : (
-                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
+                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-slate-300 hover:border-green-primary/30 cursor-pointer transition-colors">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -560,8 +560,8 @@ export default function CloseTradePagePage() {
                                   <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
                                 ) : (
                                   <>
-                                    <Image className="w-5 h-5 text-gray-text mb-1" />
-                                    <span className="text-[10px] text-gray-text">Click to upload</span>
+                                    <Image className="w-5 h-5 text-slate-600 mb-1" />
+                                    <span className="text-[10px] text-slate-600">Click to upload</span>
                                   </>
                                 )}
                               </label>
@@ -588,7 +588,7 @@ export default function CloseTradePagePage() {
                     formData.result === 'LOSS' ? 'text-red-primary' :
                       'text-yellow-primary'
                   }`} />
-                <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Balance Impact</h3>
+                <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Balance Impact</h3>
               </div>
 
               {/* Big number */}
@@ -596,7 +596,7 @@ export default function CloseTradePagePage() {
                   formData.result === 'LOSS' ? 'bg-red-primary/5' :
                     'bg-yellow-primary/5'
                 }`}>
-                <p className="text-[10px] text-gray-text uppercase tracking-wider mb-1">Net Change</p>
+                <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">Net Change</p>
                 <p className={`text-2xl font-bold ${netImpact > 0 ? 'text-green-primary' :
                     netImpact < 0 ? 'text-red-primary' :
                       'text-yellow-primary'
@@ -610,16 +610,16 @@ export default function CloseTradePagePage() {
                 {formData.result === 'PROFIT' && (
                   <>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-text">Realised P/L</span>
+                      <span className="text-slate-600">Realised P/L</span>
                       <span className="font-semibold text-green-primary">+${grossImpact.toFixed(2)}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-text">Service Charge</span>
+                      <span className="text-slate-600">Service Charge</span>
                       <span className="font-semibold text-red-primary">-${(formData.serviceCharge || 0).toFixed(2)}</span>
                     </div>
                     <div className="h-px bg-dark-border" />
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-light">Net Addition</span>
+                      <span className="font-medium text-slate-900">Net Addition</span>
                       <span className="font-bold text-green-primary">${netImpact.toFixed(2)}</span>
                     </div>
                   </>
@@ -627,16 +627,16 @@ export default function CloseTradePagePage() {
                 {formData.result === 'LOSS' && (
                   <>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-text">Realised Loss</span>
+                      <span className="text-slate-600">Realised Loss</span>
                       <span className="font-semibold text-red-primary">-${Math.abs(grossImpact).toFixed(2)}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-text">Service Charge</span>
+                      <span className="text-slate-600">Service Charge</span>
                       <span className="font-semibold text-red-primary">-${(formData.serviceCharge || 0).toFixed(2)}</span>
                     </div>
                     <div className="h-px bg-dark-border" />
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-light">Net Deduction</span>
+                      <span className="font-medium text-slate-900">Net Deduction</span>
                       <span className="font-bold text-red-primary">-${Math.abs(netImpact).toFixed(2)}</span>
                     </div>
                   </>
@@ -644,12 +644,12 @@ export default function CloseTradePagePage() {
                 {formData.result === 'BREAK_EVEN' && (
                   <>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-text">Service Charge</span>
+                      <span className="text-slate-600">Service Charge</span>
                       <span className="font-semibold text-red-primary">-${(formData.serviceCharge || 0).toFixed(2)}</span>
                     </div>
                     <div className="h-px bg-dark-border" />
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-light">Net Change</span>
+                      <span className="font-medium text-slate-900">Net Change</span>
                       <span className="font-bold text-yellow-primary">-${(formData.serviceCharge || 0).toFixed(2)}</span>
                     </div>
                   </>
@@ -658,10 +658,10 @@ export default function CloseTradePagePage() {
             </div>
 
             {/* Warning note */}
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-dark-bg/40 border border-dark-border">
+            <div className="flex items-start gap-2 p-3 rounded-xl bg-slate-50 border border-slate-300">
               <Shield className="w-3.5 h-3.5 text-yellow-primary flex-shrink-0 mt-0.5" />
-              <p className="text-[10px] text-gray-text leading-relaxed">
-                This action is <strong className="text-gray-light">permanent</strong>. The trade will be marked as closed and your account balance will be updated immediately.
+              <p className="text-[10px] text-slate-600 leading-relaxed">
+                This action is <strong className="text-slate-900">permanent</strong>. The trade will be marked as closed and your account balance will be updated immediately.
               </p>
             </div>
 
@@ -694,7 +694,7 @@ export default function CloseTradePagePage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="block w-full mt-2 py-2.5 rounded-xl text-center text-xs font-medium text-gray-text hover:text-gray-light border border-dark-border hover:border-dark-border-hover transition-all"
+                className="block w-full mt-2 py-2.5 rounded-xl text-center text-xs font-medium text-slate-600 hover:text-slate-900 border border-slate-300 hover:border-slate-300 transition-all"
               >
                 Cancel — Keep Open
               </button>

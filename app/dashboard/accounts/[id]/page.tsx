@@ -203,7 +203,7 @@ export default function AccountDetailPage() {
       <div>
         <Link
           href="/dashboard/accounts"
-          className="inline-flex items-center gap-2 text-sm text-gray-text hover:text-green-primary transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-green-primary transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Accounts
@@ -214,8 +214,8 @@ export default function AccountDetailPage() {
               <Wallet className="w-7 h-7 text-green-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-light tracking-tight">{account.accountName}</h1>
-              <p className="text-sm text-gray-text">{account.brokerName} • {account.marketSegment} • 
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{account.accountName}</h1>
+              <p className="text-sm text-slate-600">{account.brokerName} • {account.marketSegment} • 
                 <span className={`ml-1 text-xs font-semibold px-1.5 py-0.5 rounded ${
                   account.accountType === 'LIVE' ? 'bg-green-primary/10 text-green-primary' :
                   account.accountType === 'DEMO' ? 'bg-blue-primary/10 text-blue-primary' :
@@ -234,7 +234,7 @@ export default function AccountDetailPage() {
             </Link>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="p-2.5 rounded-xl border border-dark-border text-gray-text hover:text-red-primary hover:border-red-primary/50 hover:bg-red-primary/5 transition-all"
+              className="p-2.5 rounded-xl border border-slate-300 text-slate-600 hover:text-red-primary hover:border-red-primary/50 hover:bg-red-primary/5 transition-all"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -249,12 +249,12 @@ export default function AccountDetailPage() {
             <AlertTriangle className="w-5 h-5 text-red-primary flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="font-semibold text-red-primary mb-1">Delete Account?</h3>
-              <p className="text-sm text-gray-text mb-3">This will permanently delete this account and all {trades.length} trades. This cannot be undone.</p>
+              <p className="text-sm text-slate-600 mb-3">This will permanently delete this account and all {trades.length} trades. This cannot be undone.</p>
               <div className="flex gap-2">
                 <button onClick={handleDeleteAccount} className="px-4 py-2 bg-red-primary text-white rounded-lg text-sm font-semibold hover:bg-red-primary/90 transition-colors">
                   Delete Account
                 </button>
-                <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 bg-dark-bg text-gray-text rounded-lg text-sm font-semibold hover:text-gray-light transition-colors">
+                <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 bg-slate-50 text-slate-600 rounded-lg text-sm font-semibold hover:text-slate-900 transition-colors">
                   Cancel
                 </button>
               </div>
@@ -268,12 +268,12 @@ export default function AccountDetailPage() {
         <div className="stat-card stat-card-green">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="w-4 h-4 text-green-primary" />
-            <span className="text-xs text-gray-text font-medium uppercase tracking-wider">Balance</span>
+            <span className="text-xs text-slate-600 font-medium uppercase tracking-wider">Balance</span>
           </div>
           <p className="text-xl font-bold text-green-primary number-highlight">
             {formatCurrency(Number(account.currentBalance), account.currencyCode)}
           </p>
-          <p className="text-xs text-gray-text mt-1">Initial: {formatCurrency(Number(account.initialBalance))}</p>
+          <p className="text-xs text-slate-600 mt-1">Initial: {formatCurrency(Number(account.initialBalance))}</p>
         </div>
 
         <div className={`stat-card ${profitLoss >= 0 ? 'stat-card-green' : 'stat-card-red'}`}>
@@ -283,7 +283,7 @@ export default function AccountDetailPage() {
             ) : (
               <ArrowDownRight className="w-4 h-4 text-red-primary" />
             )}
-            <span className="text-xs text-gray-text font-medium uppercase tracking-wider">P&L</span>
+            <span className="text-xs text-slate-600 font-medium uppercase tracking-wider">P&L</span>
           </div>
           <p className={`text-xl font-bold number-highlight ${profitLoss >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
             {profitLoss >= 0 ? '+' : ''}{formatCurrency(profitLoss, account.currencyCode)}
@@ -296,10 +296,10 @@ export default function AccountDetailPage() {
         <div className="stat-card stat-card-blue">
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-4 h-4 text-blue-primary" />
-            <span className="text-xs text-gray-text font-medium uppercase tracking-wider">Win Rate</span>
+            <span className="text-xs text-slate-600 font-medium uppercase tracking-wider">Win Rate</span>
           </div>
-          <p className="text-xl font-bold text-gray-light">{(stats?.winRate ?? 0).toFixed(1)}%</p>
-          <p className="text-xs text-gray-text mt-1">
+          <p className="text-xl font-bold text-slate-900">{(stats?.winRate ?? 0).toFixed(1)}%</p>
+          <p className="text-xs text-slate-600 mt-1">
             <span className="text-green-primary">{stats?.winningTrades ?? 0}W</span>
             {' / '}
             <span className="text-red-primary">{stats?.losingTrades ?? 0}L</span>
@@ -309,10 +309,10 @@ export default function AccountDetailPage() {
         <div className="stat-card stat-card-yellow">
           <div className="flex items-center gap-2 mb-3">
             <Activity className="w-4 h-4 text-yellow-primary" />
-            <span className="text-xs text-gray-text font-medium uppercase tracking-wider">Trades</span>
+            <span className="text-xs text-slate-600 font-medium uppercase tracking-wider">Trades</span>
           </div>
-          <p className="text-xl font-bold text-gray-light">{stats?.totalTrades ?? 0}</p>
-          <p className="text-xs text-gray-text mt-1">
+          <p className="text-xl font-bold text-slate-900">{stats?.totalTrades ?? 0}</p>
+          <p className="text-xs text-slate-600 mt-1">
             {openTrades > 0 && <span className="text-blue-primary">{openTrades} open</span>}
             {openTrades > 0 && closedTrades > 0 && ' • '}
             {closedTrades > 0 && <span>{closedTrades} closed</span>}
@@ -325,12 +325,12 @@ export default function AccountDetailPage() {
         <div className="card">
           <div className="flex items-center gap-2 mb-5">
             <BarChart3 className="w-5 h-5 text-green-primary" />
-            <h2 className="text-lg font-bold text-gray-light">Performance Metrics</h2>
+            <h2 className="text-lg font-bold text-slate-900">Performance Metrics</h2>
           </div>
           
-          <div className="mb-5 p-4 bg-dark-bg/60 rounded-xl">
+          <div className="mb-5 p-4 bg-slate-50 rounded-xl">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-text">Win Rate</span>
+              <span className="text-sm text-slate-600">Win Rate</span>
               <span className="text-sm font-bold text-green-primary">{(stats.winRate ?? 0).toFixed(1)}%</span>
             </div>
             <div className="w-full h-2.5 bg-dark-border rounded-full overflow-hidden">
@@ -342,38 +342,38 @@ export default function AccountDetailPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Avg Win</p>
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Avg Win</p>
               <p className="text-sm font-bold text-green-primary number-highlight">
                 {formatCurrency(stats.averageWin ?? 0, account.currencyCode)}
               </p>
             </div>
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Avg Loss</p>
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Avg Loss</p>
               <p className="text-sm font-bold text-red-primary number-highlight">
                 {formatCurrency(stats.averageLoss ?? 0, account.currencyCode)}
               </p>
             </div>
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Largest Win</p>
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Largest Win</p>
               <p className="text-sm font-bold text-green-primary number-highlight">
                 {formatCurrency(stats.largestWin ?? 0, account.currencyCode)}
               </p>
             </div>
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Largest Loss</p>
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Largest Loss</p>
               <p className="text-sm font-bold text-red-primary number-highlight">
                 {formatCurrency(stats.largestLoss ?? 0, account.currencyCode)}
               </p>
             </div>
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Profit Factor</p>
-              <p className="text-sm font-bold text-gray-light number-highlight">
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Profit Factor</p>
+              <p className="text-sm font-bold text-slate-900 number-highlight">
                 {(stats.profitFactor ?? 0).toFixed(2)}
               </p>
             </div>
-            <div className="p-3 bg-dark-bg/60 rounded-xl">
-              <p className="text-xs text-gray-text mb-1">Net P/L</p>
+            <div className="p-3 bg-slate-50 rounded-xl">
+              <p className="text-xs text-slate-600 mb-1">Net P/L</p>
               <p className={`text-sm font-bold number-highlight ${(stats.netProfitLoss ?? 0) >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                 {formatCurrency(stats.netProfitLoss ?? 0, account.currencyCode)}
               </p>
@@ -387,7 +387,7 @@ export default function AccountDetailPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Server className="w-5 h-5 text-blue-400" />
-            <h2 className="text-lg font-bold text-gray-light">MT5 Integration</h2>
+            <h2 className="text-lg font-bold text-slate-900">MT5 Integration</h2>
           </div>
         </div>
 
@@ -398,12 +398,12 @@ export default function AccountDetailPage() {
                 <Server className="w-4 h-4 text-blue-400" />
               </div>
               <div>
-                <p className="font-semibold text-gray-light text-sm">Linked to MetaTrader 5</p>
-                <p className="text-xs text-gray-text mt-0.5">
-                  Login: <span className="text-gray-light">{account.mt5Login}</span> • Server: <span className="text-gray-light">{account.mt5Server}</span>
+                <p className="font-semibold text-slate-900 text-sm">Linked to MetaTrader 5</p>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Login: <span className="text-slate-900">{account.mt5Login}</span> • Server: <span className="text-slate-900">{account.mt5Server}</span>
                 </p>
                 {account.lastSyncTime && (
-                  <p className="text-[10px] text-gray-text mt-1">
+                  <p className="text-[10px] text-slate-600 mt-1">
                     Last sync: {formatDateTime(account.lastSyncTime.toString())}
                   </p>
                 )}
@@ -413,24 +413,24 @@ export default function AccountDetailPage() {
               <button
                 onClick={handleManualSync}
                 disabled={syncLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-gray-light hover:border-blue-400/40 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 hover:border-blue-400/40 transition-colors"
               >
                 <RefreshCw className={`w-3 h-3 ${syncLoading ? 'animate-spin' : ''}`} /> Sync Now
               </button>
               <button
                 onClick={handleUnlinkMt5}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-red-primary/70 hover:text-red-primary hover:border-red-primary/40 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-red-primary/70 hover:text-red-primary hover:border-red-primary/40 transition-colors"
               >
                 <Link2Off className="w-3 h-3" /> Unlink
               </button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-dashed border-dark-border rounded-xl bg-dark-bg/30">
-            <p className="text-sm text-gray-text">Connect to MetaTrader 5 to automatically sync your trades.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+            <p className="text-sm text-slate-600">Connect to MetaTrader 5 to automatically sync your trades.</p>
             <button
               onClick={() => setShowMt5Modal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-dark-bg border border-dark-border hover:border-blue-500/50 rounded-lg text-sm font-semibold transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-300 hover:border-blue-500/50 rounded-lg text-sm font-semibold transition-colors"
             >
               <Link2 className="w-4 h-4 text-blue-400" /> Connect MT5
             </button>
@@ -443,7 +443,7 @@ export default function AccountDetailPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-green-primary" />
-            <h2 className="text-lg font-bold text-gray-light">Log Template</h2>
+            <h2 className="text-lg font-bold text-slate-900">Log Template</h2>
           </div>
           <a href="/dashboard/templates" className="text-xs text-green-primary hover:text-green-secondary transition-colors font-medium">
             Manage Templates
@@ -458,18 +458,18 @@ export default function AccountDetailPage() {
                 <Layers className="w-4 h-4 text-green-primary" />
               </div>
               <div>
-                <p className="font-semibold text-gray-light text-sm">{assignedTemplate.name}</p>
+                <p className="font-semibold text-slate-900 text-sm">{assignedTemplate.name}</p>
                 {assignedTemplate.description && (
-                  <p className="text-xs text-gray-text mt-0.5">{assignedTemplate.description}</p>
+                  <p className="text-xs text-slate-600 mt-0.5">{assignedTemplate.description}</p>
                 )}
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   {assignedTemplate.fields.slice(0, 4).map(f => (
-                    <span key={f.id} className="text-[10px] px-1.5 py-0.5 rounded bg-dark-bg text-gray-text font-medium">
+                    <span key={f.id} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-50 text-slate-600 font-medium">
                       {f.fieldName}
                     </span>
                   ))}
                   {assignedTemplate.fields.length > 4 && (
-                    <span className="text-[10px] text-gray-text/60">+{assignedTemplate.fields.length - 4} more</span>
+                    <span className="text-[10px] text-slate-600/60">+{assignedTemplate.fields.length - 4} more</span>
                   )}
                 </div>
               </div>
@@ -480,26 +480,26 @@ export default function AccountDetailPage() {
                 <button
                   onClick={() => setShowTemplateDropdown(v => !v)}
                   disabled={templateLoading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-gray-light hover:border-green-primary/40 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 hover:border-green-primary/40 transition-colors"
                 >
                   Change <ChevronDown className="w-3 h-3" />
                 </button>
                 {showTemplateDropdown && (
-                  <div className="absolute right-0 top-full mt-1 w-56 bg-dark-card border border-dark-border rounded-xl shadow-xl z-20 overflow-hidden">
+                  <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-slate-300 rounded-xl shadow-xl z-20 overflow-hidden">
                     <div className="p-1">
                       {allTemplates.length === 0 ? (
-                        <p className="text-xs text-gray-text px-3 py-2">No templates available</p>
+                        <p className="text-xs text-slate-600 px-3 py-2">No templates available</p>
                       ) : (
                         allTemplates.map(t => (
                           <button
                             key={t.id}
                             onClick={() => handleAssignTemplate(t.id)}
-                            className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-dark-bg transition-colors ${
-                              t.id === assignedTemplate?.id ? 'text-green-primary font-semibold' : 'text-gray-light'
+                            className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-slate-50 transition-colors ${
+                              t.id === assignedTemplate?.id ? 'text-green-primary font-semibold' : 'text-slate-900'
                             }`}
                           >
                             <p className="font-medium truncate">{t.name}</p>
-                            <p className="text-[11px] text-gray-text">{t.fields.length} fields</p>
+                            <p className="text-[11px] text-slate-600">{t.fields.length} fields</p>
                           </button>
                         ))
                       )}
@@ -511,7 +511,7 @@ export default function AccountDetailPage() {
               <button
                 onClick={handleUnassignTemplate}
                 disabled={templateLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-xs font-semibold text-red-primary/70 hover:text-red-primary hover:border-red-primary/40 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-red-primary/70 hover:text-red-primary hover:border-red-primary/40 transition-colors"
               >
                 <Link2Off className="w-3 h-3" /> Remove
               </button>
@@ -523,36 +523,36 @@ export default function AccountDetailPage() {
             {allTemplates.length === 0 ? (
               <div className="text-center py-8">
                 <div className="empty-state-icon mx-auto mb-3">
-                  <Layers className="w-7 h-7 text-gray-text" />
+                  <Layers className="w-7 h-7 text-slate-600" />
                 </div>
-                <p className="text-sm text-gray-text mb-1">No templates yet</p>
-                <p className="text-xs text-gray-text/60 mb-4">Create a template to add custom fields to your trades</p>
+                <p className="text-sm text-slate-600 mb-1">No templates yet</p>
+                <p className="text-xs text-slate-600/60 mb-4">Create a template to add custom fields to your trades</p>
                 <a href="/dashboard/templates/new" className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4">
                   <Plus className="w-4 h-4" /> Create Template
                 </a>
               </div>
             ) : (
               <div>
-                <p className="text-sm text-gray-text mb-3">Select a template to add custom log fields to trades for this account.</p>
+                <p className="text-sm text-slate-600 mb-3">Select a template to add custom log fields to trades for this account.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {allTemplates.map(t => (
                     <button
                       key={t.id}
                       onClick={() => handleAssignTemplate(t.id)}
                       disabled={templateLoading}
-                      className="flex items-start gap-3 p-3.5 bg-dark-bg/60 border border-dark-border/50 hover:border-green-primary/30 hover:bg-green-primary/5 rounded-xl text-left transition-all group disabled:opacity-50"
+                      className="flex items-start gap-3 p-3.5 bg-slate-50 border border-slate-300 hover:border-green-primary/30 hover:bg-green-primary/5 rounded-xl text-left transition-all group disabled:opacity-50"
                     >
                       <div className="w-8 h-8 bg-green-primary/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-green-primary/15 transition-colors">
                         <Layers className="w-4 h-4 text-green-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-light text-sm truncate">{t.name}</p>
-                        <p className="text-[11px] text-gray-text mt-0.5">{t.fields.length} field{t.fields.length !== 1 ? 's' : ''}</p>
+                        <p className="font-semibold text-slate-900 text-sm truncate">{t.name}</p>
+                        <p className="text-[11px] text-slate-600 mt-0.5">{t.fields.length} field{t.fields.length !== 1 ? 's' : ''}</p>
                         {t.description && (
-                          <p className="text-[11px] text-gray-text/60 mt-0.5 truncate">{t.description}</p>
+                          <p className="text-[11px] text-slate-600/60 mt-0.5 truncate">{t.description}</p>
                         )}
                       </div>
-                      <Link2 className="w-3.5 h-3.5 text-gray-text/30 group-hover:text-green-primary transition-colors flex-shrink-0 mt-0.5" />
+                      <Link2 className="w-3.5 h-3.5 text-slate-600/30 group-hover:text-green-primary transition-colors flex-shrink-0 mt-0.5" />
                     </button>
                   ))}
                 </div>
@@ -565,7 +565,7 @@ export default function AccountDetailPage() {
       {/* Trades Table */}
       <div className="card">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-gray-light">Trade History</h2>
+          <h2 className="text-lg font-bold text-slate-900">Trade History</h2>
           <Link
             href={`/dashboard/trades/new?accountId=${account.id}`}
             className="flex items-center gap-1 text-xs text-green-primary hover:text-green-secondary transition-colors font-medium"
@@ -578,10 +578,10 @@ export default function AccountDetailPage() {
         {trades.length === 0 ? (
           <div className="text-center py-12">
             <div className="empty-state-icon mx-auto">
-              <TrendingUp className="w-8 h-8 text-gray-text" />
+              <TrendingUp className="w-8 h-8 text-slate-600" />
             </div>
-            <p className="text-gray-text mb-1 text-sm">No trades logged yet</p>
-            <p className="text-xs text-gray-text/60 mb-4">Start trading to track your performance</p>
+            <p className="text-slate-600 mb-1 text-sm">No trades logged yet</p>
+            <p className="text-xs text-slate-600/60 mb-4">Start trading to track your performance</p>
             <Link
               href={`/dashboard/trades/new?accountId=${account.id}`}
               className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4"
@@ -594,31 +594,31 @@ export default function AccountDetailPage() {
           <div className="overflow-x-auto -mx-6">
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="border-b border-dark-border/50">
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-6 py-3">Date</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Instrument</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Dir</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Entry</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Size</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Status</th>
-                  <th className="text-left text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Result</th>
-                  <th className="text-right text-xs font-semibold text-gray-text uppercase tracking-wider px-3 py-3">P/L</th>
-                  <th className="text-right text-xs font-semibold text-gray-text uppercase tracking-wider px-6 py-3"></th>
+                <tr className="border-b border-slate-300">
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-6 py-3">Date</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Instrument</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Dir</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Entry</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Size</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Status</th>
+                  <th className="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Result</th>
+                  <th className="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">P/L</th>
+                  <th className="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-6 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {trades.map((trade) => {
                   const templatePreviewItems = getTradeTemplatePreviewItems(trade);
                   return (
-                  <tr key={trade.id} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors">
-                    <td className="px-6 py-3 text-xs text-gray-text">{formatDateTime(trade.entryDateTime)}</td>
+                  <tr key={trade.id} className="border-b border-slate-300 hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-3 text-xs text-slate-600">{formatDateTime(trade.entryDateTime)}</td>
                     <td className="px-3 py-3">
-                      <p className="text-sm font-semibold text-gray-light">{trade.instrument}</p>
+                      <p className="text-sm font-semibold text-slate-900">{trade.instrument}</p>
                       {templatePreviewItems.length > 0 && (
                         <div className="mt-1 space-y-0.5">
                           {templatePreviewItems.map((item) => (
-                            <p key={`${trade.id}-${item.label}`} className="text-[11px] text-gray-text truncate">
-                              <span className="text-gray-text/70">{item.label}:</span> {item.value}
+                            <p key={`${trade.id}-${item.label}`} className="text-[11px] text-slate-600 truncate">
+                              <span className="text-slate-600/70">{item.label}:</span> {item.value}
                             </p>
                           ))}
                         </div>
@@ -633,15 +633,15 @@ export default function AccountDetailPage() {
                         {trade.direction}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-light number-highlight">
+                    <td className="px-3 py-3 text-sm text-slate-900 number-highlight">
                       {trade.entryPrice ? formatCurrency(Number(trade.entryPrice)) : '-'}
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-text">{trade.positionSize || '-'}</td>
+                    <td className="px-3 py-3 text-sm text-slate-600">{trade.positionSize || '-'}</td>
                     <td className="px-3 py-3">
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                         trade.status === 'OPEN' 
                           ? 'bg-blue-primary/10 text-blue-primary' 
-                          : 'bg-gray-text/10 text-gray-text'
+                          : 'bg-gray-text/10 text-slate-600'
                       }`}>
                         {trade.status}
                       </span>
@@ -655,7 +655,7 @@ export default function AccountDetailPage() {
                         }`}>
                           {trade.result}
                         </span>
-                      ) : <span className="text-gray-text/40">—</span>}
+                      ) : <span className="text-slate-600/40">—</span>}
                     </td>
                     <td className="px-3 py-3 text-right">
                       {getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) !== null ? (
@@ -665,7 +665,7 @@ export default function AccountDetailPage() {
                           {(getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0) >= 0 ? '+' : ''}
                           {formatCurrency(getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge) || 0)}
                         </span>
-                      ) : <span className="text-gray-text/40">—</span>}
+                      ) : <span className="text-slate-600/40">—</span>}
                     </td>
                     <td className="px-6 py-3 text-right">
                       {trade.status === 'OPEN' && (
@@ -688,18 +688,18 @@ export default function AccountDetailPage() {
       {/* MT5 Modal */}
       {showMt5Modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in">
-          <div className="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl shadow-xl overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b border-dark-border">
-              <h2 className="text-lg font-bold text-gray-light flex items-center gap-2">
+          <div className="bg-white border border-slate-300 w-full max-w-sm rounded-2xl shadow-xl overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-slate-300">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Server className="w-5 h-5 text-blue-400" /> Connect MT5
               </h2>
-              <button onClick={() => setShowMt5Modal(false)} className="text-gray-text hover:text-white">
+              <button onClick={() => setShowMt5Modal(false)} className="text-slate-600 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <form onSubmit={handleLinkMt5} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">Login</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">Login</label>
                 <input
                   type="text"
                   required
@@ -710,7 +710,7 @@ export default function AccountDetailPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">Password</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">Password</label>
                 <input
                   type="password"
                   required
@@ -721,7 +721,7 @@ export default function AccountDetailPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">Server</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">Server</label>
                 <input
                   type="text"
                   required
@@ -735,7 +735,7 @@ export default function AccountDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowMt5Modal(false)}
-                  className="flex-1 py-2.5 rounded-xl border border-dark-border font-semibold text-gray-light hover:bg-dark-bg transition-colors"
+                  className="flex-1 py-2.5 rounded-xl border border-slate-300 font-semibold text-slate-900 hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>

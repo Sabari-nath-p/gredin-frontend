@@ -239,13 +239,13 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
         <div>
-          <h1 className="text-xl font-bold text-gray-light tracking-tight">Analytics Dashboard</h1>
-          <p className="text-xs text-gray-text mt-0.5">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Analytics Dashboard</h1>
+          <p className="text-xs text-slate-600 mt-0.5">
             {closedTrades.length} closed trades across {filteredData.length} account{filteredData.length !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-text" />
+          <Filter className="w-4 h-4 text-slate-600" />
           <select
             value={selectedAccount}
             onChange={(e) => setSelectedAccount(e.target.value)}
@@ -264,10 +264,10 @@ export default function AnalyticsPage() {
       {accountsWithStats.length === 0 ? (
         <div className="card text-center py-16">
           <div className="empty-state-icon mx-auto">
-            <BarChart3 className="w-10 h-10 text-gray-text" />
+            <BarChart3 className="w-10 h-10 text-slate-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-light mb-2">No Data Available</h3>
-          <p className="text-sm text-gray-text">Start logging trades to see your analytics</p>
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">No Data Available</h3>
+          <p className="text-sm text-slate-600">Start logging trades to see your analytics</p>
         </div>
       ) : (
         <>
@@ -276,10 +276,10 @@ export default function AnalyticsPage() {
             <div className="stat-card stat-card-green">
               <div className="flex items-center gap-1.5 mb-2">
                 <Hash className="w-3.5 h-3.5 text-green-primary" />
-                <span className="text-[10px] text-gray-text font-medium uppercase tracking-wider">Trades</span>
+                <span className="text-[10px] text-slate-600 font-medium uppercase tracking-wider">Trades</span>
               </div>
-              <p className="text-xl font-bold text-gray-light">{totalStats.closedTrades}</p>
-              <p className="text-[10px] text-gray-text mt-0.5">
+              <p className="text-xl font-bold text-slate-900">{totalStats.closedTrades}</p>
+              <p className="text-[10px] text-slate-600 mt-0.5">
                 <span className="text-green-primary">{totalStats.winningTrades}W</span>
                 {' / '}
                 <span className="text-red-primary">{totalStats.losingTrades}L</span>
@@ -290,7 +290,7 @@ export default function AnalyticsPage() {
             <div className="stat-card stat-card-blue">
               <div className="flex items-center gap-1.5 mb-2">
                 <Target className="w-3.5 h-3.5 text-blue-primary" />
-                <span className="text-[10px] text-gray-text font-medium uppercase tracking-wider">Win Rate</span>
+                <span className="text-[10px] text-slate-600 font-medium uppercase tracking-wider">Win Rate</span>
               </div>
               <p className="text-xl font-bold text-green-primary">{formatPercentage(overallWinRate)}</p>
               <div className="w-full h-1.5 bg-dark-border rounded-full overflow-hidden mt-1.5">
@@ -303,7 +303,7 @@ export default function AnalyticsPage() {
                 {totalStats.netProfitLoss >= 0
                   ? <ArrowUpRight className="w-3.5 h-3.5 text-green-primary" />
                   : <ArrowDownRight className="w-3.5 h-3.5 text-red-primary" />}
-                <span className="text-[10px] text-gray-text font-medium uppercase tracking-wider">Net P/L</span>
+                <span className="text-[10px] text-slate-600 font-medium uppercase tracking-wider">Net P/L</span>
               </div>
               <p className={`text-xl font-bold ${totalStats.netProfitLoss >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                 {formatCurrency(totalStats.netProfitLoss)}
@@ -313,9 +313,9 @@ export default function AnalyticsPage() {
             <div className="stat-card stat-card-yellow">
               <div className="flex items-center gap-1.5 mb-2">
                 <PieChart className="w-3.5 h-3.5 text-yellow-primary" />
-                <span className="text-[10px] text-gray-text font-medium uppercase tracking-wider">Profit Factor</span>
+                <span className="text-[10px] text-slate-600 font-medium uppercase tracking-wider">Profit Factor</span>
               </div>
-              <p className="text-xl font-bold text-gray-light">
+              <p className="text-xl font-bold text-slate-900">
                 {profitFactor === Infinity ? '∞' : profitFactor.toFixed(2)}
               </p>
             </div>
@@ -323,17 +323,17 @@ export default function AnalyticsPage() {
             <div className="stat-card stat-card-purple col-span-2 lg:col-span-1">
               <div className="flex items-center gap-1.5 mb-2">
                 <Zap className="w-3.5 h-3.5 text-purple-400" />
-                <span className="text-[10px] text-gray-text font-medium uppercase tracking-wider">Expectancy</span>
+                <span className="text-[10px] text-slate-600 font-medium uppercase tracking-wider">Expectancy</span>
               </div>
               <p className={`text-xl font-bold ${expectancy >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                 {formatCurrency(expectancy)}
               </p>
-              <p className="text-[10px] text-gray-text mt-0.5">per trade avg</p>
+              <p className="text-[10px] text-slate-600 mt-0.5">per trade avg</p>
             </div>
           </div>
 
           {/* ═══════ TAB NAVIGATION ═══════ */}
-          <div className="flex items-center gap-1 bg-dark-card border border-dark-border rounded-xl p-1 mb-5 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-white border border-slate-300 rounded-xl p-1 mb-5 overflow-x-auto">
             {([
               { key: 'overview', label: 'Overview', icon: Activity },
               { key: 'calendar', label: 'Calendar', icon: Calendar },
@@ -346,7 +346,7 @@ export default function AnalyticsPage() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
-                    : 'text-gray-text hover:text-gray-light'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <tab.icon className="w-3.5 h-3.5" />
@@ -360,11 +360,11 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-12 gap-4">
               {/* P/L Breakdown */}
               <div className="col-span-12 lg:col-span-4 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4">Profit & Loss</h2>
+                <h2 className="text-sm font-bold text-slate-900 mb-4">Profit & Loss</h2>
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between p-3 bg-green-primary/5 border border-green-primary/20 rounded-xl">
                     <div>
-                      <p className="text-[10px] text-gray-text">Total Profit</p>
+                      <p className="text-[10px] text-slate-600">Total Profit</p>
                       <p className="text-lg font-bold text-green-primary">{formatCurrency(totalStats.totalProfit)}</p>
                     </div>
                     <span className="text-xs font-bold text-green-primary bg-green-primary/10 px-2 py-1 rounded-lg">
@@ -373,7 +373,7 @@ export default function AnalyticsPage() {
                   </div>
                   <div className="flex items-center justify-between p-3 bg-red-primary/5 border border-red-primary/20 rounded-xl">
                     <div>
-                      <p className="text-[10px] text-gray-text">Total Loss</p>
+                      <p className="text-[10px] text-slate-600">Total Loss</p>
                       <p className="text-lg font-bold text-red-primary">{formatCurrency(totalStats.totalLoss)}</p>
                     </div>
                     <span className="text-xs font-bold text-red-primary bg-red-primary/10 px-2 py-1 rounded-lg">
@@ -382,7 +382,7 @@ export default function AnalyticsPage() {
                   </div>
                   {/* Win Rate bar */}
                   <div className="pt-2">
-                    <div className="flex justify-between text-[10px] text-gray-text mb-1">
+                    <div className="flex justify-between text-[10px] text-slate-600 mb-1">
                       <span>Win Rate</span>
                       <span className="font-bold text-green-primary">{formatPercentage(overallWinRate)}</span>
                     </div>
@@ -400,18 +400,18 @@ export default function AnalyticsPage() {
 
               {/* Key Metrics */}
               <div className="col-span-12 lg:col-span-4 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4">Key Metrics</h2>
+                <h2 className="text-sm font-bold text-slate-900 mb-4">Key Metrics</h2>
                 <div className="space-y-2">
                   {[
                     { label: 'Average Win', value: formatCurrency(avgWin), color: 'text-green-primary' },
                     { label: 'Average Loss', value: formatCurrency(avgLoss), color: 'text-red-primary' },
                     { label: 'Largest Win', value: formatCurrency(totalStats.largestWin), color: 'text-green-primary' },
                     { label: 'Largest Loss', value: formatCurrency(totalStats.largestLoss), color: 'text-red-primary' },
-                    { label: 'Profit Factor', value: profitFactor === Infinity ? '∞' : profitFactor.toFixed(2), color: 'text-gray-light' },
+                    { label: 'Profit Factor', value: profitFactor === Infinity ? '∞' : profitFactor.toFixed(2), color: 'text-slate-900' },
                     { label: 'Expectancy', value: formatCurrency(expectancy), color: expectancy >= 0 ? 'text-green-primary' : 'text-red-primary' },
                   ].map((m, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-dark-border/30 last:border-0">
-                      <span className="text-xs text-gray-text">{m.label}</span>
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-slate-300 last:border-0">
+                      <span className="text-xs text-slate-600">{m.label}</span>
                       <span className={`text-xs font-bold ${m.color}`}>{m.value}</span>
                     </div>
                   ))}
@@ -422,18 +422,18 @@ export default function AnalyticsPage() {
               <div className="col-span-12 lg:col-span-4 space-y-4">
                 {/* Direction split */}
                 <div className="card">
-                  <h2 className="text-sm font-bold text-gray-light mb-3">By Direction</h2>
+                  <h2 className="text-sm font-bold text-slate-900 mb-3">By Direction</h2>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="p-3 rounded-xl bg-green-primary/5 border border-green-primary/20 text-center">
                       <ArrowUp className="w-4 h-4 text-green-primary mx-auto mb-1" />
-                      <p className="text-lg font-bold text-gray-light">{directionStats.buyCount}</p>
-                      <p className="text-[10px] text-gray-text">LONG trades</p>
+                      <p className="text-lg font-bold text-slate-900">{directionStats.buyCount}</p>
+                      <p className="text-[10px] text-slate-600">LONG trades</p>
                       <p className="text-xs font-bold text-green-primary mt-1">{formatPercentage(directionStats.buyWinRate)}</p>
                     </div>
                     <div className="p-3 rounded-xl bg-red-primary/5 border border-red-primary/20 text-center">
                       <ArrowDown className="w-4 h-4 text-red-primary mx-auto mb-1" />
-                      <p className="text-lg font-bold text-gray-light">{directionStats.sellCount}</p>
-                      <p className="text-[10px] text-gray-text">SHORT trades</p>
+                      <p className="text-lg font-bold text-slate-900">{directionStats.sellCount}</p>
+                      <p className="text-[10px] text-slate-600">SHORT trades</p>
                       <p className="text-xs font-bold text-green-primary mt-1">{formatPercentage(directionStats.sellWinRate)}</p>
                     </div>
                   </div>
@@ -441,21 +441,21 @@ export default function AnalyticsPage() {
 
                 {/* Quick Streaks */}
                 <div className="card">
-                  <h2 className="text-sm font-bold text-gray-light mb-3">Streaks</h2>
+                  <h2 className="text-sm font-bold text-slate-900 mb-3">Streaks</h2>
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="p-2 rounded-lg bg-dark-bg/50 border border-dark-border">
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-300">
                       <p className="text-lg font-bold text-green-primary">{streaks.maxWin}</p>
-                      <p className="text-[10px] text-gray-text">Best Win</p>
+                      <p className="text-[10px] text-slate-600">Best Win</p>
                     </div>
-                    <div className="p-2 rounded-lg bg-dark-bg/50 border border-dark-border">
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-300">
                       <p className="text-lg font-bold text-red-primary">{streaks.maxLoss}</p>
-                      <p className="text-[10px] text-gray-text">Worst Loss</p>
+                      <p className="text-[10px] text-slate-600">Worst Loss</p>
                     </div>
-                    <div className="p-2 rounded-lg bg-dark-bg/50 border border-dark-border">
-                      <p className={`text-lg font-bold ${streaks.currentType === 'win' ? 'text-green-primary' : streaks.currentType === 'loss' ? 'text-red-primary' : 'text-gray-text'}`}>
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-300">
+                      <p className={`text-lg font-bold ${streaks.currentType === 'win' ? 'text-green-primary' : streaks.currentType === 'loss' ? 'text-red-primary' : 'text-slate-600'}`}>
                         {streaks.currentStreak}
                       </p>
-                      <p className="text-[10px] text-gray-text">Current</p>
+                      <p className="text-[10px] text-slate-600">Current</p>
                     </div>
                   </div>
                 </div>
@@ -464,17 +464,17 @@ export default function AnalyticsPage() {
               {/* Account Performance — full width */}
               {filteredData.length > 1 && (
                 <div className="col-span-12 card">
-                  <h2 className="text-sm font-bold text-gray-light mb-4">Account Performance</h2>
+                  <h2 className="text-sm font-bold text-slate-900 mb-4">Account Performance</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {filteredData.map(({ account, stats }) => {
                       const pl = Number(account.currentBalance) - Number(account.initialBalance);
                       const plPct = Number(account.initialBalance) > 0 ? (pl / Number(account.initialBalance)) * 100 : 0;
                       return (
-                        <div key={account.id} className="p-3 bg-dark-bg/60 rounded-xl border border-dark-border/50">
+                        <div key={account.id} className="p-3 bg-slate-50 rounded-xl border border-slate-300">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                               <Wallet className="w-3.5 h-3.5 text-green-primary" />
-                              <span className="font-semibold text-gray-light text-xs">{account.accountName}</span>
+                              <span className="font-semibold text-slate-900 text-xs">{account.accountName}</span>
                             </div>
                             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                               account.accountType === 'LIVE' ? 'bg-green-primary/10 text-green-primary' :
@@ -484,21 +484,21 @@ export default function AnalyticsPage() {
                           </div>
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
-                              <p className="text-[10px] text-gray-text">Balance</p>
+                              <p className="text-[10px] text-slate-600">Balance</p>
                               <p className="text-xs font-bold text-green-primary">{formatCurrency(Number(account.currentBalance))}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-text">P/L</p>
+                              <p className="text-[10px] text-slate-600">P/L</p>
                               <p className={`text-xs font-bold ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                                 {pl >= 0 ? '+' : ''}{formatPercentage(plPct)}
                               </p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-text">Trades</p>
-                              <p className="text-xs font-bold text-gray-light">{stats.totalTrades}</p>
+                              <p className="text-[10px] text-slate-600">Trades</p>
+                              <p className="text-xs font-bold text-slate-900">{stats.totalTrades}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-text">Win Rate</p>
+                              <p className="text-[10px] text-slate-600">Win Rate</p>
                               <p className="text-xs font-bold text-green-primary">{formatPercentage(stats.winRate ?? 0)}</p>
                             </div>
                           </div>
@@ -518,28 +518,28 @@ export default function AnalyticsPage() {
               <div className="col-span-12 lg:col-span-8 card">
                 {/* Calendar header */}
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-light flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-green-primary" />
                     {MONTH_NAMES[calMonth]} {calYear}
                   </h2>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else setCalMonth(m => m - 1); }}
-                      className="w-7 h-7 rounded-lg bg-dark-bg border border-dark-border flex items-center justify-center hover:border-green-primary/50 transition-colors"
+                      className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-300 flex items-center justify-center hover:border-green-primary/50 transition-colors"
                     >
-                      <ChevronLeft className="w-3.5 h-3.5 text-gray-text" />
+                      <ChevronLeft className="w-3.5 h-3.5 text-slate-600" />
                     </button>
                     <button
                       onClick={() => { const n = new Date(); setCalMonth(n.getMonth()); setCalYear(n.getFullYear()); }}
-                      className="px-3 py-1 rounded-lg text-[10px] font-semibold text-gray-text hover:text-green-primary border border-dark-border hover:border-green-primary/50 transition-colors"
+                      className="px-3 py-1 rounded-lg text-[10px] font-semibold text-slate-600 hover:text-green-primary border border-slate-300 hover:border-green-primary/50 transition-colors"
                     >
                       Today
                     </button>
                     <button
                       onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else setCalMonth(m => m + 1); }}
-                      className="w-7 h-7 rounded-lg bg-dark-bg border border-dark-border flex items-center justify-center hover:border-green-primary/50 transition-colors"
+                      className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-300 flex items-center justify-center hover:border-green-primary/50 transition-colors"
                     >
-                      <ChevronRight className="w-3.5 h-3.5 text-gray-text" />
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
                     </button>
                   </div>
                 </div>
@@ -547,7 +547,7 @@ export default function AnalyticsPage() {
                 {/* Day labels */}
                 <div className="grid grid-cols-7 gap-1 mb-1">
                   {DAY_LABELS.map(d => (
-                    <div key={d} className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider py-1">
+                    <div key={d} className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider py-1">
                       {d}
                     </div>
                   ))}
@@ -561,8 +561,8 @@ export default function AnalyticsPage() {
                     const isToday = cell.key === new Date().toISOString().slice(0, 10);
                     const isHovered = hoveredDay === cell.key;
 
-                    let bgColor = 'bg-dark-bg/30';
-                    let textColor = 'text-gray-text';
+                    let bgColor = 'bg-slate-50';
+                    let textColor = 'text-slate-600';
                     if (data) {
                       const intensity = Math.min(Math.abs(data.pl) / maxAbsPL, 1);
                       const alpha = Math.max(0.1, intensity * 0.5);
@@ -579,8 +579,8 @@ export default function AnalyticsPage() {
                     }
 
                     // Use explicit classes for Tailwind JIT safety
-                    let cellBg = 'bg-dark-bg/30';
-                    let cellText = 'text-gray-text';
+                    let cellBg = 'bg-slate-50';
+                    let cellText = 'text-slate-600';
                     if (data) {
                       if (data.pl > 0) {
                         const pct = Math.abs(data.pl) / maxAbsPL;
@@ -605,7 +605,7 @@ export default function AnalyticsPage() {
                           isToday ? 'border-green-primary' : isHovered && data ? 'border-gray-text/50' : 'border-transparent'
                         }`}
                       >
-                        <span className={`text-xs font-medium ${data ? cellText : 'text-gray-text/60'}`}>
+                        <span className={`text-xs font-medium ${data ? cellText : 'text-slate-600/60'}`}>
                           {cell.day}
                         </span>
                         {data && (
@@ -623,8 +623,8 @@ export default function AnalyticsPage() {
 
                         {/* Tooltip */}
                         {isHovered && data && (
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 w-44 p-2.5 rounded-xl bg-dark-card border border-dark-border shadow-elevated text-left pointer-events-none">
-                            <p className="text-[10px] text-gray-text mb-1">{new Date(cell.key).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 w-44 p-2.5 rounded-xl bg-white border border-slate-300 shadow-elevated text-left pointer-events-none">
+                            <p className="text-[10px] text-slate-600 mb-1">{new Date(cell.key).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                             <p className={`text-sm font-bold ${data.pl >= 0 ? 'text-green-primary' : 'text-red-primary'} mb-1`}>
                               {data.pl >= 0 ? '+' : ''}{formatCurrency(data.pl)}
                             </p>
@@ -633,17 +633,17 @@ export default function AnalyticsPage() {
                               <span className="text-red-primary">{data.losses}L</span>
                               {data.even > 0 && <span className="text-yellow-primary">{data.even}E</span>}
                             </div>
-                            <div className="mt-1.5 pt-1.5 border-t border-dark-border/50 space-y-0.5">
+                            <div className="mt-1.5 pt-1.5 border-t border-slate-300 space-y-0.5">
                               {data.trades.slice(0, 3).map(t => (
                                 <div key={t.id} className="flex items-center justify-between">
-                                  <span className="text-[10px] text-gray-text">{t.instrument}</span>
+                                  <span className="text-[10px] text-slate-600">{t.instrument}</span>
                                   <span className={`text-[10px] font-bold ${t.result === 'PROFIT' ? 'text-green-primary' : t.result === 'LOSS' ? 'text-red-primary' : 'text-yellow-primary'}`}>
                                     {t.result === 'PROFIT' ? '+' : '-'}{formatCurrency(Math.abs(Number(t.realisedProfitLoss) || 0))}
                                   </span>
                                 </div>
                               ))}
                               {data.trades.length > 3 && (
-                                <p className="text-[9px] text-gray-text">+{data.trades.length - 3} more</p>
+                                <p className="text-[9px] text-slate-600">+{data.trades.length - 3} more</p>
                               )}
                             </div>
                           </div>
@@ -654,37 +654,37 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Legend */}
-                <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-dark-border/30">
-                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-green-primary/20" /><span className="text-[10px] text-gray-text">Profit Day</span></div>
-                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-primary/20" /><span className="text-[10px] text-gray-text">Loss Day</span></div>
-                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-yellow-primary/10" /><span className="text-[10px] text-gray-text">Break Even</span></div>
-                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded border border-green-primary" /><span className="text-[10px] text-gray-text">Today</span></div>
+                <div className="flex items-center justify-center gap-4 mt-3 pt-3 border-t border-slate-300">
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-green-primary/20" /><span className="text-[10px] text-slate-600">Profit Day</span></div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-primary/20" /><span className="text-[10px] text-slate-600">Loss Day</span></div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-yellow-primary/10" /><span className="text-[10px] text-slate-600">Break Even</span></div>
+                  <div className="flex items-center gap-1"><div className="w-3 h-3 rounded border border-green-primary" /><span className="text-[10px] text-slate-600">Today</span></div>
                 </div>
               </div>
 
               {/* Month Summary sidebar */}
               <div className="col-span-12 lg:col-span-4 space-y-4">
                 <div className="card">
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider mb-3">Month Summary</h3>
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">Month Summary</h3>
                   <div className={`text-center p-4 rounded-xl mb-3 ${monthPL.total >= 0 ? 'bg-green-primary/5' : 'bg-red-primary/5'}`}>
-                    <p className="text-[10px] text-gray-text uppercase tracking-wider mb-1">Net P/L</p>
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1">Net P/L</p>
                     <p className={`text-2xl font-bold ${monthPL.total >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                       {monthPL.total >= 0 ? '+' : ''}{formatCurrency(monthPL.total)}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="p-2.5 rounded-lg bg-dark-bg/50 border border-dark-border text-center">
+                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-center">
                       <p className="text-lg font-bold text-green-primary">{monthPL.wins}</p>
-                      <p className="text-[10px] text-gray-text">Wins</p>
+                      <p className="text-[10px] text-slate-600">Wins</p>
                     </div>
-                    <div className="p-2.5 rounded-lg bg-dark-bg/50 border border-dark-border text-center">
+                    <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-center">
                       <p className="text-lg font-bold text-red-primary">{monthPL.losses}</p>
-                      <p className="text-[10px] text-gray-text">Losses</p>
+                      <p className="text-[10px] text-slate-600">Losses</p>
                     </div>
                   </div>
                   {(monthPL.wins + monthPL.losses) > 0 && (
                     <div className="mt-3">
-                      <div className="flex justify-between text-[10px] text-gray-text mb-1">
+                      <div className="flex justify-between text-[10px] text-slate-600 mb-1">
                         <span>Month Win Rate</span>
                         <span className="font-bold text-green-primary">
                           {formatPercentage((monthPL.wins / (monthPL.wins + monthPL.losses)) * 100)}
@@ -699,16 +699,16 @@ export default function AnalyticsPage() {
 
                 {/* Hovered day detail */}
                 <div className="card">
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider mb-3">
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">
                     {hoveredDay ? new Date(hoveredDay + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'Hover a day'}
                   </h3>
                   {hoveredDay && dailyPL[hoveredDay] ? (
                     <div className="space-y-2">
                       {dailyPL[hoveredDay].trades.map(t => (
-                        <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-dark-bg/50 border border-dark-border/50">
+                        <div key={t.id} className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-300">
                           <div>
-                            <p className="text-xs font-semibold text-gray-light">{t.instrument}</p>
-                            <p className="text-[10px] text-gray-text">
+                            <p className="text-xs font-semibold text-slate-900">{t.instrument}</p>
+                            <p className="text-[10px] text-slate-600">
                               {t.direction} • {new Date(t.entryDateTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
@@ -719,7 +719,7 @@ export default function AnalyticsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-text">Hover over a calendar day to see trade details</p>
+                    <p className="text-xs text-slate-600">Hover over a calendar day to see trade details</p>
                   )}
                 </div>
               </div>
@@ -730,20 +730,20 @@ export default function AnalyticsPage() {
           {activeTab === 'instruments' && (
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-12 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4">Instrument Performance</h2>
+                <h2 className="text-sm font-bold text-slate-900 mb-4">Instrument Performance</h2>
                 {instrumentData.length === 0 ? (
-                  <p className="text-xs text-gray-text py-8 text-center">No closed trades to analyze</p>
+                  <p className="text-xs text-slate-600 py-8 text-center">No closed trades to analyze</p>
                 ) : (
                   <div className="space-y-2">
                     {instrumentData.map((ins, idx) => {
                       const maxTrades = instrumentData[0]?.trades || 1;
                       return (
-                        <div key={ins.name} className="p-3 rounded-xl bg-dark-bg/40 border border-dark-border/50 hover:border-dark-border transition-colors">
+                        <div key={ins.name} className="p-3 rounded-xl bg-slate-50 border border-slate-300 hover:border-slate-300 transition-colors">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-3">
-                              <span className="text-[10px] text-gray-text font-mono w-5">#{idx + 1}</span>
-                              <span className="text-sm font-bold text-gray-light">{ins.name}</span>
-                              <span className="text-[10px] text-gray-text">{ins.trades} trades</span>
+                              <span className="text-[10px] text-slate-600 font-mono w-5">#{idx + 1}</span>
+                              <span className="text-sm font-bold text-slate-900">{ins.name}</span>
+                              <span className="text-[10px] text-slate-600">{ins.trades} trades</span>
                             </div>
                             <div className="flex items-center gap-3">
                               <span className={`text-xs font-bold ${ins.pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
@@ -780,7 +780,7 @@ export default function AnalyticsPage() {
               {instrumentData.length >= 2 && (
                 <>
                   <div className="col-span-12 lg:col-span-6 card">
-                    <h2 className="text-sm font-bold text-gray-light mb-3 flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
                       <Award className="w-4 h-4 text-green-primary" />
                       Most Profitable
                     </h2>
@@ -788,8 +788,8 @@ export default function AnalyticsPage() {
                       {[...instrumentData].sort((a, b) => b.pl - a.pl).slice(0, 5).map(ins => (
                         <div key={ins.name} className="flex items-center justify-between p-2.5 rounded-lg bg-green-primary/5 border border-green-primary/10">
                           <div>
-                            <span className="text-xs font-bold text-gray-light">{ins.name}</span>
-                            <span className="text-[10px] text-gray-text ml-2">{ins.trades} trades</span>
+                            <span className="text-xs font-bold text-slate-900">{ins.name}</span>
+                            <span className="text-[10px] text-slate-600 ml-2">{ins.trades} trades</span>
                           </div>
                           <span className="text-xs font-bold text-green-primary">+{formatCurrency(ins.pl)}</span>
                         </div>
@@ -797,7 +797,7 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <div className="col-span-12 lg:col-span-6 card">
-                    <h2 className="text-sm font-bold text-gray-light mb-3 flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
                       <ArrowDownRight className="w-4 h-4 text-red-primary" />
                       Least Profitable
                     </h2>
@@ -805,8 +805,8 @@ export default function AnalyticsPage() {
                       {[...instrumentData].sort((a, b) => a.pl - b.pl).slice(0, 5).map(ins => (
                         <div key={ins.name} className="flex items-center justify-between p-2.5 rounded-lg bg-red-primary/5 border border-red-primary/10">
                           <div>
-                            <span className="text-xs font-bold text-gray-light">{ins.name}</span>
-                            <span className="text-[10px] text-gray-text ml-2">{ins.trades} trades</span>
+                            <span className="text-xs font-bold text-slate-900">{ins.name}</span>
+                            <span className="text-[10px] text-slate-600 ml-2">{ins.trades} trades</span>
                           </div>
                           <span className="text-xs font-bold text-red-primary">{formatCurrency(ins.pl)}</span>
                         </div>
@@ -823,30 +823,30 @@ export default function AnalyticsPage() {
             <div className="grid grid-cols-12 gap-4">
               {/* Streak cards */}
               <div className="col-span-12 lg:col-span-4 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4 flex items-center gap-2">
+                <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                   <Flame className="w-4 h-4 text-orange-400" />
                   Trading Streaks
                 </h2>
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-green-primary/5 border border-green-primary/20 text-center">
                     <p className="text-3xl font-bold text-green-primary">{streaks.maxWin}</p>
-                    <p className="text-xs text-gray-text mt-1">Best Winning Streak</p>
+                    <p className="text-xs text-slate-600 mt-1">Best Winning Streak</p>
                   </div>
                   <div className="p-4 rounded-xl bg-red-primary/5 border border-red-primary/20 text-center">
                     <p className="text-3xl font-bold text-red-primary">{streaks.maxLoss}</p>
-                    <p className="text-xs text-gray-text mt-1">Worst Losing Streak</p>
+                    <p className="text-xs text-slate-600 mt-1">Worst Losing Streak</p>
                   </div>
                   <div className={`p-4 rounded-xl text-center ${
                     streaks.currentType === 'win' ? 'bg-green-primary/5 border border-green-primary/20'
                     : streaks.currentType === 'loss' ? 'bg-red-primary/5 border border-red-primary/20'
-                    : 'bg-dark-bg/50 border border-dark-border'
+                    : 'bg-slate-50 border border-slate-300'
                   }`}>
                     <p className={`text-3xl font-bold ${
                       streaks.currentType === 'win' ? 'text-green-primary'
                       : streaks.currentType === 'loss' ? 'text-red-primary'
-                      : 'text-gray-text'
+                      : 'text-slate-600'
                     }`}>{streaks.currentStreak}</p>
-                    <p className="text-xs text-gray-text mt-1">
+                    <p className="text-xs text-slate-600 mt-1">
                       Current Streak {streaks.currentType !== 'none' && `(${streaks.currentType === 'win' ? 'Winning' : 'Losing'})`}
                     </p>
                   </div>
@@ -855,29 +855,29 @@ export default function AnalyticsPage() {
 
               {/* Detailed Stats table */}
               <div className="col-span-12 lg:col-span-8 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4">Detailed Account Statistics</h2>
+                <h2 className="text-sm font-bold text-slate-900 mb-4">Detailed Account Statistics</h2>
                 <div className="overflow-x-auto -mx-6">
                   <table className="w-full min-w-[600px]">
                     <thead>
-                      <tr className="border-b border-dark-border/50">
-                        <th className="text-left text-[10px] font-semibold text-gray-text uppercase tracking-wider px-6 py-2">Account</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Trades</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Win Rate</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Avg Win</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Avg Loss</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Best</th>
-                        <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Worst</th>
-                        <th className="text-right text-[10px] font-semibold text-gray-text uppercase tracking-wider px-6 py-2">P.Factor</th>
+                      <tr className="border-b border-slate-300">
+                        <th className="text-left text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-6 py-2">Account</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Trades</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Win Rate</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Avg Win</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Avg Loss</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Best</th>
+                        <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Worst</th>
+                        <th className="text-right text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-6 py-2">P.Factor</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredData.map(({ account, stats }) => (
-                        <tr key={account.id} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors">
+                        <tr key={account.id} className="border-b border-slate-300 hover:bg-slate-50 transition-colors">
                           <td className="px-6 py-2.5">
-                            <p className="font-semibold text-gray-light text-xs">{account.accountName}</p>
-                            <p className="text-[10px] text-gray-text">{account.brokerName}</p>
+                            <p className="font-semibold text-slate-900 text-xs">{account.accountName}</p>
+                            <p className="text-[10px] text-slate-600">{account.brokerName}</p>
                           </td>
-                          <td className="px-2 py-2.5 text-center text-xs text-gray-light">{stats.totalTrades}</td>
+                          <td className="px-2 py-2.5 text-center text-xs text-slate-900">{stats.totalTrades}</td>
                           <td className="px-2 py-2.5 text-center">
                             <span className="text-xs font-bold text-green-primary">{formatPercentage(stats.winRate ?? 0)}</span>
                           </td>
@@ -885,7 +885,7 @@ export default function AnalyticsPage() {
                           <td className="px-2 py-2.5 text-center text-xs text-red-primary">{formatCurrency(stats.averageLoss ?? 0)}</td>
                           <td className="px-2 py-2.5 text-center text-xs font-bold text-green-primary">{formatCurrency(stats.largestWin ?? 0)}</td>
                           <td className="px-2 py-2.5 text-center text-xs font-bold text-red-primary">{formatCurrency(stats.largestLoss ?? 0)}</td>
-                          <td className="px-6 py-2.5 text-right text-xs font-bold text-gray-light">{(stats.profitFactor ?? 0).toFixed(2)}</td>
+                          <td className="px-6 py-2.5 text-right text-xs font-bold text-slate-900">{(stats.profitFactor ?? 0).toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -895,38 +895,38 @@ export default function AnalyticsPage() {
 
               {/* Recent closed trades */}
               <div className="col-span-12 card">
-                <h2 className="text-sm font-bold text-gray-light mb-4 flex items-center gap-2">
+                <h2 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                   <Clock className="w-4 h-4 text-green-primary" />
                   Recent Closed Trades
                 </h2>
                 {closedTrades.length === 0 ? (
-                  <p className="text-xs text-gray-text py-6 text-center">No closed trades yet</p>
+                  <p className="text-xs text-slate-600 py-6 text-center">No closed trades yet</p>
                 ) : (
                   <div className="overflow-x-auto -mx-6">
                     <table className="w-full min-w-[700px]">
                       <thead>
-                        <tr className="border-b border-dark-border/50">
-                          <th className="text-left text-[10px] font-semibold text-gray-text uppercase tracking-wider px-6 py-2">Date</th>
-                          <th className="text-left text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Instrument</th>
-                          <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Dir</th>
-                          <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Entry</th>
-                          <th className="text-center text-[10px] font-semibold text-gray-text uppercase tracking-wider px-2 py-2">Result</th>
-                          <th className="text-right text-[10px] font-semibold text-gray-text uppercase tracking-wider px-6 py-2">P/L</th>
+                        <tr className="border-b border-slate-300">
+                          <th className="text-left text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-6 py-2">Date</th>
+                          <th className="text-left text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Instrument</th>
+                          <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Dir</th>
+                          <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Entry</th>
+                          <th className="text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-2 py-2">Result</th>
+                          <th className="text-right text-[10px] font-semibold text-slate-600 uppercase tracking-wider px-6 py-2">P/L</th>
                         </tr>
                       </thead>
                       <tbody>
                         {closedTrades.slice(0, 20).map(t => (
-                          <tr key={t.id} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors">
-                            <td className="px-6 py-2 text-[10px] text-gray-text">
+                          <tr key={t.id} className="border-b border-slate-300 hover:bg-slate-50 transition-colors">
+                            <td className="px-6 py-2 text-[10px] text-slate-600">
                               {new Date(t.entryDateTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </td>
-                            <td className="px-2 py-2 text-xs font-semibold text-gray-light">{t.instrument}</td>
+                            <td className="px-2 py-2 text-xs font-semibold text-slate-900">{t.instrument}</td>
                             <td className="px-2 py-2 text-center">
                               <span className={`text-[10px] font-bold ${t.direction === 'BUY' ? 'text-green-primary' : 'text-red-primary'}`}>
                                 {t.direction}
                               </span>
                             </td>
-                            <td className="px-2 py-2 text-center text-xs text-gray-text">
+                            <td className="px-2 py-2 text-center text-xs text-slate-600">
                               {t.entryPrice ? `$${Number(t.entryPrice).toFixed(2)}` : '—'}
                             </td>
                             <td className="px-2 py-2 text-center">

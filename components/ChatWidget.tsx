@@ -119,9 +119,9 @@ export default function ChatWidget() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {isOpen && (
-        <div className="w-[380px] bg-dark-card border border-dark-border rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[600px]">
+        <div className="w-[380px] bg-white border border-slate-300 rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[600px]">
           {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-r from-dark-bg/80 to-dark-bg/60 border-b border-dark-border flex items-center justify-between">
+          <div className="px-4 py-3 bg-gradient-to-r from-dark-bg/80 to-dark-bg/60 border-b border-slate-300 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${statusColor}`}></div>
               <div className="text-sm font-semibold">AI Chat</div>
@@ -135,7 +135,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-dark-bg/30">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
             {messages.length === 0 && (
               <div className="text-center text-gray-400 text-sm mt-8">
                 <div className="text-2xl mb-2">💬</div>
@@ -167,7 +167,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="p-3 border-t border-dark-border bg-dark-bg/60 flex gap-2">
+          <div className="p-3 border-t border-slate-300 bg-slate-50 flex gap-2">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -179,7 +179,7 @@ export default function ChatWidget() {
               }}
               placeholder={connected ? 'Ask something...' : 'Connecting...'}
               disabled={!connected || loading}
-              className="flex-1 px-3 py-2 text-sm bg-dark-bg border border-dark-border rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-primary disabled:opacity-50"
+              className="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-primary disabled:opacity-50"
             />
             <button
               onClick={send}
@@ -192,7 +192,7 @@ export default function ChatWidget() {
 
           {/* Status info */}
           {status && status !== 'connected' && (
-            <div className="px-3 py-2 bg-dark-bg/80 border-t border-dark-border text-xs text-gray-400">
+            <div className="px-3 py-2 bg-slate-50/80 border-t border-slate-300 text-xs text-gray-400">
               Status: <span className="capitalize font-medium">{status}</span>
             </div>
           )}

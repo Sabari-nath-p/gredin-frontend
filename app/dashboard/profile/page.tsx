@@ -35,8 +35,8 @@ export default function ProfilePage() {
     <div className="max-w-3xl mx-auto space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-light tracking-tight">Profile Settings</h1>
-        <p className="text-sm text-gray-text mt-0.5">Manage your account information</p>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Profile Settings</h1>
+        <p className="text-sm text-slate-600 mt-0.5">Manage your account information</p>
       </div>
 
       {/* Profile Card */}
@@ -49,14 +49,14 @@ export default function ProfilePage() {
               </span>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-light">{user?.name || 'Trader'}</h2>
-              <p className="text-sm text-gray-text">{user?.email}</p>
+              <h2 className="text-xl font-bold text-slate-900">{user?.name || 'Trader'}</h2>
+              <p className="text-sm text-slate-600">{user?.email}</p>
             </div>
           </div>
           {!editing && (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dark-border text-gray-text hover:text-green-primary hover:border-green-primary/50 transition-all text-sm"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:text-green-primary hover:border-green-primary/50 transition-all text-sm"
             >
               <Edit2 className="w-3.5 h-3.5" />
               Edit
@@ -67,7 +67,7 @@ export default function ProfilePage() {
         <div className="space-y-5">
           {/* Name */}
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-text uppercase tracking-wider mb-2">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">
               <UserIcon className="w-3.5 h-3.5" />
               Name
             </label>
@@ -80,7 +80,7 @@ export default function ProfilePage() {
                 placeholder="Enter your name"
               />
             ) : (
-              <p className="text-gray-light font-medium">{user?.name || 'Not set'}</p>
+              <p className="text-slate-900 font-medium">{user?.name || 'Not set'}</p>
             )}
           </div>
 
@@ -88,19 +88,19 @@ export default function ProfilePage() {
 
           {/* Email */}
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-text uppercase tracking-wider mb-2">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">
               <Mail className="w-3.5 h-3.5" />
               Email
             </label>
-            <p className="text-gray-light font-medium">{user?.email}</p>
-            <p className="text-[10px] text-gray-text mt-1">Email cannot be changed</p>
+            <p className="text-slate-900 font-medium">{user?.email}</p>
+            <p className="text-[10px] text-slate-600 mt-1">Email cannot be changed</p>
           </div>
 
           <div className="divider-green"></div>
 
           {/* Role */}
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-text uppercase tracking-wider mb-2">
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 uppercase tracking-wider mb-2">
               <Shield className="w-3.5 h-3.5" />
               Role
             </label>
@@ -117,30 +117,30 @@ export default function ProfilePage() {
 
           {/* Account Info */}
           <div>
-            <h3 className="text-xs font-medium text-gray-text uppercase tracking-wider mb-3">Account Information</h3>
+            <h3 className="text-xs font-medium text-slate-600 uppercase tracking-wider mb-3">Account Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-3 bg-dark-bg/60 rounded-xl">
+              <div className="p-3 bg-slate-50 rounded-xl">
                 <div className="flex items-center gap-1.5 mb-1">
-                  <Calendar className="w-3 h-3 text-gray-text" />
-                  <p className="text-[10px] text-gray-text">Created</p>
+                  <Calendar className="w-3 h-3 text-slate-600" />
+                  <p className="text-[10px] text-slate-600">Created</p>
                 </div>
-                <p className="text-sm text-gray-light font-medium">
+                <p className="text-sm text-slate-900 font-medium">
                   {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
-              <div className="p-3 bg-dark-bg/60 rounded-xl">
+              <div className="p-3 bg-slate-50 rounded-xl">
                 <div className="flex items-center gap-1.5 mb-1">
-                  <Calendar className="w-3 h-3 text-gray-text" />
-                  <p className="text-[10px] text-gray-text">Updated</p>
+                  <Calendar className="w-3 h-3 text-slate-600" />
+                  <p className="text-[10px] text-slate-600">Updated</p>
                 </div>
-                <p className="text-sm text-gray-light font-medium">
+                <p className="text-sm text-slate-900 font-medium">
                   {user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
-              <div className="p-3 bg-dark-bg/60 rounded-xl">
+              <div className="p-3 bg-slate-50 rounded-xl">
                 <div className="flex items-center gap-1.5 mb-1">
-                  <Activity className="w-3 h-3 text-gray-text" />
-                  <p className="text-[10px] text-gray-text">Status</p>
+                  <Activity className="w-3 h-3 text-slate-600" />
+                  <p className="text-[10px] text-slate-600">Status</p>
                 </div>
                 <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
                   user?.isActive ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
@@ -186,9 +186,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Tips */}
-      <div className="card bg-dark-bg/40">
-        <h3 className="text-sm font-semibold text-gray-light mb-3">💡 Profile Tips</h3>
-        <ul className="space-y-2 text-xs text-gray-text">
+      <div className="card bg-slate-50">
+        <h3 className="text-sm font-semibold text-slate-900 mb-3">💡 Profile Tips</h3>
+        <ul className="space-y-2 text-xs text-slate-600">
           <li className="flex items-start gap-2">
             <span className="text-green-primary mt-0.5">•</span>
             <span>Your profile name is displayed across the dashboard</span>

@@ -92,7 +92,7 @@ export default function NewAccountPage() {
       <div>
         <Link
           href="/dashboard/accounts"
-          className="inline-flex items-center gap-2 text-sm text-gray-text hover:text-green-primary transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-green-primary transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Accounts
@@ -102,8 +102,8 @@ export default function NewAccountPage() {
             <Wallet className="w-6 h-6 text-green-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-light tracking-tight">Create Trading Account</h1>
-            <p className="text-sm text-gray-text">Set up a new account for trade logging</p>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create Trading Account</h1>
+            <p className="text-sm text-slate-600">Set up a new account for trade logging</p>
           </div>
         </div>
       </div>
@@ -112,10 +112,10 @@ export default function NewAccountPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Account Details */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-gray-text uppercase tracking-wider mb-4">Account Details</h3>
+          <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-4">Account Details</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-light mb-2">
+              <label className="block text-sm font-medium text-slate-900 mb-2">
                 Account Name <span className="text-red-primary">*</span>
               </label>
               <input
@@ -130,7 +130,7 @@ export default function NewAccountPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-light mb-2">
+              <label className="block text-sm font-medium text-slate-900 mb-2">
                 Broker Name <span className="text-red-primary">*</span>
               </label>
               <input
@@ -148,7 +148,7 @@ export default function NewAccountPage() {
 
         {/* Account Type */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-gray-text uppercase tracking-wider mb-4">Account Type</h3>
+          <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-4">Account Type</h3>
           <div className="grid grid-cols-3 gap-3">
             {accountTypes.map(type => (
               <button
@@ -159,16 +159,16 @@ export default function NewAccountPage() {
                     ? type.color === 'green' ? 'border-green-primary bg-green-primary/10' :
                       type.color === 'blue' ? 'border-blue-primary bg-blue-primary/10' :
                         'border-yellow-primary bg-yellow-primary/10'
-                    : 'border-dark-border hover:border-dark-border-hover'
+                    : 'border-slate-300 hover:border-slate-300'
                   }`}
               >
                 <span className={`text-sm font-bold ${formData.accountType === type.value
                     ? type.color === 'green' ? 'text-green-primary' :
                       type.color === 'blue' ? 'text-blue-primary' :
                         'text-yellow-primary'
-                    : 'text-gray-light'
+                    : 'text-slate-900'
                   }`}>{type.label}</span>
-                <p className="text-[10px] text-gray-text mt-0.5">{type.desc}</p>
+                <p className="text-[10px] text-slate-600 mt-0.5">{type.desc}</p>
               </button>
             ))}
           </div>
@@ -176,10 +176,10 @@ export default function NewAccountPage() {
 
         {/* Market & Currency */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-gray-text uppercase tracking-wider mb-4">Market Settings</h3>
+          <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-4">Market Settings</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-light mb-2">
+              <label className="block text-sm font-medium text-slate-900 mb-2">
                 Market Segment <span className="text-red-primary">*</span>
               </label>
               <select
@@ -198,7 +198,7 @@ export default function NewAccountPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-light mb-2">
+              <label className="block text-sm font-medium text-slate-900 mb-2">
                 Currency
               </label>
               <select
@@ -214,7 +214,7 @@ export default function NewAccountPage() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-light mb-2">
+              <label className="block text-sm font-medium text-slate-900 mb-2">
                 Initial Balance <span className="text-red-primary">*</span>
               </label>
               <input
@@ -228,7 +228,7 @@ export default function NewAccountPage() {
                 min="0"
                 required
               />
-              <p className="text-xs text-gray-text mt-1.5">Starting balance cannot be changed later</p>
+              <p className="text-xs text-slate-600 mt-1.5">Starting balance cannot be changed later</p>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function NewAccountPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Server className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-bold text-gray-light">MT5 Integration (Optional)</h2>
+              <h2 className="text-lg font-bold text-slate-900">MT5 Integration (Optional)</h2>
             </div>
             <label className="flex items-center cursor-pointer">
               <div className="relative">
@@ -255,9 +255,9 @@ export default function NewAccountPage() {
           </div>
 
           {connectMt5 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-dark-border animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-300 animate-fade-in">
               <div>
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">MT5 Login ID</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">MT5 Login ID</label>
                 <input
                   type="text"
                   value={mt5Form.mt5Login}
@@ -268,7 +268,7 @@ export default function NewAccountPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">MT5 Password</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">MT5 Password</label>
                 <input
                   type="password"
                   value={mt5Form.mt5Password}
@@ -279,7 +279,7 @@ export default function NewAccountPage() {
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-gray-light mb-1.5">Server Name</label>
+                <label className="block text-sm font-semibold text-slate-900 mb-1.5">Server Name</label>
                 <input
                   type="text"
                   value={mt5Form.mt5Server}
@@ -288,7 +288,7 @@ export default function NewAccountPage() {
                   placeholder="e.g. MetaQuotes-Demo"
                   required={connectMt5}
                 />
-                <p className="text-xs text-gray-text mt-1.5">Trades will automatically sync every 5 minutes</p>
+                <p className="text-xs text-slate-600 mt-1.5">Trades will automatically sync every 5 minutes</p>
               </div>
             </div>
           )}
@@ -297,7 +297,7 @@ export default function NewAccountPage() {
         {/* Info */}
         <div className="flex items-start gap-3 p-4 bg-green-primary/5 border border-green-primary/20 rounded-xl">
           <Info className="w-4 h-4 text-green-primary flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-gray-text space-y-1">
+          <div className="text-xs text-slate-600 space-y-1">
             <p>• Account balance will be automatically updated based on your trades</p>
             <p>• You can create multiple accounts for different strategies</p>
             <p>• All fields can be updated later except initial balance</p>

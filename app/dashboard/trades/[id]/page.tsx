@@ -247,9 +247,9 @@ export default function TradeDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="w-9 h-9 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-green-primary/40 transition-colors flex-shrink-0"
+            className="w-9 h-9 rounded-xl bg-white border border-slate-300 flex items-center justify-center hover:border-green-primary/40 transition-colors flex-shrink-0"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-text" />
+            <ArrowLeft className="w-4 h-4 text-slate-600" />
           </button>
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
             isBuy ? 'bg-green-primary/10' : 'bg-red-primary/10'
@@ -260,12 +260,12 @@ export default function TradeDetailPage() {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-light tracking-tight">{trade.instrument}</h1>
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{trade.instrument}</h1>
               <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
                 isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
               }`}>{trade.direction}</span>
               <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
-                isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-gray-text'
+                isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-slate-600'
               }`}>{trade.status}</span>
               {trade.result && (
                 <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
@@ -275,7 +275,7 @@ export default function TradeDetailPage() {
                 }`}>{trade.result}</span>
               )}
             </div>
-            <p className="text-xs text-gray-text mt-0.5">{account?.accountName} • {formatDateTime(trade.entryDateTime)}</p>
+            <p className="text-xs text-slate-600 mt-0.5">{account?.accountName} • {formatDateTime(trade.entryDateTime)}</p>
           </div>
         </div>
 
@@ -294,7 +294,7 @@ export default function TradeDetailPage() {
           {!editing ? (
             <button
               onClick={() => setEditing(true)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-dark-card hover:bg-dark-border/40 text-gray-light rounded-xl text-xs font-bold transition-colors border border-dark-border"
+              className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-dark-border/40 text-slate-900 rounded-xl text-xs font-bold transition-colors border border-slate-300"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Edit</span>
@@ -303,7 +303,7 @@ export default function TradeDetailPage() {
             <>
               <button
                 onClick={() => { setEditing(false); syncForm(trade); syncTemplateFieldValues(trade, template); }}
-                className="flex items-center gap-1.5 px-3 py-2 bg-dark-card hover:bg-dark-border/40 text-gray-text rounded-xl text-xs font-bold transition-colors border border-dark-border"
+                className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-dark-border/40 text-slate-600 rounded-xl text-xs font-bold transition-colors border border-slate-300"
               >
                 <X className="w-3.5 h-3.5" />
                 Cancel
@@ -338,18 +338,18 @@ export default function TradeDetailPage() {
                 <div className="flex items-center gap-3">
                   {resultIcon}
                   <div>
-                    <p className="text-xs text-gray-text font-medium uppercase tracking-wider">Realised P&L</p>
+                    <p className="text-xs text-slate-600 font-medium uppercase tracking-wider">Realised P&L</p>
                     <p className={`text-3xl font-bold number-highlight mt-0.5 ${resultColor}`}>
                       {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-text mb-0.5">Service Charge</p>
-                  <p className="text-sm font-semibold text-gray-light">
+                  <p className="text-xs text-slate-600 mb-0.5">Service Charge</p>
+                  <p className="text-sm font-semibold text-slate-900">
                     -{formatCurrency(Number(trade.serviceCharge))}
                   </p>
-                  <p className="text-xs text-gray-text mt-1">Net</p>
+                  <p className="text-xs text-slate-600 mt-1">Net</p>
                   <p className={`text-sm font-bold number-highlight ${
                     netPl >= 0 ? 'text-green-primary' : 'text-red-primary'
                   }`}>
@@ -365,7 +365,7 @@ export default function TradeDetailPage() {
           <div className="card">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-4 h-4 text-green-primary" />
-              <h3 className="text-sm font-bold text-gray-light">Trade Details</h3>
+              <h3 className="text-sm font-bold text-slate-900">Trade Details</h3>
               {editing && <span className="text-[10px] text-blue-primary bg-blue-primary/10 px-2 py-0.5 rounded-full font-semibold ml-auto">Editing</span>}
             </div>
 
@@ -378,7 +378,7 @@ export default function TradeDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Instrument */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5">Instrument</label>
+                <label className="block text-xs font-medium text-slate-600 mb-1.5">Instrument</label>
                 {canEditCoreFields ? (
                   <input
                     className="input w-full text-sm"
@@ -387,13 +387,13 @@ export default function TradeDetailPage() {
                     placeholder="e.g. AAPL, EURUSD"
                   />
                 ) : (
-                  <p className="text-sm font-bold text-gray-light">{trade.instrument}</p>
+                  <p className="text-sm font-bold text-slate-900">{trade.instrument}</p>
                 )}
               </div>
 
               {/* Entry Date */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5">Entry Date & Time</label>
+                <label className="block text-xs font-medium text-slate-600 mb-1.5">Entry Date & Time</label>
                 {canEditCoreFields ? (
                   <input
                     type="datetime-local"
@@ -402,8 +402,8 @@ export default function TradeDetailPage() {
                     onChange={e => setForm(p => ({ ...p, entryDateTime: e.target.value }))}
                   />
                 ) : (
-                  <p className="text-sm text-gray-light flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-gray-text" />
+                  <p className="text-sm text-slate-900 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-slate-600" />
                     {formatDateTime(trade.entryDateTime)}
                   </p>
                 )}
@@ -411,7 +411,7 @@ export default function TradeDetailPage() {
 
               {/* Entry Price */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5">Entry Price</label>
+                <label className="block text-xs font-medium text-slate-600 mb-1.5">Entry Price</label>
                 {canEditCoreFields ? (
                   <input
                     type="number" step="any"
@@ -421,7 +421,7 @@ export default function TradeDetailPage() {
                     placeholder="0.00"
                   />
                 ) : (
-                  <p className="text-sm font-semibold text-gray-light number-highlight">
+                  <p className="text-sm font-semibold text-slate-900 number-highlight">
                     {trade.entryPrice != null ? formatCurrency(Number(trade.entryPrice)) : '—'}
                   </p>
                 )}
@@ -429,7 +429,7 @@ export default function TradeDetailPage() {
 
               {/* Position Size */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5">Position Size</label>
+                <label className="block text-xs font-medium text-slate-600 mb-1.5">Position Size</label>
                 {canEditCoreFields ? (
                   <input
                     type="number" step="any"
@@ -439,13 +439,13 @@ export default function TradeDetailPage() {
                     placeholder="Qty / Lots"
                   />
                 ) : (
-                  <p className="text-sm text-gray-light">{trade.positionSize ?? '—'}</p>
+                  <p className="text-sm text-slate-900">{trade.positionSize ?? '—'}</p>
                 )}
               </div>
 
               {/* Stop Loss */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1.5 flex items-center gap-1">
                   <Shield className="w-3 h-3 text-red-primary/70" /> Stop Loss Amount
                 </label>
                 {canEditCoreFields ? (
@@ -465,7 +465,7 @@ export default function TradeDetailPage() {
 
               {/* Take Profit */}
               <div>
-                <label className="block text-xs font-medium text-gray-text mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-medium text-slate-600 mb-1.5 flex items-center gap-1">
                   <Target className="w-3 h-3 text-green-primary/70" /> Take Profit Amount
                 </label>
                 {canEditCoreFields ? (
@@ -485,8 +485,8 @@ export default function TradeDetailPage() {
             </div>
 
             {/* Notes */}
-            <div className="mt-4 pt-4 border-t border-dark-border/40">
-              <label className="block text-xs font-medium text-gray-text mb-1.5 flex items-center gap-1">
+            <div className="mt-4 pt-4 border-t border-slate-300">
+              <label className="block text-xs font-medium text-slate-600 mb-1.5 flex items-center gap-1">
                 <FileText className="w-3 h-3" /> Notes
               </label>
               {editing ? (
@@ -498,8 +498,8 @@ export default function TradeDetailPage() {
                   placeholder="Strategy, rationale, market conditions..."
                 />
               ) : (
-                <p className="text-sm text-gray-light whitespace-pre-wrap min-h-[2.5rem]">
-                  {trade.notes || <span className="text-gray-text/40 italic">No notes</span>}
+                <p className="text-sm text-slate-900 whitespace-pre-wrap min-h-[2.5rem]">
+                  {trade.notes || <span className="text-slate-600/40 italic">No notes</span>}
                 </p>
               )}
             </div>
@@ -510,7 +510,7 @@ export default function TradeDetailPage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-4">
                 <Layers className="w-4 h-4 text-green-primary" />
-                <h3 className="text-sm font-bold text-gray-light">Log Template: {template.name}</h3>
+                <h3 className="text-sm font-bold text-slate-900">Log Template: {template.name}</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {template.fields
@@ -521,7 +521,7 @@ export default function TradeDetailPage() {
                     const formattedValue = formatTradeFieldValue(fv, field);
                     return (
                       <div key={field.id}>
-                        <label className="block text-xs font-medium text-gray-text mb-1.5">{field.fieldName}</label>
+                        <label className="block text-xs font-medium text-slate-600 mb-1.5">{field.fieldName}</label>
                         {editing && field.fieldType === 'TEXT' && (
                           <input
                             type="text"
@@ -557,16 +557,16 @@ export default function TradeDetailPage() {
                             {(field.scorecard?.options || []).map((opt) => (
                               <label
                                 key={opt.label}
-                                className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors"
+                                className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors"
                               >
                                 <input
                                   type="radio"
                                   name={`scorecard_${field.id}`}
                                   checked={(fieldValue?.textValue || '') === opt.label}
                                   onChange={() => setFieldValues((prev) => ({ ...prev, [field.id]: { textValue: opt.label } }))}
-                                  className="w-4 h-4 border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                                  className="w-4 h-4 border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                                 />
-                                <span className="text-xs font-medium text-gray-light">{opt.label}</span>
+                                <span className="text-xs font-medium text-slate-900">{opt.label}</span>
                               </label>
                             ))}
                           </div>
@@ -589,7 +589,7 @@ export default function TradeDetailPage() {
                               <div className="flex items-center justify-between mb-2">
                                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                                   totalScore === 100 ? 'bg-green-primary/10 text-green-primary' :
-                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-dark-bg text-gray-text'
+                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-slate-50 text-slate-600'
                                 }`}>{totalScore} / 100</span>
                               </div>
                               <div className="w-full h-1.5 bg-dark-border rounded-full mb-3 overflow-hidden">
@@ -608,16 +608,16 @@ export default function TradeDetailPage() {
                                     className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors ${
                                       selected.includes(opt.label)
                                         ? 'bg-purple-400/10 border-purple-400/30'
-                                        : 'bg-dark-bg/50 border-dark-border hover:border-purple-400/20'
+                                        : 'bg-slate-50 border-slate-300 hover:border-purple-400/20'
                                     }`}
                                   >
                                     <input
                                       type="checkbox"
                                       checked={selected.includes(opt.label)}
                                       onChange={() => toggleOpt(opt.label)}
-                                      className="w-4 h-4 rounded border-dark-border text-purple-400 focus:ring-purple-400 bg-dark-bg"
+                                      className="w-4 h-4 rounded border-slate-300 text-purple-400 focus:ring-purple-400 bg-slate-50"
                                     />
-                                    <span className="text-xs font-medium text-gray-light flex-1">{opt.label}</span>
+                                    <span className="text-xs font-medium text-slate-900 flex-1">{opt.label}</span>
                                     <span className="text-[10px] font-bold text-purple-400/70">+{opt.score}</span>
                                   </label>
                                 ))}
@@ -626,32 +626,32 @@ export default function TradeDetailPage() {
                           );
                         })()}
                         {editing && field.fieldType === 'CHECKBOX' && (
-                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
+                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors">
                             <input
                               type="checkbox"
                               checked={fieldValue?.booleanValue || false}
                               onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
-                              className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                              className="w-4 h-4 rounded border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                             />
-                            <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
+                            <span className="text-xs font-medium text-slate-900">{field.fieldName}</span>
                           </label>
                         )}
                         {editing && field.fieldType === 'IMAGE' && (
                           <div>
                             {fieldValue?.imageUrl ? (
-                              <div className="relative rounded-xl overflow-hidden border border-dark-border">
+                              <div className="relative rounded-xl overflow-hidden border border-slate-300">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={fieldValue.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-dark-bg" />
+                                <img src={fieldValue.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-slate-50" />
                                 <button
                                   type="button"
                                   onClick={() => setFieldValues((prev) => ({ ...prev, [field.id]: { imageUrl: '' } }))}
-                                  className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
+                                  className="absolute top-2 right-2 p-1 bg-slate-50/80 rounded-lg text-slate-600 hover:text-red-primary transition-colors"
                                 >
                                   ✕
                                 </button>
                               </div>
                             ) : (
-                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
+                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-slate-300 hover:border-green-primary/30 cursor-pointer transition-colors">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -665,8 +665,8 @@ export default function TradeDetailPage() {
                                   <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
                                 ) : (
                                   <>
-                                    <Image className="w-5 h-5 text-gray-text mb-1" />
-                                    <span className="text-[10px] text-gray-text">Click to upload</span>
+                                    <Image className="w-5 h-5 text-slate-600 mb-1" />
+                                    <span className="text-[10px] text-slate-600">Click to upload</span>
                                   </>
                                 )}
                               </label>
@@ -675,20 +675,20 @@ export default function TradeDetailPage() {
                         )}
                         {!editing && field.fieldType === 'CHECKBOX' ? (
                           <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold ${
-                            fv?.booleanValue ? 'bg-green-primary/10 text-green-primary' : 'bg-gray-text/10 text-gray-text'
+                            fv?.booleanValue ? 'bg-green-primary/10 text-green-primary' : 'bg-gray-text/10 text-slate-600'
                           }`}>
                             {fv?.booleanValue ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                             {fv?.booleanValue ? 'Yes' : 'No'}
                           </div>
                         ) : !editing && field.fieldType === 'IMAGE' && fv?.imageUrl ? (
                           <a href={fv.imageUrl} target="_blank" rel="noreferrer"
-                            className="block rounded-xl overflow-hidden border border-dark-border hover:border-green-primary/30 transition-colors">
+                            className="block rounded-xl overflow-hidden border border-slate-300 hover:border-green-primary/30 transition-colors">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={fv.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-dark-bg" />
+                            <img src={fv.imageUrl} alt={field.fieldName} className="w-full max-h-48 object-contain bg-slate-50" />
                           </a>
                         ) : !editing && field.fieldType === 'LONG_TEXT' ? (
-                          <p className="text-sm text-gray-light whitespace-pre-wrap bg-dark-bg/60 rounded-xl p-3 border border-dark-border/40">
-                            {formattedValue || <span className="text-gray-text/40 italic">Empty</span>}
+                          <p className="text-sm text-slate-900 whitespace-pre-wrap bg-slate-50 rounded-xl p-3 border border-slate-300">
+                            {formattedValue || <span className="text-slate-600/40 italic">Empty</span>}
                           </p>
                         ) : !editing && field.fieldType === 'SCORED_CHOICE' ? (() => {
                           const allOpts = field.scorecard?.options || [];
@@ -711,9 +711,9 @@ export default function TradeDetailPage() {
                                 totalScore === 100 ? 'bg-green-primary/10 text-green-primary' : 'bg-purple-400/10 text-purple-400'
                               }`}>Total: {totalScore} / 100</span>
                             </div>
-                          ) : <span className="text-gray-text/40 italic text-sm">—</span>;
+                          ) : <span className="text-slate-600/40 italic text-sm">—</span>;
                         })() : !editing ? (
-                          <p className="text-sm text-gray-light">{formattedValue || <span className="text-gray-text/40 italic">—</span>}</p>
+                          <p className="text-sm text-slate-900">{formattedValue || <span className="text-slate-600/40 italic">—</span>}</p>
                         ) : null}
                       </div>
                     );
@@ -731,20 +731,20 @@ export default function TradeDetailPage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-3">
                 <Wallet className="w-4 h-4 text-green-primary" />
-                <h3 className="text-sm font-bold text-gray-light">Account</h3>
+                <h3 className="text-sm font-bold text-slate-900">Account</h3>
               </div>
               <Link
                 href={`/dashboard/accounts/${account.id}`}
-                className="flex items-center gap-3 p-3 bg-dark-bg/60 rounded-xl border border-dark-border/40 hover:border-green-primary/20 transition-colors group"
+                className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-300 hover:border-green-primary/20 transition-colors group"
               >
                 <div className="w-9 h-9 bg-green-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                   <Wallet className="w-4 h-4 text-green-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-light text-sm truncate">{account.accountName}</p>
-                  <p className="text-[11px] text-gray-text">{account.brokerName} • {account.accountType}</p>
+                  <p className="font-semibold text-slate-900 text-sm truncate">{account.accountName}</p>
+                  <p className="text-[11px] text-slate-600">{account.brokerName} • {account.accountType}</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-text/40 group-hover:text-green-primary transition-colors flex-shrink-0" />
+                <ChevronRight className="w-4 h-4 text-slate-600/40 group-hover:text-green-primary transition-colors flex-shrink-0" />
               </Link>
             </div>
           )}
@@ -753,24 +753,24 @@ export default function TradeDetailPage() {
           <div className="card">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4 text-green-primary" />
-              <h3 className="text-sm font-bold text-gray-light">Summary</h3>
+              <h3 className="text-sm font-bold text-slate-900">Summary</h3>
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-text">Status</span>
+                <span className="text-xs text-slate-600">Status</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                  isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-gray-text'
+                  isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-slate-600'
                 }`}>{trade.status}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-text">Direction</span>
+                <span className="text-xs text-slate-600">Direction</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
                   isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
                 }`}>{trade.direction}</span>
               </div>
               {isClosed && trade.result && (
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-text">Result</span>
+                  <span className="text-xs text-slate-600">Result</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1 ${
                     trade.result === 'PROFIT' ? 'bg-green-primary/10 text-green-primary' :
                     trade.result === 'LOSS'   ? 'bg-red-primary/10 text-red-primary' :
@@ -780,21 +780,21 @@ export default function TradeDetailPage() {
               )}
               {isClosed && trade.realisedProfitLoss !== null && (
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-text">P&L</span>
+                  <span className="text-xs text-slate-600">P&L</span>
                   <span className={`text-sm font-bold number-highlight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                     {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                   </span>
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-text">Service Charge</span>
-                <span className="text-xs text-gray-light font-medium">
+                <span className="text-xs text-slate-600">Service Charge</span>
+                <span className="text-xs text-slate-900 font-medium">
                   {formatCurrency(Number(trade.serviceCharge))}
                 </span>
               </div>
-              <div className="border-t border-dark-border/40 pt-3 flex items-center justify-between">
-                <span className="text-xs text-gray-text">Logged</span>
-                <span className="text-xs text-gray-text/70">{formatDateTime(trade.createdAt)}</span>
+              <div className="border-t border-slate-300 pt-3 flex items-center justify-between">
+                <span className="text-xs text-slate-600">Logged</span>
+                <span className="text-xs text-slate-600/70">{formatDateTime(trade.createdAt)}</span>
               </div>
             </div>
           </div>
@@ -804,7 +804,7 @@ export default function TradeDetailPage() {
             <div className="card border-blue-primary/15">
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="w-4 h-4 text-blue-primary" />
-                <h3 className="text-sm font-bold text-gray-light">Open Position</h3>
+                <h3 className="text-sm font-bold text-slate-900">Open Position</h3>
               </div>
               <Link
                 href={`/dashboard/trades/${trade.id}/close`}
@@ -820,7 +820,7 @@ export default function TradeDetailPage() {
           <div className="card border-red-primary/10">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-red-primary/60" />
-              <h3 className="text-sm font-bold text-gray-text">Danger Zone</h3>
+              <h3 className="text-sm font-bold text-slate-600">Danger Zone</h3>
             </div>
             {!confirmDelete ? (
               <button
@@ -832,11 +832,11 @@ export default function TradeDetailPage() {
               </button>
             ) : (
               <div className="space-y-2">
-                <p className="text-xs text-gray-text text-center">Are you sure? This cannot be undone.</p>
+                <p className="text-xs text-slate-600 text-center">Are you sure? This cannot be undone.</p>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setConfirmDelete(false)}
-                    className="py-2 rounded-xl text-xs font-semibold text-gray-text bg-dark-bg hover:bg-dark-border/40 transition-colors border border-dark-border"
+                    className="py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-50 hover:bg-dark-border/40 transition-colors border border-slate-300"
                   >
                     Cancel
                   </button>

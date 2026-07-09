@@ -118,7 +118,7 @@ export default function DashboardPage() {
   const { token, user } = useAuthStore();
   const [accounts, setAccounts] = useState<TradeAccount[]>([]);
   const [allTrades, setAllTrades] = useState<TradeEntry[]>([]);
-  const [recentTrades, setRecentTrades] = useState<TradeEntry[]>([]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('ALL');
   const [tradeTab, setTradeTab] = useState<'open' | 'closed'>('open');
   const [equityRange, setEquityRange] = useState<ChartRange>('1M');
   const [pnlRange, setPnlRange] = useState<ChartRange>('1M');
@@ -145,7 +145,6 @@ export default function DashboardPage() {
           new Date(b.entryDateTime).getTime() - new Date(a.entryDateTime).getTime()
         );
         setAllTrades(sorted);
-        setRecentTrades(sorted.slice(0, 12));
       }
     } catch (error: any) {
       toast.error('Failed to load dashboard data');
@@ -154,16 +153,28 @@ export default function DashboardPage() {
     }
   };
 
-  const totalBalance = accounts.reduce((sum, acc) => sum + Number(acc.currentBalance), 0);
-  const totalInitialBalance = accounts.reduce((sum, acc) => sum + Number(acc.initialBalance), 0);
+  const filteredAccounts = useMemo(() => {
+    if (selectedAccountId === 'ALL') return accounts;
+    return accounts.filter(a => a.id === selectedAccountId);
+  }, [accounts, selectedAccountId]);
+
+  const filteredTrades = useMemo(() => {
+    if (selectedAccountId === 'ALL') return allTrades;
+    return allTrades.filter(t => t.tradeAccountId === selectedAccountId);
+  }, [allTrades, selectedAccountId]);
+
+  const recentTrades = filteredTrades.slice(0, 12);
+
+  const totalBalance = filteredAccounts.reduce((sum, acc) => sum + Number(acc.currentBalance), 0);
+  const totalInitialBalance = filteredAccounts.reduce((sum, acc) => sum + Number(acc.initialBalance), 0);
   const totalProfitLoss = totalBalance - totalInitialBalance;
   const profitLossPercentage = totalInitialBalance > 0
     ? (totalProfitLoss / totalInitialBalance) * 100 : 0;
   const openTrades = recentTrades.filter(t => t.status === 'OPEN').length;
 
   const closedTrades = useMemo(
-    () => allTrades.filter((trade) => trade.status === 'CLOSED'),
-    [allTrades],
+    () => filteredTrades.filter((trade) => trade.status === 'CLOSED'),
+    [filteredTrades],
   );
 
   const equityCurveData = useMemo(() => {
@@ -250,8 +261,8 @@ export default function DashboardPage() {
     const wins = closedTrades.filter((trade) => trade.result === 'PROFIT').length;
     const losses = closedTrades.filter((trade) => trade.result === 'LOSS').length;
     return [
-      { name: 'Wins', value: wins, color: '#00ff88' },
-      { name: 'Losses', value: losses, color: '#ff4d6d' },
+      { name: 'Wins', value: wins, color: '#047857' },
+      { name: 'Losses', value: losses, color: '#dc2626' },
     ];
   }, [closedTrades]);
 
@@ -281,18 +292,32 @@ export default function DashboardPage() {
       <div className="animate-fade-in">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-light mb-1 tracking-tight">
+            <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-1 tracking-tight">
               Welcome back, <span className="gradient-text">{user?.name || 'Trader'}</span> 👋
             </h1>
-            <p className="text-gray-text text-sm">Here&apos;s your trading overview for today</p>
+            <p className="text-slate-600 text-sm">Here&apos;s your trading overview for today</p>
           </div>
-          <Link
-            href="/dashboard/trades/new"
-            className="hidden md:flex btn-primary items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            New Trade
-          </Link>
+          <div className="hidden md:flex items-center gap-4">
+            <select
+              value={selectedAccountId}
+              onChange={(e) => setSelectedAccountId(e.target.value)}
+              className="px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg shadow-sm text-slate-700 outline-none focus:border-green-primary focus:ring-2 focus:ring-green-primary/20 transition-all cursor-pointer min-w-[160px]"
+            >
+              <option value="ALL">All Accounts</option>
+              {accounts.map(acc => (
+                <option key={acc.id} value={acc.id}>
+                  {acc.accountName} ({acc.accountType})
+                </option>
+              ))}
+            </select>
+            <Link
+              href="/dashboard/trades/new"
+              className="btn-primary items-center gap-2 flex"
+            >
+              <Plus className="w-4 h-4" />
+              New Trade
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -303,14 +328,14 @@ export default function DashboardPage() {
             <div className="w-11 h-11 bg-green-primary/10 rounded-xl flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-green-primary" />
             </div>
-            <span className="text-[10px] font-semibold text-gray-text uppercase tracking-wider bg-dark-bg px-2 py-1 rounded-md">
+            <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-wider bg-slate-50 px-2 py-1 rounded-md border border-slate-300">
               Total
             </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-light mb-1 number-highlight">
+          <h3 className="text-2xl font-bold text-slate-900 mb-1 number-highlight">
             {formatCurrency(totalBalance)}
           </h3>
-          <p className="text-xs text-gray-text">Current Balance</p>
+          <p className="text-xs text-slate-600">Current Balance</p>
         </div>
 
         <div className={`stat-card ${totalProfitLoss >= 0 ? 'stat-card-green' : 'stat-card-red'} animate-fade-in stagger-2`}>
@@ -334,7 +359,7 @@ export default function DashboardPage() {
             }`}>
             {totalProfitLoss >= 0 ? '+' : ''}{formatCurrency(totalProfitLoss)}
           </h3>
-          <p className="text-xs text-gray-text">
+          <p className="text-xs text-slate-600">
             {totalProfitLoss >= 0 ? 'Total Profit' : 'Total Loss'}
           </p>
         </div>
@@ -348,8 +373,8 @@ export default function DashboardPage() {
               <Plus className="w-4 h-4" />
             </Link>
           </div>
-          <h3 className="text-2xl font-bold text-gray-light mb-1">{accounts.length}</h3>
-          <p className="text-xs text-gray-text">Active Accounts</p>
+          <h3 className="text-2xl font-bold text-slate-900 mb-1">{accounts.length}</h3>
+          <p className="text-xs text-slate-600">Active Accounts</p>
         </div>
 
         <div className="stat-card stat-card-yellow animate-fade-in stagger-4">
@@ -363,53 +388,53 @@ export default function DashboardPage() {
               </span>
             )}
           </div>
-          <h3 className="text-2xl font-bold text-gray-light mb-1">{recentTrades.length}</h3>
-          <p className="text-xs text-gray-text">Recent Trades</p>
+          <h3 className="text-2xl font-bold text-slate-900 mb-1">{recentTrades.length}</h3>
+          <p className="text-xs text-slate-600">Recent Trades</p>
         </div>
       </div>
 
       <div className="card animate-fade-in stagger-5">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="w-5 h-5 text-green-primary" />
-          <h2 className="text-lg font-bold text-gray-light">Quick Actions</h2>
+          <h2 className="text-lg font-bold text-slate-900">Quick Actions</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Link
             href="/dashboard/trades/new"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-green-primary/20 hover:border-green-primary/40 hover:bg-green-primary/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-green-primary/20 hover:border-green-primary/40 hover:bg-green-primary/5 transition-all group"
           >
             <div className="w-10 h-10 bg-green-primary/10 rounded-xl flex items-center justify-center group-hover:bg-green-primary/15 transition-colors">
               <Plus className="w-5 h-5 text-green-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-light text-sm">New Trade</h3>
-              <p className="text-xs text-gray-text">Log a trade entry</p>
+              <h3 className="font-semibold text-slate-900 text-sm">New Trade</h3>
+              <p className="text-xs text-slate-600">Log a trade entry</p>
             </div>
           </Link>
 
           <Link
             href="/dashboard/accounts/new"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-blue-primary/30 hover:bg-blue-primary/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-300 hover:border-blue-primary/30 hover:bg-blue-primary/5 transition-all group"
           >
             <div className="w-10 h-10 bg-blue-primary/10 rounded-xl flex items-center justify-center group-hover:bg-blue-primary/15 transition-colors">
               <Wallet className="w-5 h-5 text-blue-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-light text-sm">New Account</h3>
-              <p className="text-xs text-gray-text">Create trading account</p>
+              <h3 className="font-semibold text-slate-900 text-sm">New Account</h3>
+              <p className="text-xs text-slate-600">Create trading account</p>
             </div>
           </Link>
 
           <Link
             href="/dashboard/analytics"
-            className="flex items-center gap-3 p-4 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-yellow-primary/30 hover:bg-yellow-primary/5 transition-all group"
+            className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-300 hover:border-yellow-primary/30 hover:bg-yellow-primary/5 transition-all group"
           >
             <div className="w-10 h-10 bg-yellow-primary/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-primary/15 transition-colors">
               <BarChart3 className="w-5 h-5 text-yellow-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-light text-sm">Analytics</h3>
-              <p className="text-xs text-gray-text">Performance metrics</p>
+              <h3 className="font-semibold text-slate-900 text-sm">Analytics</h3>
+              <p className="text-xs text-slate-600">Performance metrics</p>
             </div>
           </Link>
         </div>
@@ -419,8 +444,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card md:col-span-2 animate-fade-in stagger-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-light">Cumulative P&amp;L</h2>
-            <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1">
+            <h2 className="text-lg font-bold text-slate-900">Cumulative P&amp;L</h2>
+            <div className="flex items-center gap-1 bg-slate-50 border border-slate-300 rounded-xl p-1">
               {rangeOptions.map((option) => (
                 <button
                   key={option.value}
@@ -428,7 +453,7 @@ export default function DashboardPage() {
                   onClick={() => setEquityRange(option.value)}
                   className={`px-2 py-1 text-[11px] font-semibold rounded-md transition-colors ${equityRange === option.value
                       ? 'bg-green-primary/20 text-green-primary'
-                      : 'text-gray-text hover:text-gray-light'
+                      : 'text-slate-600 hover:text-slate-900'
                     }`}
                 >
                   {option.label}
@@ -443,24 +468,24 @@ export default function DashboardPage() {
                 data={equityCurveData}
                 margin={{ top: 10, right: 16, left: 0, bottom: 0 }}
               >
-                <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis
-                  tick={{ fill: '#9ca3af', fontSize: 11 }}
+                  tick={{ fill: '#94a3b8', fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   width={80}
                   domain={[(dataMin: number) => Math.min(0, Math.floor(dataMin)), (dataMax: number) => Math.max(0, Math.ceil(dataMax))]}
                 />
-                <ReferenceLine y={0} stroke="#374151" strokeDasharray="4 4" />
+                <ReferenceLine y={0} stroke="#e2e8f0" strokeDasharray="4 4" />
                 <Tooltip
-                  contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, color: '#1e293b', fontSize: 12 }}
                   formatter={(value: number) => formatCurrency(Number(value))}
                 />
                 <Line
                   type="monotone"
                   dataKey="pnl"
-                  stroke="#00ff88"
+                  stroke="#047857"
                   strokeWidth={2.5}
                   dot={false}
                   activeDot={{ r: 4 }}
@@ -472,12 +497,12 @@ export default function DashboardPage() {
 
         <div className="card animate-fade-in stagger-3">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-light">Win vs Loss</h2>
-            <span className="text-xs text-gray-text">Closed trades</span>
+            <h2 className="text-lg font-bold text-slate-900">Win vs Loss</h2>
+            <span className="text-xs text-slate-600">Closed trades</span>
           </div>
 
           {closedTrades.length === 0 ? (
-            <div className="h-72 flex items-center justify-center text-sm text-gray-text">
+            <div className="h-72 flex items-center justify-center text-sm text-slate-600">
               No closed trades yet.
             </div>
           ) : (
@@ -499,7 +524,7 @@ export default function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, color: '#1e293b', fontSize: 12 }}
                     formatter={(value: number) => [value, 'Trades']}
                   />
                 </PieChart>
@@ -511,8 +536,8 @@ export default function DashboardPage() {
 
       <div className="card animate-fade-in stagger-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-light">Daily P&L</h2>
-          <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1">
+          <h2 className="text-lg font-bold text-slate-900">Daily P&L</h2>
+          <div className="flex items-center gap-1 bg-slate-50 border border-slate-300 rounded-xl p-1">
             {rangeOptions.map((option) => (
               <button
                 key={option.value}
@@ -520,7 +545,7 @@ export default function DashboardPage() {
                 onClick={() => setPnlRange(option.value)}
                 className={`px-2 py-1 text-[11px] font-semibold rounded-md transition-colors ${pnlRange === option.value
                     ? 'bg-green-primary/20 text-green-primary'
-                    : 'text-gray-text hover:text-gray-light'
+                    : 'text-slate-600 hover:text-slate-900'
                   }`}
               >
                 {option.label}
@@ -532,16 +557,16 @@ export default function DashboardPage() {
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={dailyPnLData} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
+              <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} width={80} />
               <Tooltip
-                contentStyle={{ background: '#0f172a', border: '1px solid #1f2937', borderRadius: 10 }}
+                contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, color: '#1e293b', fontSize: 12 }}
                 formatter={(value: number) => formatCurrency(Number(value))}
               />
               <Bar dataKey="pnl" radius={[6, 6, 0, 0]}>
                 {dailyPnLData.map((entry, index) => (
-                  <Cell key={`${entry.date}-${index}`} fill={entry.pnl >= 0 ? '#00ff88' : '#ff4d6d'} />
+                  <Cell key={`${entry.date}-${index}`} fill={entry.pnl >= 0 ? '#047857' : '#dc2626'} />
                 ))}
               </Bar>
             </BarChart>
@@ -554,7 +579,7 @@ export default function DashboardPage() {
         {/* Trading Accounts */}
         <div className="card animate-fade-in stagger-3">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-bold text-gray-light">Trading Accounts</h2>
+            <h2 className="text-lg font-bold text-slate-900">Trading Accounts</h2>
             <Link href="/dashboard/accounts" className="flex items-center gap-1 text-xs text-green-primary hover:text-green-secondary transition-colors font-medium">
               View All <ChevronRight className="w-3 h-3" />
             </Link>
@@ -563,10 +588,10 @@ export default function DashboardPage() {
           {accounts.length === 0 ? (
             <div className="text-center py-12">
               <div className="empty-state-icon">
-                <Wallet className="w-8 h-8 text-gray-text" />
+                <Wallet className="w-8 h-8 text-slate-600" />
               </div>
-              <p className="text-gray-text mb-1 text-sm">No accounts yet</p>
-              <p className="text-xs text-gray-text/60 mb-4">Create your first trading account</p>
+              <p className="text-slate-600 mb-1 text-sm">No accounts yet</p>
+              <p className="text-xs text-slate-600/60 mb-4">Create your first trading account</p>
               <Link href="/dashboard/accounts/new" className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4">
                 <Plus className="w-4 h-4" />
                 Create Account
@@ -580,14 +605,14 @@ export default function DashboardPage() {
                   <Link
                     key={account.id}
                     href={`/dashboard/accounts/${account.id}`}
-                    className="flex items-center gap-4 p-3.5 bg-dark-bg/60 rounded-xl border border-dark-border/50 hover:border-green-primary/20 hover:bg-dark-bg transition-all group"
+                    className="flex items-center gap-4 p-3.5 bg-slate-50 rounded-xl border border-slate-300 hover:border-green-primary/20 hover:bg-slate-50 transition-all group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-green-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-primary/15 transition-colors">
                       <Wallet className="w-5 h-5 text-green-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-light text-sm truncate">{account.accountName}</h3>
-                      <p className="text-xs text-gray-text truncate">{account.brokerName} • {account.marketSegment}</p>
+                      <h3 className="font-semibold text-slate-900 text-sm truncate">{account.accountName}</h3>
+                      <p className="text-xs text-slate-600 truncate">{account.brokerName} • {account.marketSegment}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="font-bold text-green-primary text-sm number-highlight">
@@ -597,7 +622,7 @@ export default function DashboardPage() {
                         {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-text/40 group-hover:text-green-primary transition-colors flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-slate-600/40 group-hover:text-green-primary transition-colors flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -608,34 +633,34 @@ export default function DashboardPage() {
         {/* Recent Trades — tabbed */}
         <div className="card animate-fade-in stagger-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-light">Trade Log</h2>
+            <h2 className="text-lg font-bold text-slate-900">Trade Log</h2>
             <Link href="/dashboard/trades" className="flex items-center gap-1 text-xs text-green-primary hover:text-green-secondary transition-colors font-medium">
               View All <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
 
           {/* Open / Closed tabs */}
-          <div className="flex bg-dark-bg rounded-xl p-1 mb-4 gap-0.5">
+          <div className="flex bg-slate-50 border border-slate-300 rounded-xl p-1 mb-4 gap-0.5">
             <button
               onClick={() => setTradeTab('open')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'open' ? 'bg-blue-primary/15 text-blue-primary' : 'text-gray-text hover:text-gray-light'
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'open' ? 'bg-blue-primary/15 text-blue-primary' : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
               <Clock className="w-3 h-3" />
               Open
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'open' ? 'bg-blue-primary/20 text-blue-primary' : 'bg-dark-card text-gray-text'
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'open' ? 'bg-blue-primary/20 text-blue-primary' : 'bg-white text-slate-600'
                 }`}>
                 {recentTrades.filter(t => t.status === 'OPEN').length}
               </span>
             </button>
             <button
               onClick={() => setTradeTab('closed')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'closed' ? 'bg-green-primary/15 text-green-primary' : 'text-gray-text hover:text-gray-light'
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${tradeTab === 'closed' ? 'bg-green-primary/15 text-green-primary' : 'text-slate-600 hover:text-slate-900'
                 }`}
             >
               <CheckCircle2 className="w-3 h-3" />
               Closed
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'closed' ? 'bg-green-primary/20 text-green-primary' : 'bg-dark-card text-gray-text'
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${tradeTab === 'closed' ? 'bg-green-primary/20 text-green-primary' : 'bg-white text-slate-600'
                 }`}>
                 {recentTrades.filter(t => t.status === 'CLOSED').length}
               </span>
@@ -649,10 +674,10 @@ export default function DashboardPage() {
             if (recentTrades.length === 0) return (
               <div className="text-center py-10">
                 <div className="empty-state-icon">
-                  <TrendingUp className="w-8 h-8 text-gray-text" />
+                  <TrendingUp className="w-8 h-8 text-slate-600" />
                 </div>
-                <p className="text-gray-text mb-1 text-sm">No trades yet</p>
-                <p className="text-xs text-gray-text/60 mb-4">Start logging your trades</p>
+                <p className="text-slate-600 mb-1 text-sm">No trades yet</p>
+                <p className="text-xs text-slate-600/60 mb-4">Start logging your trades</p>
                 <Link href="/dashboard/trades/new" className="btn-primary inline-flex items-center gap-2 text-sm py-2 px-4">
                   <Plus className="w-4 h-4" /> Log Trade
                 </Link>
@@ -660,7 +685,7 @@ export default function DashboardPage() {
             );
             if (displayed.length === 0) return (
               <div className="text-center py-8">
-                <p className="text-sm text-gray-text">
+                <p className="text-sm text-slate-600">
                   {tradeTab === 'open' ? 'No open positions' : 'No closed trades yet'}
                 </p>
                 {tradeTab === 'open' && (
@@ -680,7 +705,7 @@ export default function DashboardPage() {
                       key={trade.id}
                       className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${trade.status === 'OPEN'
                           ? 'bg-blue-primary/5 border-blue-primary/15 hover:border-blue-primary/30'
-                          : 'bg-dark-bg/60 border-dark-border/50 hover:border-dark-border'
+                          : 'bg-slate-50 border-slate-300 hover:border-slate-300'
                         }`}
                     >
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isBuy ? 'bg-green-primary/10' : 'bg-red-primary/10'
@@ -691,11 +716,11 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-gray-light text-sm">{trade.instrument}</span>
+                          <span className="font-bold text-slate-900 text-sm">{trade.instrument}</span>
                           <span className={`text-[10px] px-1 py-0.5 rounded font-bold ${isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
                             }`}>{trade.direction}</span>
                         </div>
-                        <p className="text-xs text-gray-text/70">{formatDateTime(trade.entryDateTime)}</p>
+                        <p className="text-xs text-slate-600/70">{formatDateTime(trade.entryDateTime)}</p>
                       </div>
                       <div className="flex-shrink-0">
                         {trade.status === 'OPEN' ? (

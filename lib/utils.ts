@@ -75,7 +75,7 @@ export const formatDateTime = (date: string | Date): string => {
 
 export const getRandomColor = (): string => {
   const colors = [
-    '#00ff88', '#00cc6f', '#009954',
+    '#047857', '#059669', '#065f46',
     '#3b82f6', '#6366f1', '#8b5cf6',
     '#ffd93d', '#ffb93d', '#ff9f3d',
   ];

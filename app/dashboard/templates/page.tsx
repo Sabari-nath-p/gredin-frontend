@@ -101,8 +101,8 @@ export default function TemplatesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-light tracking-tight">Log Templates</h1>
-          <p className="text-sm text-gray-text mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Log Templates</h1>
+          <p className="text-sm text-slate-600 mt-0.5">
             Create custom field templates for your trade logs
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function TemplatesPage() {
       {/* Search */}
       {templates.length > 0 && (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-text" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
           <input
             type="text"
             placeholder="Search templates..."
@@ -133,7 +133,7 @@ export default function TemplatesPage() {
             <AlertTriangle className="w-5 h-5 text-red-primary flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="font-semibold text-red-primary mb-1">Delete Template?</h3>
-              <p className="text-sm text-gray-text mb-3">
+              <p className="text-sm text-slate-600 mb-3">
                 This will permanently delete this template and unlink it from all accounts. Field values in existing trades will be preserved.
               </p>
               <div className="flex gap-2">
@@ -145,7 +145,7 @@ export default function TemplatesPage() {
                 </button>
                 <button
                   onClick={() => setDeleteId(null)}
-                  className="px-4 py-2 bg-dark-bg text-gray-text rounded-lg text-sm font-semibold hover:text-gray-light transition-colors"
+                  className="px-4 py-2 bg-slate-50 text-slate-600 rounded-lg text-sm font-semibold hover:text-slate-900 transition-colors"
                 >
                   Cancel
                 </button>
@@ -159,10 +159,10 @@ export default function TemplatesPage() {
       {filtered.length === 0 && templates.length === 0 ? (
         <div className="card text-center py-16">
           <div className="empty-state-icon mx-auto">
-            <Layers className="w-10 h-10 text-gray-text" />
+            <Layers className="w-10 h-10 text-slate-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-light mb-2">No Templates Yet</h3>
-          <p className="text-sm text-gray-text mb-6 max-w-sm mx-auto">
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">No Templates Yet</h3>
+          <p className="text-sm text-slate-600 mb-6 max-w-sm mx-auto">
             Create custom field templates to add extra data fields to your trade logs — like screenshots, notes, checklists, and more.
           </p>
           <Link href="/dashboard/templates/new" className="btn-primary inline-flex items-center gap-2">
@@ -172,8 +172,8 @@ export default function TemplatesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="card text-center py-12">
-          <Search className="w-8 h-8 text-gray-text mx-auto mb-3" />
-          <p className="text-gray-text">No templates match &quot;{search}&quot;</p>
+          <Search className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+          <p className="text-slate-600">No templates match &quot;{search}&quot;</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -191,7 +191,7 @@ export default function TemplatesPage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleToggleActive(template)}
-                    className="text-gray-text hover:text-green-primary transition-colors"
+                    className="text-slate-600 hover:text-green-primary transition-colors"
                     title={template.isActive ? 'Deactivate' : 'Activate'}
                   >
                     {template.isActive ? (
@@ -203,7 +203,7 @@ export default function TemplatesPage() {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${
                     template.isActive
                       ? 'bg-green-primary/10 text-green-primary'
-                      : 'bg-gray-text/10 text-gray-text'
+                      : 'bg-gray-text/10 text-slate-600'
                   }`}>
                     {template.isActive ? 'Active' : 'Inactive'}
                   </span>
@@ -211,9 +211,9 @@ export default function TemplatesPage() {
               </div>
 
               {/* Info */}
-              <h3 className="font-bold text-gray-light mb-0.5 truncate">{template.name}</h3>
+              <h3 className="font-bold text-slate-900 mb-0.5 truncate">{template.name}</h3>
               {template.description && (
-                <p className="text-xs text-gray-text mb-3 line-clamp-2">{template.description}</p>
+                <p className="text-xs text-slate-600 mb-3 line-clamp-2">{template.description}</p>
               )}
 
               {/* Fields preview */}
@@ -221,20 +221,20 @@ export default function TemplatesPage() {
                 {(template.fields || []).slice(0, 5).map((field) => (
                   <span
                     key={field.id}
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg ${FIELD_TYPE_COLORS[field.fieldType] || 'bg-gray-text/10 text-gray-text'}`}
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-lg ${FIELD_TYPE_COLORS[field.fieldType] || 'bg-gray-text/10 text-slate-600'}`}
                   >
                     {field.fieldName}
                   </span>
                 ))}
                 {(template.fields || []).length > 5 && (
-                  <span className="text-[10px] text-gray-text px-2 py-0.5">
+                  <span className="text-[10px] text-slate-600 px-2 py-0.5">
                     +{(template.fields || []).length - 5} more
                   </span>
                 )}
               </div>
 
               {/* Meta */}
-              <div className="flex items-center gap-3 mb-3 text-[10px] text-gray-text">
+              <div className="flex items-center gap-3 mb-3 text-[10px] text-slate-600">
                 <span className="flex items-center gap-1">
                   <FileText className="w-3 h-3" />
                   {(template.fields || []).length} field{(template.fields || []).length !== 1 ? 's' : ''}
@@ -276,7 +276,7 @@ export default function TemplatesPage() {
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-dark-border text-gray-text hover:text-green-primary hover:border-green-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 text-slate-600 hover:text-green-primary hover:border-green-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Previous
           </button>
@@ -288,7 +288,7 @@ export default function TemplatesPage() {
                 className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
                   p === page
                     ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
-                    : 'text-gray-text hover:text-gray-light'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {p}
@@ -298,7 +298,7 @@ export default function TemplatesPage() {
           <button
             onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
             disabled={page >= meta.totalPages}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-dark-border text-gray-text hover:text-green-primary hover:border-green-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 text-slate-600 hover:text-green-primary hover:border-green-primary/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Next
           </button>

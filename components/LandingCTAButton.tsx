@@ -26,7 +26,7 @@ export default function LandingCTAButton({ size = 'default', variant = 'primary'
         className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group whitespace-nowrap shrink-0 ${sizeClasses} ${
           variant === 'primary'
             ? 'btn-primary'
-            : 'border-2 border-[#00ff88]/40 text-[#00ff88] hover:bg-[#00ff88]/10 hover:border-[#00ff88]'
+            : 'border-2 border-[#047857]/40 text-[#047857] hover:bg-[#047857]/10 hover:border-[#047857]'
         }`}
       >
         <LayoutDashboard className="w-5 h-5" />
@@ -49,7 +49,7 @@ export default function LandingCTAButton({ size = 'default', variant = 'primary'
       className={`inline-flex items-center gap-2.5 font-bold rounded-xl transition-all group whitespace-nowrap shrink-0 ${sizeClasses} ${
         variant === 'primary'
           ? 'btn-primary'
-          : 'border-2 border-[#00ff88]/40 text-[#00ff88] hover:bg-[#00ff88]/10 hover:border-[#00ff88]'
+          : 'border-2 border-[#047857]/40 text-[#047857] hover:bg-[#047857]/10 hover:border-[#047857]'
       }`}
     >
       {compactOnMobile ? (

@@ -128,7 +128,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
               border: '1px solid #1e2936',
             },
             success: {
-              iconTheme: { primary: '#00ff88', secondary: '#111822' },
+              iconTheme: { primary: '#047857', secondary: '#111822' },
             },
             error: {
               iconTheme: { primary: '#ff4757', secondary: '#111822' },

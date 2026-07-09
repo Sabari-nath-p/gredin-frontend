@@ -17,7 +17,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-green rounded-2xl mb-4 animate-glow">
             <TrendingUp className="w-8 h-8 text-dark-bg" />

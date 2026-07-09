@@ -52,15 +52,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex bg-[#0a0e14] relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute w-[600px] h-[600px] bg-[#00ff88] opacity-[0.03] rounded-full blur-[120px] -top-64 -left-64" />
+        <div className="absolute w-[600px] h-[600px] bg-[#047857] opacity-[0.03] rounded-full blur-[120px] -top-64 -left-64" />
         <div className="absolute w-[400px] h-[400px] bg-[#3b82f6] opacity-[0.03] rounded-full blur-[100px] bottom-32 right-32" />
-        <div className="absolute w-[300px] h-[300px] bg-[#00ff88] opacity-[0.02] rounded-full blur-[80px] top-1/2 left-1/3" />
+        <div className="absolute w-[300px] h-[300px] bg-[#047857] opacity-[0.02] rounded-full blur-[80px] top-1/2 left-1/3" />
       </div>
 
       {/* Left Panel — Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-center px-16 xl:px-24">
         <div className="animate-fade-in">
-          <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-[#00ff88]/10 border border-[#00ff88]/20 rounded-full text-[#00ff88] text-sm font-medium mb-8 hover:bg-[#00ff88]/15 transition-colors">
+          <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-[#047857]/10 border border-[#047857]/20 rounded-full text-[#047857] text-sm font-medium mb-8 hover:bg-[#047857]/15 transition-colors">
             <Sparkles className="w-4 h-4" />
             Gredin.in
           </Link>
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 key={f.title}
                 className={`flex items-start gap-4 p-4 rounded-xl bg-[#111822]/50 border border-[#1e2936]/50 animate-fade-in stagger-${i + 2}`}
               >
-                <div className="w-10 h-10 rounded-lg bg-[#00ff88]/10 flex items-center justify-center flex-shrink-0 text-lg">
+                <div className="w-10 h-10 rounded-lg bg-[#047857]/10 flex items-center justify-center flex-shrink-0 text-lg">
                   {f.emoji}
                 </div>
                 <div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
           {/* Mobile Logo */}
           <div className="text-center mb-10 lg:hidden flex flex-col items-center">
             <Link href="/" className="inline-block mb-4">
-              <Image src="/logo.png" alt="Gredin Logo" width={200} height={56} className="w-auto h-14" />
+              <Image src="/logo.png" alt="Gredin Logo" width={220} height={60} priority />
             </Link>
             <p className="text-sm text-[#8b92a8]">Professional trade logging</p>
           </div>
@@ -116,7 +116,7 @@ export default function LoginPage() {
               <form onSubmit={handleSendOtp} className="space-y-6">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="hidden lg:flex w-10 h-10 bg-gradient-to-br from-[#00ff88] to-[#00cc6f] rounded-xl items-center justify-center">
+                    <div className="hidden lg:flex w-10 h-10 bg-gradient-to-br from-[#047857] to-[#059669] rounded-xl items-center justify-center">
                       <TrendingUp className="w-5 h-5 text-[#0a0e14]" />
                     </div>
                     <div>
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 <div>
                   <h2 className="text-2xl font-bold text-[#c9d1d9] mb-1">Enter OTP</h2>
                   <p className="text-sm text-[#8b92a8]">
-                    Code sent to <span className="text-[#00ff88] font-medium">{email}</span>
+                    Code sent to <span className="text-[#047857] font-medium">{email}</span>
                   </p>
                 </div>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-6 text-center">
-            <Link href="/" className="text-xs text-[#8b92a8]/60 hover:text-[#00ff88] transition-colors">
+            <Link href="/" className="text-xs text-[#8b92a8]/60 hover:text-[#047857] transition-colors">
               ← Back to homepage
             </Link>
           </div>

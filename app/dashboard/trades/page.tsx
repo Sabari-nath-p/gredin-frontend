@@ -94,8 +94,8 @@ export default function TradesPage() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-light tracking-tight">Trade Log</h1>
-          <p className="text-sm text-gray-text mt-0.5">{allTrades.length} total entries</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Trade Log</h1>
+          <p className="text-sm text-slate-600 mt-0.5">{allTrades.length} total entries</p>
         </div>
         <Link href="/dashboard/trades/new" className="btn-primary flex items-center gap-2">
           <Plus className="w-4 h-4" />
@@ -109,21 +109,21 @@ export default function TradesPage() {
         <div className="stat-card stat-card-green">
           <div className="flex items-center gap-2 mb-1.5">
             <BarChart3 className="w-4 h-4 text-green-primary" />
-            <span className="text-[11px] text-gray-text font-medium uppercase tracking-wider">Total</span>
+            <span className="text-[11px] text-slate-600 font-medium uppercase tracking-wider">Total</span>
           </div>
-          <p className="text-2xl font-bold text-gray-light">{filteredTrades.length}</p>
+          <p className="text-2xl font-bold text-slate-900">{filteredTrades.length}</p>
         </div>
         <div className="stat-card stat-card-blue">
           <div className="flex items-center gap-2 mb-1.5">
             <Clock className="w-4 h-4 text-blue-primary" />
-            <span className="text-[11px] text-gray-text font-medium uppercase tracking-wider">Open</span>
+            <span className="text-[11px] text-slate-600 font-medium uppercase tracking-wider">Open</span>
           </div>
           <p className="text-2xl font-bold text-blue-primary">{openCount}</p>
         </div>
         <div className="stat-card stat-card-green">
           <div className="flex items-center gap-2 mb-1.5">
             <TrendingUp className="w-4 h-4 text-green-primary" />
-            <span className="text-[11px] text-gray-text font-medium uppercase tracking-wider">Winning</span>
+            <span className="text-[11px] text-slate-600 font-medium uppercase tracking-wider">Winning</span>
           </div>
           <p className="text-2xl font-bold text-green-primary">{winCount}</p>
         </div>
@@ -132,7 +132,7 @@ export default function TradesPage() {
             {totalPL >= 0
               ? <ArrowUpRight className="w-4 h-4 text-green-primary" />
               : <ArrowDownRight className="w-4 h-4 text-red-primary" />}
-            <span className="text-[11px] text-gray-text font-medium uppercase tracking-wider">Net P/L</span>
+            <span className="text-[11px] text-slate-600 font-medium uppercase tracking-wider">Net P/L</span>
           </div>
           <p className={`text-xl font-bold number-highlight ${totalPL >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
             {totalPL >= 0 ? '+' : ''}{formatCurrency(totalPL)}
@@ -142,7 +142,7 @@ export default function TradesPage() {
 
       {/* ── Tabs + Account filter ── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="flex bg-dark-card border border-dark-border/60 rounded-xl p-1">
+        <div className="flex bg-white border border-slate-300 rounded-xl p-1">
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -150,19 +150,19 @@ export default function TradesPage() {
               className={`flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
                   ? 'bg-green-primary/15 text-green-primary'
-                  : 'text-gray-text hover:text-gray-light'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {tab.label}
               <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold ${
-                activeTab === tab.key ? 'bg-green-primary/20 text-green-primary' : 'bg-dark-bg text-gray-text'
+                activeTab === tab.key ? 'bg-green-primary/20 text-green-primary' : 'bg-slate-50 text-slate-600'
               }`}>{tab.count}</span>
             </button>
           ))}
         </div>
         {accounts.length > 1 && (
           <div className="flex items-center gap-2 flex-1 sm:max-w-xs">
-            <Filter className="w-4 h-4 text-gray-text flex-shrink-0" />
+            <Filter className="w-4 h-4 text-slate-600 flex-shrink-0" />
             <select
               value={selectedAccount}
               onChange={(e) => setSelectedAccount(e.target.value)}
@@ -181,10 +181,10 @@ export default function TradesPage() {
       {filteredTrades.length === 0 ? (
         <div className="card text-center py-16">
           <div className="empty-state-icon mx-auto">
-            <TrendingUp className="w-10 h-10 text-gray-text" />
+            <TrendingUp className="w-10 h-10 text-slate-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-light mb-2">No Trades Found</h3>
-          <p className="text-sm text-gray-text mb-6 max-w-sm mx-auto">
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">No Trades Found</h3>
+          <p className="text-sm text-slate-600 mb-6 max-w-sm mx-auto">
             {allTrades.length === 0
               ? 'Start logging your trades to see them here'
               : 'No trades match your current filters'}
@@ -209,8 +209,8 @@ export default function TradesPage() {
                 <div
                   key={trade.id}
                   onClick={() => router.push(`/dashboard/trades/${trade.id}`)}
-                  className={`bg-dark-card rounded-2xl border p-4 transition-colors cursor-pointer hover:border-green-primary/20 active:scale-[0.99] ${
-                    isOpen ? 'border-blue-primary/20' : 'border-dark-border/50'
+                  className={`bg-white rounded-2xl border p-4 transition-colors cursor-pointer hover:border-green-primary/20 active:scale-[0.99] ${
+                    isOpen ? 'border-blue-primary/20' : 'border-slate-300'
                   }`}
                 >
                   {/* Top row: icon + instrument + badges + close/p&l */}
@@ -224,13 +224,13 @@ export default function TradesPage() {
                           : <ArrowDownRight className="w-5 h-5 text-red-primary" />}
                       </div>
                       <div>
-                        <p className="font-bold text-gray-light text-base leading-tight">{trade.instrument}</p>
+                        <p className="font-bold text-slate-900 text-base leading-tight">{trade.instrument}</p>
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                           <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                             isBuy ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
                           }`}>{trade.direction}</span>
                           <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                            isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-gray-text'
+                            isOpen ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-slate-600'
                           }`}>{trade.status}</span>
                           {trade.result && (
                             <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
@@ -255,42 +255,42 @@ export default function TradesPage() {
                         <p className={`text-lg font-bold number-highlight leading-tight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                           {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                         </p>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-gray-text/40 ml-auto mt-0.5" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-slate-600/40 ml-auto mt-0.5" />
                       </div>
                     ) : null}
                   </div>
 
                   {/* Detail grid */}
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs border-t border-dark-border/30 pt-3">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs border-t border-slate-300 pt-3">
                     <div className="flex justify-between">
-                      <span className="text-gray-text">Account</span>
-                      <span className="text-gray-light font-medium truncate ml-2 max-w-[110px]">{account?.accountName || '—'}</span>
+                      <span className="text-slate-600">Account</span>
+                      <span className="text-slate-900 font-medium truncate ml-2 max-w-[110px]">{account?.accountName || '—'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-text">Size</span>
-                      <span className="text-gray-light font-medium">{trade.positionSize || '—'}</span>
+                      <span className="text-slate-600">Size</span>
+                      <span className="text-slate-900 font-medium">{trade.positionSize || '—'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-text">Entry</span>
-                      <span className="text-gray-light font-medium number-highlight">
+                      <span className="text-slate-600">Entry</span>
+                      <span className="text-slate-900 font-medium number-highlight">
                         {trade.entryPrice ? formatCurrency(Number(trade.entryPrice)) : '—'}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-text">Stop Loss</span>
+                      <span className="text-slate-600">Stop Loss</span>
                       <span className="text-red-primary/80 font-medium number-highlight">
                         {trade.stopLossAmount ? formatCurrency(Number(trade.stopLossAmount)) : '—'}
                       </span>
                     </div>
-                    <div className="col-span-2 pt-1.5 border-t border-dark-border/20 mt-0.5">
-                      <span className="text-gray-text/60">{formatDateTime(trade.entryDateTime)}</span>
+                    <div className="col-span-2 pt-1.5 border-t border-slate-300 mt-0.5">
+                      <span className="text-slate-600/60">{formatDateTime(trade.entryDateTime)}</span>
                     </div>
                     {templatePreviewItems.length > 0 && (
-                      <div className="col-span-2 pt-2 border-t border-dark-border/20 mt-1 space-y-1">
+                      <div className="col-span-2 pt-2 border-t border-slate-300 mt-1 space-y-1">
                         {templatePreviewItems.map((item) => (
                           <div key={`${trade.id}-${item.label}`} className="flex justify-between gap-3">
-                            <span className="text-gray-text truncate">{item.label}</span>
-                            <span className="text-gray-light font-medium truncate max-w-[150px] text-right">{item.value}</span>
+                            <span className="text-slate-600 truncate">{item.label}</span>
+                            <span className="text-slate-900 font-medium truncate max-w-[150px] text-right">{item.value}</span>
                           </div>
                         ))}
                       </div>
@@ -305,16 +305,16 @@ export default function TradesPage() {
           <div className="hidden md:block card overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
-                <tr className="border-b border-dark-border/50">
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider pl-5 pr-3 py-3">Date</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Account</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Instrument</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Dir</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Entry</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Size</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Status</th>
-                  <th className="text-left text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">Result</th>
-                  <th className="text-right text-[11px] font-semibold text-gray-text uppercase tracking-wider px-3 py-3">P/L</th>
+                <tr className="border-b border-slate-300">
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider pl-5 pr-3 py-3">Date</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Account</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Instrument</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Dir</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Entry</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Size</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Status</th>
+                  <th className="text-left text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">Result</th>
+                  <th className="text-right text-[11px] font-semibold text-slate-600 uppercase tracking-wider px-3 py-3">P/L</th>
                   <th className="pr-5 pl-3 py-3"></th>
                 </tr>
               </thead>
@@ -324,16 +324,16 @@ export default function TradesPage() {
                   const pl = getTradeNetProfitLoss(trade.result, trade.realisedProfitLoss, trade.serviceCharge);
                   const templatePreviewItems = getTradeTemplatePreviewItems(trade);
                   return (
-                    <tr key={trade.id} onClick={() => router.push(`/dashboard/trades/${trade.id}`)} className="border-b border-dark-border/30 hover:bg-dark-bg/40 transition-colors cursor-pointer">
-                      <td className="pl-5 pr-3 py-3 text-xs text-gray-text whitespace-nowrap">{formatDateTime(trade.entryDateTime)}</td>
-                      <td className="px-3 py-3 text-xs text-gray-text">{account?.accountName || '—'}</td>
+                    <tr key={trade.id} onClick={() => router.push(`/dashboard/trades/${trade.id}`)} className="border-b border-slate-300 hover:bg-slate-50 transition-colors cursor-pointer">
+                      <td className="pl-5 pr-3 py-3 text-xs text-slate-600 whitespace-nowrap">{formatDateTime(trade.entryDateTime)}</td>
+                      <td className="px-3 py-3 text-xs text-slate-600">{account?.accountName || '—'}</td>
                       <td className="px-3 py-3">
-                        <p className="text-sm font-bold text-gray-light">{trade.instrument}</p>
+                        <p className="text-sm font-bold text-slate-900">{trade.instrument}</p>
                         {templatePreviewItems.length > 0 && (
                           <div className="mt-1 space-y-0.5">
                             {templatePreviewItems.map((item) => (
-                              <p key={`${trade.id}-${item.label}`} className="text-[11px] text-gray-text truncate">
-                                <span className="text-gray-text/70">{item.label}:</span> {item.value}
+                              <p key={`${trade.id}-${item.label}`} className="text-[11px] text-slate-600 truncate">
+                                <span className="text-slate-600/70">{item.label}:</span> {item.value}
                               </p>
                             ))}
                           </div>
@@ -344,13 +344,13 @@ export default function TradesPage() {
                           trade.direction === 'BUY' ? 'bg-green-primary/10 text-green-primary' : 'bg-red-primary/10 text-red-primary'
                         }`}>{trade.direction}</span>
                       </td>
-                      <td className="px-3 py-3 text-sm text-gray-light number-highlight">
+                      <td className="px-3 py-3 text-sm text-slate-900 number-highlight">
                         {trade.entryPrice ? formatCurrency(Number(trade.entryPrice)) : '—'}
                       </td>
-                      <td className="px-3 py-3 text-sm text-gray-text">{trade.positionSize || '—'}</td>
+                      <td className="px-3 py-3 text-sm text-slate-600">{trade.positionSize || '—'}</td>
                       <td className="px-3 py-3">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                          trade.status === 'OPEN' ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-gray-text'
+                          trade.status === 'OPEN' ? 'bg-blue-primary/10 text-blue-primary' : 'bg-gray-text/10 text-slate-600'
                         }`}>{trade.status}</span>
                       </td>
                       <td className="px-3 py-3">
@@ -360,7 +360,7 @@ export default function TradesPage() {
                               trade.result === 'LOSS'   ? 'bg-red-primary/10 text-red-primary' :
                                                           'bg-yellow-primary/10 text-yellow-primary'
                             }`}>{trade.result}</span>
-                          : <span className="text-gray-text/30">—</span>
+                          : <span className="text-slate-600/30">—</span>
                         }
                       </td>
                       <td className="px-3 py-3 text-right">
@@ -368,7 +368,7 @@ export default function TradesPage() {
                           ? <span className={`text-sm font-bold number-highlight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                               {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                             </span>
-                          : <span className="text-gray-text/30">—</span>
+                          : <span className="text-slate-600/30">—</span>
                         }
                       </td>
                       <td className="pr-5 pl-3 py-3 text-right">

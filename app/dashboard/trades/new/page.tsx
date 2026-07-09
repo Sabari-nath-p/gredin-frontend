@@ -179,27 +179,27 @@ export default function NewTradePage() {
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/trades"
-            className="w-9 h-9 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-green-primary/50 transition-colors"
+            className="w-9 h-9 rounded-xl bg-white border border-slate-300 flex items-center justify-center hover:border-green-primary/50 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-text" />
+            <ArrowLeft className="w-4 h-4 text-slate-600" />
           </Link>
           <div className="w-10 h-10 bg-green-primary/10 rounded-xl flex items-center justify-center">
             <TrendingUp className="w-5 h-5 text-green-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-light tracking-tight">Log New Trade</h1>
-            <p className="text-xs text-gray-text">Fill in your trade details below</p>
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Log New Trade</h1>
+            <p className="text-xs text-slate-600">Fill in your trade details below</p>
           </div>
         </div>
 
         {/* Trade Mode Toggle — inline in header */}
-        <div className="flex items-center bg-dark-card border border-dark-border rounded-xl p-1 gap-1 w-full xl:w-auto overflow-x-auto">
+        <div className="flex items-center bg-white border border-slate-300 rounded-xl p-1 gap-1 w-full xl:w-auto overflow-x-auto">
           <button
             type="button"
             onClick={() => handleModeChange('OPEN')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${tradeMode === 'OPEN'
                 ? 'bg-blue-primary/15 text-blue-primary border border-blue-primary/30'
-                : 'text-gray-text hover:text-gray-light'
+                : 'text-slate-600 hover:text-slate-900'
               }`}
           >
             <Unlock className="w-3.5 h-3.5" />
@@ -210,7 +210,7 @@ export default function NewTradePage() {
             onClick={() => handleModeChange('CLOSED')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${tradeMode === 'CLOSED'
                 ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
-                : 'text-gray-text hover:text-gray-light'
+                : 'text-slate-600 hover:text-slate-900'
               }`}
           >
             <Lock className="w-3.5 h-3.5" />
@@ -230,12 +230,12 @@ export default function NewTradePage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-3">
                 <Target className="w-4 h-4 text-green-primary" />
-                <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Trade Setup</h3>
+                <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Trade Setup</h3>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-light mb-1">
+                  <label className="block text-xs font-medium text-slate-900 mb-1">
                     Account <span className="text-red-primary">*</span>
                   </label>
                   <select
@@ -253,7 +253,7 @@ export default function NewTradePage() {
                     ))}
                   </select>
                   {selectedAccount && (
-                    <p className="text-[10px] text-gray-text mt-1">
+                    <p className="text-[10px] text-slate-600 mt-1">
                       {selectedAccount.brokerName} • Bal: {Number(selectedAccount.currentBalance).toLocaleString()} {selectedAccount.currencyCode}
                     </p>
                   )}
@@ -261,7 +261,7 @@ export default function NewTradePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">
+                    <label className="block text-xs font-medium text-slate-900 mb-1">
                       Instrument <span className="text-red-primary">*</span>
                     </label>
                     <input
@@ -276,7 +276,7 @@ export default function NewTradePage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">
+                    <label className="block text-xs font-medium text-slate-900 mb-1">
                       Entry Date & Time <span className="text-red-primary">*</span>
                     </label>
                     <input
@@ -294,7 +294,7 @@ export default function NewTradePage() {
 
             {/* Direction */}
             <div className="card">
-              <label className="block text-xs font-medium text-gray-light mb-2">
+              <label className="block text-xs font-medium text-slate-900 mb-2">
                 Direction <span className="text-red-primary">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -303,11 +303,11 @@ export default function NewTradePage() {
                   onClick={() => setFormData(prev => ({ ...prev, direction: 'BUY' }))}
                   className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${formData.direction === 'BUY'
                       ? 'bg-green-primary/10 border-green-primary'
-                      : 'border-dark-border hover:border-green-primary/50'
+                      : 'border-slate-300 hover:border-green-primary/50'
                     }`}
                 >
-                  <ArrowUpCircle className={`w-4 h-4 ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-gray-text'}`} />
-                  <span className={`font-semibold text-xs ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-gray-light'}`}>
+                  <ArrowUpCircle className={`w-4 h-4 ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-slate-600'}`} />
+                  <span className={`font-semibold text-xs ${formData.direction === 'BUY' ? 'text-green-primary' : 'text-slate-900'}`}>
                     BUY / LONG
                   </span>
                 </button>
@@ -316,11 +316,11 @@ export default function NewTradePage() {
                   onClick={() => setFormData(prev => ({ ...prev, direction: 'SELL' }))}
                   className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 transition-all ${formData.direction === 'SELL'
                       ? 'bg-red-primary/10 border-red-primary'
-                      : 'border-dark-border hover:border-red-primary/50'
+                      : 'border-slate-300 hover:border-red-primary/50'
                     }`}
                 >
-                  <ArrowDownCircle className={`w-4 h-4 ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-gray-text'}`} />
-                  <span className={`font-semibold text-xs ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-gray-light'}`}>
+                  <ArrowDownCircle className={`w-4 h-4 ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-slate-600'}`} />
+                  <span className={`font-semibold text-xs ${formData.direction === 'SELL' ? 'text-red-primary' : 'text-slate-900'}`}>
                     SELL / SHORT
                   </span>
                 </button>
@@ -331,7 +331,7 @@ export default function NewTradePage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-4 h-4 text-green-primary" />
-                <label className="text-xs font-semibold text-gray-text uppercase tracking-wider">Notes</label>
+                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Notes</label>
               </div>
               <textarea
                 name="notes"
@@ -348,10 +348,10 @@ export default function NewTradePage() {
               <div className="card border-green-primary/10">
                 <div className="flex items-center gap-2 mb-3">
                   <Layers className="w-4 h-4 text-green-primary" />
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     {template.name}
                   </h3>
-                  <span className="text-[10px] text-gray-text/60 ml-auto">All optional</span>
+                  <span className="text-[10px] text-slate-600/60 ml-auto">All optional</span>
                 </div>
                 <div className="space-y-3">
                   {template.fields
@@ -360,7 +360,7 @@ export default function NewTradePage() {
                       <div key={field.id}>
                         {field.fieldType === 'TEXT' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <input
                               type="text"
                               value={fieldValues[field.id]?.textValue || ''}
@@ -372,7 +372,7 @@ export default function NewTradePage() {
                         )}
                         {field.fieldType === 'LONG_TEXT' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <textarea
                               value={fieldValues[field.id]?.textValue || ''}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
@@ -384,7 +384,7 @@ export default function NewTradePage() {
                         )}
                         {field.fieldType === 'MULTIPLE_CHOICE' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             <select
                               value={fieldValues[field.id]?.textValue || ''}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: e.target.value } }))}
@@ -399,21 +399,21 @@ export default function NewTradePage() {
                         )}
                         {field.fieldType === 'SCORECARD' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-2">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-2">{field.fieldName}</label>
                             <div className="space-y-2">
                               {(field.scorecard?.options || []).map((opt) => (
                                 <label
                                   key={opt.label}
-                                  className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors"
+                                  className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors"
                                 >
                                   <input
                                     type="radio"
                                     name={`scorecard_${field.id}`}
                                     checked={(fieldValues[field.id]?.textValue || '') === opt.label}
                                     onChange={() => setFieldValues(prev => ({ ...prev, [field.id]: { textValue: opt.label } }))}
-                                    className="w-4 h-4 border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                                    className="w-4 h-4 border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                                   />
-                                  <span className="text-xs font-medium text-gray-light">{opt.label}</span>
+                                  <span className="text-xs font-medium text-slate-900">{opt.label}</span>
                                 </label>
                               ))}
                             </div>
@@ -435,10 +435,10 @@ export default function NewTradePage() {
                           return (
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <label className="text-xs font-medium text-gray-light">{field.fieldName}</label>
+                                <label className="text-xs font-medium text-slate-900">{field.fieldName}</label>
                                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                                   totalScore === 100 ? 'bg-green-primary/10 text-green-primary' :
-                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-dark-bg text-gray-text'
+                                  totalScore > 0 ? 'bg-purple-400/10 text-purple-400' : 'bg-slate-50 text-slate-600'
                                 }`}>{totalScore} / 100</span>
                               </div>
                               <div className="w-full h-1.5 bg-dark-border rounded-full mb-3 overflow-hidden">
@@ -457,16 +457,16 @@ export default function NewTradePage() {
                                     className={`flex items-center gap-3 p-2.5 rounded-xl border cursor-pointer transition-colors ${
                                       selected.includes(opt.label)
                                         ? 'bg-purple-400/10 border-purple-400/30'
-                                        : 'bg-dark-bg/50 border-dark-border hover:border-purple-400/20'
+                                        : 'bg-slate-50 border-slate-300 hover:border-purple-400/20'
                                     }`}
                                   >
                                     <input
                                       type="checkbox"
                                       checked={selected.includes(opt.label)}
                                       onChange={() => toggleOpt(opt.label)}
-                                      className="w-4 h-4 rounded border-dark-border text-purple-400 focus:ring-purple-400 bg-dark-bg"
+                                      className="w-4 h-4 rounded border-slate-300 text-purple-400 focus:ring-purple-400 bg-slate-50"
                                     />
-                                    <span className="text-xs font-medium text-gray-light flex-1">{opt.label}</span>
+                                    <span className="text-xs font-medium text-slate-900 flex-1">{opt.label}</span>
                                     <span className="text-[10px] font-bold text-purple-400/70">+{opt.score}</span>
                                   </label>
                                 ))}
@@ -475,32 +475,32 @@ export default function NewTradePage() {
                           );
                         })()}
                         {field.fieldType === 'CHECKBOX' && (
-                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-dark-bg/50 border border-dark-border cursor-pointer hover:border-green-primary/20 transition-colors">
+                          <label className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-300 cursor-pointer hover:border-green-primary/20 transition-colors">
                             <input
                               type="checkbox"
                               checked={fieldValues[field.id]?.booleanValue || false}
                               onChange={(e) => setFieldValues(prev => ({ ...prev, [field.id]: { booleanValue: e.target.checked } }))}
-                              className="w-4 h-4 rounded border-dark-border text-green-primary focus:ring-green-primary bg-dark-bg"
+                              className="w-4 h-4 rounded border-slate-300 text-green-primary focus:ring-green-primary bg-slate-50"
                             />
-                            <span className="text-xs font-medium text-gray-light">{field.fieldName}</span>
+                            <span className="text-xs font-medium text-slate-900">{field.fieldName}</span>
                           </label>
                         )}
                         {field.fieldType === 'IMAGE' && (
                           <div>
-                            <label className="block text-xs font-medium text-gray-light mb-1">{field.fieldName}</label>
+                            <label className="block text-xs font-medium text-slate-900 mb-1">{field.fieldName}</label>
                             {fieldValues[field.id]?.imageUrl ? (
-                              <div className="relative rounded-xl overflow-hidden border border-dark-border">
+                              <div className="relative rounded-xl overflow-hidden border border-slate-300">
                                 <img src={fieldValues[field.id].imageUrl} alt={field.fieldName} className="w-full h-32 object-cover" />
                                 <button
                                   type="button"
                                   onClick={() => setFieldValues(prev => ({ ...prev, [field.id]: { imageUrl: '' } }))}
-                                  className="absolute top-2 right-2 p-1 bg-dark-bg/80 rounded-lg text-gray-text hover:text-red-primary transition-colors"
+                                  className="absolute top-2 right-2 p-1 bg-slate-50/80 rounded-lg text-slate-600 hover:text-red-primary transition-colors"
                                 >
                                   ✕
                                 </button>
                               </div>
                             ) : (
-                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-dark-border hover:border-green-primary/30 cursor-pointer transition-colors">
+                              <label className="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-dashed border-slate-300 hover:border-green-primary/30 cursor-pointer transition-colors">
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -514,8 +514,8 @@ export default function NewTradePage() {
                                   <Loader2 className="w-5 h-5 text-green-primary animate-spin" />
                                 ) : (
                                   <>
-                                    <Image className="w-5 h-5 text-gray-text mb-1" />
-                                    <span className="text-[10px] text-gray-text">Click to upload</span>
+                                    <Image className="w-5 h-5 text-slate-600 mb-1" />
+                                    <span className="text-[10px] text-slate-600">Click to upload</span>
                                   </>
                                 )}
                               </label>
@@ -534,13 +534,13 @@ export default function NewTradePage() {
             <div className="card h-full">
               <div className="flex items-center gap-2 mb-3">
                 <DollarSign className="w-4 h-4 text-green-primary" />
-                <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Price & Risk</h3>
+                <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Price & Risk</h3>
               </div>
 
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">Entry Price</label>
+                    <label className="block text-xs font-medium text-slate-900 mb-1">Entry Price</label>
                     <input
                       type="number"
                       name="entryPrice"
@@ -552,7 +552,7 @@ export default function NewTradePage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">Position Size</label>
+                    <label className="block text-xs font-medium text-slate-900 mb-1">Position Size</label>
                     <input
                       type="number"
                       name="positionSize"
@@ -581,7 +581,7 @@ export default function NewTradePage() {
                     step="any"
                     required={tradeMode === 'OPEN'}
                   />
-                  <p className="text-[10px] text-gray-text mt-0.5">Max loss you accept</p>
+                  <p className="text-[10px] text-slate-600 mt-0.5">Max loss you accept</p>
                 </div>
 
                 <div>
@@ -598,13 +598,13 @@ export default function NewTradePage() {
                     step="any"
                     required={tradeMode === 'OPEN'}
                   />
-                  <p className="text-[10px] text-gray-text mt-0.5">Your profit target</p>
+                  <p className="text-[10px] text-slate-600 mt-0.5">Your profit target</p>
                 </div>
 
                 <div className="h-px bg-dark-border" />
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-light mb-1">Service Charge</label>
+                  <label className="block text-xs font-medium text-slate-900 mb-1">Service Charge</label>
                   <input
                     type="number"
                     name="serviceCharge"
@@ -618,8 +618,8 @@ export default function NewTradePage() {
 
                 {/* Risk/Reward visual */}
                 {formData.stopLossAmount > 0 && formData.takeProfitAmount > 0 && (
-                  <div className="p-3 rounded-xl bg-dark-bg/50 border border-dark-border">
-                    <p className="text-[10px] text-gray-text uppercase tracking-wider mb-2">Risk / Reward</p>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-300">
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-2">Risk / Reward</p>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 rounded-full bg-dark-border overflow-hidden flex">
                         <div
@@ -631,7 +631,7 @@ export default function NewTradePage() {
                           style={{ width: `${(formData.takeProfitAmount / (formData.stopLossAmount + formData.takeProfitAmount)) * 100}%` }}
                         />
                       </div>
-                      <span className="text-xs font-bold text-gray-light whitespace-nowrap">
+                      <span className="text-xs font-bold text-slate-900 whitespace-nowrap">
                         1 : {(formData.takeProfitAmount / formData.stopLossAmount).toFixed(1)}
                       </span>
                     </div>
@@ -648,12 +648,12 @@ export default function NewTradePage() {
               <div className="card border-green-primary/20">
                 <div className="flex items-center gap-2 mb-3">
                   <BarChart3 className="w-4 h-4 text-green-primary" />
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Exit & Results</h3>
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Exit & Results</h3>
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">
+                    <label className="block text-xs font-medium text-slate-900 mb-1">
                       Result <span className="text-red-primary">*</span>
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -666,7 +666,7 @@ export default function NewTradePage() {
                         }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'PROFIT'
                             ? 'bg-green-primary/10 border-green-primary text-green-primary'
-                            : 'border-dark-border text-gray-text hover:border-dark-border-hover'
+                            : 'border-slate-300 text-slate-600 hover:border-slate-300'
                           }`}
                       >
                         Profit
@@ -680,7 +680,7 @@ export default function NewTradePage() {
                         }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'LOSS'
                             ? 'bg-red-primary/10 border-red-primary text-red-primary'
-                            : 'border-dark-border text-gray-text hover:border-dark-border-hover'
+                            : 'border-slate-300 text-slate-600 hover:border-slate-300'
                           }`}
                       >
                         Loss
@@ -694,7 +694,7 @@ export default function NewTradePage() {
                         }))}
                         className={`py-2 rounded-lg border-2 text-xs font-semibold transition-all ${formData.result === 'BREAK_EVEN'
                             ? 'bg-yellow-primary/10 border-yellow-primary text-yellow-primary'
-                            : 'border-dark-border text-gray-text hover:border-dark-border-hover'
+                            : 'border-slate-300 text-slate-600 hover:border-slate-300'
                           }`}
                       >
                         Even
@@ -703,7 +703,7 @@ export default function NewTradePage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-light mb-1">
+                    <label className="block text-xs font-medium text-slate-900 mb-1">
                       Realised P/L <span className="text-red-primary">*</span>
                     </label>
                     <input
@@ -716,7 +716,7 @@ export default function NewTradePage() {
                       step="any"
                       required
                     />
-                    <p className="text-[10px] text-gray-text mt-0.5">
+                    <p className="text-[10px] text-slate-600 mt-0.5">
                       Enter the amount only. The selected result decides whether it is treated as profit or loss.
                     </p>
                   </div>
@@ -727,9 +727,9 @@ export default function NewTradePage() {
               <div className="card border-blue-primary/20 bg-gradient-to-br from-blue-primary/5 to-transparent">
                 <div className="flex items-center gap-2 mb-3">
                   <Unlock className="w-4 h-4 text-blue-primary" />
-                  <h3 className="text-xs font-semibold text-gray-text uppercase tracking-wider">Open Trade Info</h3>
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Open Trade Info</h3>
                 </div>
-                <div className="space-y-3 text-xs text-gray-text">
+                <div className="space-y-3 text-xs text-slate-600">
                   <p>This trade will be recorded as <strong className="text-blue-primary">OPEN</strong>.</p>
                   <ul className="space-y-1.5">
                     <li className="flex items-start gap-2">
@@ -747,10 +747,10 @@ export default function NewTradePage() {
                   </ul>
                 </div>
                 {formData.instrument && (
-                  <div className="mt-4 p-3 rounded-xl bg-dark-bg/50 border border-dark-border">
-                    <p className="text-[10px] text-gray-text uppercase tracking-wider mb-1.5">Trade Preview</p>
+                  <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-300">
+                    <p className="text-[10px] text-slate-600 uppercase tracking-wider mb-1.5">Trade Preview</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-gray-light">{formData.instrument || '—'}</span>
+                      <span className="text-sm font-bold text-slate-900">{formData.instrument || '—'}</span>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${formData.direction === 'BUY'
                           ? 'bg-green-primary/10 text-green-primary'
                           : 'bg-red-primary/10 text-red-primary'
@@ -759,7 +759,7 @@ export default function NewTradePage() {
                       </span>
                     </div>
                     {formData.entryPrice && (
-                      <p className="text-xs text-gray-text mt-1">@ {formData.entryPrice}{formData.positionSize ? ` × ${formData.positionSize}` : ''}</p>
+                      <p className="text-xs text-slate-600 mt-1">@ {formData.entryPrice}{formData.positionSize ? ` × ${formData.positionSize}` : ''}</p>
                     )}
                   </div>
                 )}
@@ -771,7 +771,7 @@ export default function NewTradePage() {
               {tradeMode === 'CLOSED' && (
                 <div className="flex items-start gap-2 p-2.5 rounded-lg bg-green-primary/5 border border-green-primary/10 mb-3">
                   <Lock className="w-3.5 h-3.5 text-green-primary flex-shrink-0 mt-0.5" />
-                  <p className="text-[10px] text-gray-text leading-relaxed">
+                  <p className="text-[10px] text-slate-600 leading-relaxed">
                     Trade will be <strong className="text-green-primary">closed immediately</strong>. Account balance updates right away.
                   </p>
                 </div>
@@ -796,7 +796,7 @@ export default function NewTradePage() {
               </button>
               <Link
                 href="/dashboard/trades"
-                className="block w-full mt-2 py-2.5 rounded-xl text-center text-xs font-medium text-gray-text hover:text-gray-light border border-dark-border hover:border-dark-border-hover transition-all"
+                className="block w-full mt-2 py-2.5 rounded-xl text-center text-xs font-medium text-slate-600 hover:text-slate-900 border border-slate-300 hover:border-slate-300 transition-all"
               >
                 Cancel
               </Link>

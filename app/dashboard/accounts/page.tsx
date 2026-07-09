@@ -68,8 +68,8 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-light tracking-tight">Trading Accounts</h1>
-          <p className="text-sm text-gray-text mt-0.5">{accounts.length} account{accounts.length !== 1 ? 's' : ''} total</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Trading Accounts</h1>
+          <p className="text-sm text-slate-600 mt-0.5">{accounts.length} account{accounts.length !== 1 ? 's' : ''} total</p>
         </div>
         <Link href="/dashboard/accounts/new" className="btn-primary flex items-center gap-2">
           <Plus className="w-4 h-4" />
@@ -81,15 +81,15 @@ export default function AccountsPage() {
       {accounts.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="stat-card stat-card-green">
-            <p className="text-xs text-gray-text font-medium uppercase tracking-wider mb-2">Total Balance</p>
-            <p className="text-xl font-bold text-gray-light number-highlight">{formatCurrency(totalBalance)}</p>
+            <p className="text-xs text-slate-600 font-medium uppercase tracking-wider mb-2">Total Balance</p>
+            <p className="text-xl font-bold text-slate-900 number-highlight">{formatCurrency(totalBalance)}</p>
           </div>
           <div className="stat-card stat-card-blue">
-            <p className="text-xs text-gray-text font-medium uppercase tracking-wider mb-2">Total Invested</p>
-            <p className="text-xl font-bold text-gray-light number-highlight">{formatCurrency(totalInitial)}</p>
+            <p className="text-xs text-slate-600 font-medium uppercase tracking-wider mb-2">Total Invested</p>
+            <p className="text-xl font-bold text-slate-900 number-highlight">{formatCurrency(totalInitial)}</p>
           </div>
           <div className={`stat-card ${totalPL >= 0 ? 'stat-card-green' : 'stat-card-red'}`}>
-            <p className="text-xs text-gray-text font-medium uppercase tracking-wider mb-2">Total P&L</p>
+            <p className="text-xs text-slate-600 font-medium uppercase tracking-wider mb-2">Total P&L</p>
             <p className={`text-xl font-bold number-highlight ${totalPL >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
               {totalPL >= 0 ? '+' : ''}{formatCurrency(totalPL)}
             </p>
@@ -100,7 +100,7 @@ export default function AccountsPage() {
       {/* Search */}
       {accounts.length > 0 && (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-text" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
           <input
             type="text"
             placeholder="Search accounts..."
@@ -115,10 +115,10 @@ export default function AccountsPage() {
       {filtered.length === 0 && accounts.length === 0 ? (
         <div className="card text-center py-16">
           <div className="empty-state-icon mx-auto">
-            <Wallet className="w-10 h-10 text-gray-text" />
+            <Wallet className="w-10 h-10 text-slate-600" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-light mb-2">No Accounts Yet</h3>
-          <p className="text-sm text-gray-text mb-6 max-w-sm mx-auto">
+          <h3 className="text-lg font-semibold text-slate-900 mb-2">No Accounts Yet</h3>
+          <p className="text-sm text-slate-600 mb-6 max-w-sm mx-auto">
             Create your first trading account to start logging trades and tracking performance.
           </p>
           <Link href="/dashboard/accounts/new" className="btn-primary inline-flex items-center gap-2">
@@ -128,8 +128,8 @@ export default function AccountsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="card text-center py-12">
-          <Search className="w-8 h-8 text-gray-text mx-auto mb-3" />
-          <p className="text-gray-text">No accounts match &quot;{search}&quot;</p>
+          <Search className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+          <p className="text-slate-600">No accounts match &quot;{search}&quot;</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -156,18 +156,18 @@ export default function AccountsPage() {
                   </span>
                 </div>
 
-                <h3 className="font-bold text-gray-light mb-0.5 truncate">{account.accountName}</h3>
-                <p className="text-xs text-gray-text mb-4">{account.brokerName} • {account.marketSegment}</p>
+                <h3 className="font-bold text-slate-900 mb-0.5 truncate">{account.accountName}</h3>
+                <p className="text-xs text-slate-600 mb-4">{account.brokerName} • {account.marketSegment}</p>
 
                 <div className="flex items-end justify-between mb-4">
                   <div>
-                    <p className="text-xs text-gray-text mb-0.5">Balance</p>
+                    <p className="text-xs text-slate-600 mb-0.5">Balance</p>
                     <p className="text-lg font-bold text-green-primary number-highlight">
                       {formatCurrency(Number(account.currentBalance), account.currencyCode)}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-text mb-0.5">P&L</p>
+                    <p className="text-xs text-slate-600 mb-0.5">P&L</p>
                     <p className={`text-sm font-bold number-highlight ${pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                       {pl >= 0 ? '+' : ''}{formatCurrency(pl)}
                     </p>
