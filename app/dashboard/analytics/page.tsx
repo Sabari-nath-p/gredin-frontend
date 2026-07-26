@@ -6,8 +6,20 @@ import {
   ArrowUpRight, ArrowDownRight, Activity, Wallet,
   Calendar, ChevronLeft, ChevronRight, Flame,
   Award, Zap, Clock, Hash, ArrowUp, ArrowDown,
-  Filter
+  Filter, CalendarRange
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeStats, type TradeEntry } from '@/lib/api';
 import { formatCurrency, formatPercentage, getTradeNetProfitLoss } from '@/lib/utils';
@@ -29,6 +41,105 @@ function getFirstDayOfMonth(year: number, month: number) {
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+// ─── Date filter (applies across every analytics tab) ───
+type DateFilterPreset = 'ALL' | '1D' | '7D' | '30D' | '90D' | '1Y' | 'CUSTOM';
+
+const DATE_FILTER_OPTIONS: Array<{ label: string; value: DateFilterPreset }> = [
+  { label: 'All Time', value: 'ALL' },
+  { label: '1D', value: '1D' },
+  { label: '7D', value: '7D' },
+  { label: '30D', value: '30D' },
+  { label: '90D', value: '90D' },
+  { label: '1Y', value: '1Y' },
+  { label: 'Custom', value: 'CUSTOM' },
+];
+
+// ─── Chart bucketing helpers (for the Equity Curve) ───
+type Granularity = 'day' | 'week' | 'month' | 'year';
+type RangeBucket = { key: string; label: string; startTs: number; endTs: number };
+
+const toLocalDayKey = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
+const buildBuckets = (start: Date, end: Date, granularity: Granularity): RangeBucket[] => {
+  const buckets: RangeBucket[] = [];
+  const endTime = end.getTime();
+
+  if (granularity === 'day') {
+    const cursor = new Date(start); cursor.setHours(0, 0, 0, 0);
+    let guard = 0;
+    while (cursor.getTime() <= endTime && guard < 400) {
+      const dayStart = new Date(cursor);
+      const dayEnd = new Date(cursor); dayEnd.setHours(23, 59, 59, 999);
+      buckets.push({
+        key: toLocalDayKey(dayStart),
+        label: dayStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        startTs: dayStart.getTime(),
+        endTs: Math.min(dayEnd.getTime(), endTime),
+      });
+      cursor.setDate(cursor.getDate() + 1);
+      guard++;
+    }
+    return buckets;
+  }
+
+  if (granularity === 'week') {
+    const cursor = new Date(start); cursor.setHours(0, 0, 0, 0);
+    let guard = 0;
+    while (cursor.getTime() <= endTime && guard < 300) {
+      const weekStart = new Date(cursor);
+      const weekEnd = new Date(cursor); weekEnd.setDate(weekEnd.getDate() + 6); weekEnd.setHours(23, 59, 59, 999);
+      buckets.push({
+        key: toLocalDayKey(weekStart),
+        label: weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        startTs: weekStart.getTime(),
+        endTs: Math.min(weekEnd.getTime(), endTime),
+      });
+      cursor.setDate(cursor.getDate() + 7);
+      guard++;
+    }
+    return buckets;
+  }
+
+  if (granularity === 'month') {
+    const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+    let guard = 0;
+    while (cursor.getTime() <= endTime && guard < 240) {
+      const monthStart = new Date(cursor);
+      const monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0, 23, 59, 59, 999);
+      buckets.push({
+        key: `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}`,
+        label: monthStart.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
+        startTs: monthStart.getTime(),
+        endTs: Math.min(monthEnd.getTime(), endTime),
+      });
+      cursor.setMonth(cursor.getMonth() + 1);
+      guard++;
+    }
+    return buckets;
+  }
+
+  const cursor = new Date(start.getFullYear(), 0, 1);
+  let guard = 0;
+  while (cursor.getTime() <= endTime && guard < 60) {
+    const yearStart = new Date(cursor);
+    const yearEnd = new Date(cursor.getFullYear(), 11, 31, 23, 59, 59, 999);
+    buckets.push({
+      key: String(yearStart.getFullYear()),
+      label: String(yearStart.getFullYear()),
+      startTs: yearStart.getTime(),
+      endTs: Math.min(yearEnd.getTime(), endTime),
+    });
+    cursor.setFullYear(cursor.getFullYear() + 1);
+    guard++;
+  }
+  return buckets;
+};
+
 export default function AnalyticsPage() {
   const token = useAuthStore((state) => state.token);
   const [accountsWithStats, setAccountsWithStats] = useState<AccountWithStats[]>([]);
@@ -37,6 +148,12 @@ export default function AnalyticsPage() {
   const [calMonth, setCalMonth] = useState(new Date().getMonth());
   const [calYear, setCalYear] = useState(new Date().getFullYear());
   const [activeTab, setActiveTab] = useState<'overview' | 'calendar' | 'instruments' | 'streaks'>('overview');
+
+  // ─── Date filter state ───
+  const [dateFilter, setDateFilter] = useState<DateFilterPreset>('30D');
+  const [customStart, setCustomStart] = useState<string>('');
+  const [customEnd, setCustomEnd] = useState<string>('');
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
 
   useEffect(() => { loadAnalytics(); }, []);
 
@@ -52,7 +169,7 @@ export default function AnalyticsPage() {
             tradeEntryApi.getByAccount(token, account.id),
           ]);
           accountsData.push({ account, stats: statsRes.data, trades: tradesRes.data });
-        } catch {}
+        } catch { }
       }
       setAccountsWithStats(accountsData);
     } catch {
@@ -62,31 +179,188 @@ export default function AnalyticsPage() {
     }
   };
 
-  // ─── Filtered data ───
+  // ─── Account-filtered data ───
   const filteredData = selectedAccount === 'all'
     ? accountsWithStats
     : accountsWithStats.filter(item => item.account.id === selectedAccount);
 
-  const allTrades = useMemo(() => filteredData.flatMap(a => a.trades), [filteredData]);
-  const closedTrades = useMemo(() => allTrades.filter(t => t.status === 'CLOSED'), [allTrades]);
+  const allAccountTrades = useMemo(() => filteredData.flatMap(a => a.trades), [filteredData]);
 
-  // ─── Aggregated stats ───
-  const totalStats = useMemo(() => filteredData.reduce((acc, item) => ({
-    totalTrades: acc.totalTrades + item.stats.totalTrades,
-    openTrades: acc.openTrades + (item.stats.openTrades ?? 0),
-    closedTrades: acc.closedTrades + (item.stats.closedTrades ?? 0),
-    winningTrades: acc.winningTrades + item.stats.winningTrades,
-    losingTrades: acc.losingTrades + item.stats.losingTrades,
-    breakEvenTrades: acc.breakEvenTrades + (item.stats.breakEvenTrades ?? 0),
-    totalProfit: acc.totalProfit + item.stats.totalProfit,
-    totalLoss: acc.totalLoss + item.stats.totalLoss,
-    netProfitLoss: acc.netProfitLoss + item.stats.netProfitLoss,
-    largestWin: Math.max(acc.largestWin, item.stats.largestWin ?? 0),
-    largestLoss: Math.max(acc.largestLoss, item.stats.largestLoss ?? 0),
-  }), {
-    totalTrades: 0, openTrades: 0, closedTrades: 0, winningTrades: 0, losingTrades: 0,
-    breakEvenTrades: 0, totalProfit: 0, totalLoss: 0, netProfitLoss: 0, largestWin: 0, largestLoss: 0
-  }), [filteredData]);
+  // ─── Date range resolution ───
+  const dateBounds = useMemo(() => {
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+    let start: Date | null = null;
+    let end: Date = now;
+
+    switch (dateFilter) {
+      case '1D':
+        start = new Date(now); start.setHours(0, 0, 0, 0);
+        break;
+      case '7D':
+        start = new Date(now); start.setDate(start.getDate() - 6); start.setHours(0, 0, 0, 0);
+        break;
+      case '30D':
+        start = new Date(now); start.setDate(start.getDate() - 29); start.setHours(0, 0, 0, 0);
+        break;
+      case '90D':
+        start = new Date(now); start.setDate(start.getDate() - 89); start.setHours(0, 0, 0, 0);
+        break;
+      case '1Y':
+        start = new Date(now); start.setFullYear(start.getFullYear() - 1); start.setHours(0, 0, 0, 0);
+        break;
+      case 'CUSTOM':
+        start = customStart ? new Date(`${customStart}T00:00:00`) : null;
+        end = customEnd ? new Date(`${customEnd}T23:59:59.999`) : now;
+        break;
+      case 'ALL':
+      default:
+        start = null;
+        end = now;
+        break;
+    }
+    return { start, end };
+  }, [dateFilter, customStart, customEnd]);
+
+  const activeDateFilterLabel = useMemo(() => {
+    if (dateFilter !== 'CUSTOM') {
+      return DATE_FILTER_OPTIONS.find(o => o.value === dateFilter)?.label ?? 'All Time';
+    }
+    if (customStart && customEnd) return `${customStart} → ${customEnd}`;
+    if (customStart) return `From ${customStart}`;
+    if (customEnd) return `Until ${customEnd}`;
+    return 'Custom';
+  }, [dateFilter, customStart, customEnd]);
+
+  // ─── Date-filtered trades: everything below derives from this ───
+  const allTrades = useMemo(() => {
+    const { start, end } = dateBounds;
+    if (!start && !end) return allAccountTrades;
+    return allAccountTrades.filter(t => {
+      const ts = new Date(t.entryDateTime).getTime();
+      if (start && ts < start.getTime()) return false;
+      if (end && ts > end.getTime()) return false;
+      return true;
+    });
+  }, [allAccountTrades, dateBounds]);
+
+  const closedTrades = useMemo(() => allTrades.filter(t => t.status === 'CLOSED'), [allTrades]);
+  const openTradesCount = useMemo(() => allTrades.filter(t => t.status === 'OPEN').length, [allTrades]);
+
+  // ─── Equity Curve + Win/Loss (Overview tab) ───
+  const totalInitialBalance = useMemo(
+    () => filteredData.reduce((sum, { account }) => sum + Number(account.initialBalance), 0),
+    [filteredData],
+  );
+
+  const granularity: Granularity = useMemo(() => {
+    if (dateFilter === '1D') return 'day';
+    if (dateFilter === '7D' || dateFilter === '30D') return 'day';
+    if (dateFilter === '90D') return 'week';
+    if (dateFilter === '1Y') return 'month';
+    if (dateFilter === 'CUSTOM') {
+      const { start, end } = dateBounds;
+      if (start && end) {
+        const days = (end.getTime() - start.getTime()) / 86400000;
+        if (days <= 31) return 'day';
+        if (days <= 180) return 'week';
+        if (days <= 730) return 'month';
+        return 'year';
+      }
+    }
+    return 'month'; // ALL time
+  }, [dateFilter, dateBounds]);
+
+  const effectiveStart = useMemo(() => {
+    if (dateBounds.start) return dateBounds.start;
+    if (allTrades.length > 0) {
+      const earliestTs = allTrades.reduce(
+        (min, t) => Math.min(min, new Date(t.entryDateTime).getTime()), Infinity,
+      );
+      return new Date(earliestTs);
+    }
+    const fallback = new Date();
+    fallback.setFullYear(fallback.getFullYear() - 1);
+    return fallback;
+  }, [dateBounds, allTrades]);
+
+  const effectiveEnd = dateBounds.end;
+
+  const chartBuckets = useMemo(
+    () => buildBuckets(effectiveStart, effectiveEnd, granularity),
+    [effectiveStart, effectiveEnd, granularity],
+  );
+
+  const equityCurveData = useMemo(() => {
+    const sortedClosed = [...closedTrades].sort(
+      (a, b) => new Date(a.entryDateTime).getTime() - new Date(b.entryDateTime).getTime(),
+    );
+
+    let equity = totalInitialBalance;
+    let tradeIndex = 0;
+
+    return chartBuckets.map((bucket) => {
+      while (tradeIndex < sortedClosed.length) {
+        const tradeTs = new Date(sortedClosed[tradeIndex].entryDateTime).getTime();
+        if (tradeTs > bucket.endTs) break;
+        equity += getTradeNetProfitLoss(
+          sortedClosed[tradeIndex].result,
+          sortedClosed[tradeIndex].realisedProfitLoss,
+          sortedClosed[tradeIndex].serviceCharge,
+        ) || 0;
+        tradeIndex++;
+      }
+      return { date: bucket.label, equity, pnl: equity - totalInitialBalance };
+    });
+  }, [closedTrades, totalInitialBalance, chartBuckets]);
+
+  const winLossPieData = useMemo(() => {
+    const wins = closedTrades.filter((t) => t.result === 'PROFIT').length;
+    const losses = closedTrades.filter((t) => t.result === 'LOSS').length;
+    return [
+      { name: 'Wins', value: wins, color: '#047857' },
+      { name: 'Losses', value: losses, color: '#dc2626' },
+    ];
+  }, [closedTrades]);
+
+  // ─── Aggregated stats — computed directly from date-filtered closed trades
+  //     (not from the accounts' lifetime API stats) so the date filter actually applies ───
+  const totalStats = useMemo(() => {
+    let winningTrades = 0, losingTrades = 0, breakEvenTrades = 0;
+    let totalProfit = 0, totalLoss = 0, largestWin = 0, largestLoss = 0;
+
+    closedTrades.forEach(t => {
+      const net = getTradeNetProfitLoss(t.result, t.realisedProfitLoss, t.serviceCharge) || 0;
+      if (t.result === 'PROFIT') {
+        winningTrades++;
+        totalProfit += net;
+        largestWin = Math.max(largestWin, net);
+      } else if (t.result === 'LOSS') {
+        losingTrades++;
+        totalLoss += Math.abs(net);
+        largestLoss = Math.max(largestLoss, Math.abs(net));
+      } else {
+        breakEvenTrades++;
+      }
+    });
+
+    const closedCount = closedTrades.length;
+    const netProfitLoss = totalProfit - totalLoss;
+
+    return {
+      totalTrades: allTrades.length,
+      openTrades: openTradesCount,
+      closedTrades: closedCount,
+      winningTrades,
+      losingTrades,
+      breakEvenTrades,
+      totalProfit,
+      totalLoss,
+      netProfitLoss,
+      largestWin,
+      largestLoss,
+    };
+  }, [closedTrades, allTrades, openTradesCount]);
 
   const overallWinRate = totalStats.closedTrades > 0
     ? (totalStats.winningTrades / totalStats.closedTrades) * 100 : 0;
@@ -116,16 +390,18 @@ export default function AnalyticsPage() {
 
   // ─── Instrument breakdown ───
   const instrumentData = useMemo(() => {
-    const map: Record<string, { trades: number; wins: number; losses: number; pl: number }> = {};
+    const map: Record<string, { trades: number; wins: number; losses: number; pl: number; lossSum: number }> = {};
     closedTrades.forEach(t => {
       const ins = t.instrument;
-      if (!map[ins]) map[ins] = { trades: 0, wins: 0, losses: 0, pl: 0 };
+      if (!map[ins]) map[ins] = { trades: 0, wins: 0, losses: 0, pl: 0, lossSum: 0 };
+      const netPl = getTradeNetProfitLoss(t.result, t.realisedProfitLoss, t.serviceCharge) || 0;
       map[ins].trades++;
-      map[ins].pl += getTradeNetProfitLoss(t.result, t.realisedProfitLoss, t.serviceCharge) || 0;
+      map[ins].pl += netPl;
       if (t.result === 'PROFIT') {
         map[ins].wins++;
       } else if (t.result === 'LOSS') {
         map[ins].losses++;
+        map[ins].lossSum += netPl;
       }
     });
     return Object.entries(map)
@@ -237,7 +513,7 @@ export default function AnalyticsPage() {
   return (
     <div className="w-full animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">Analytics Dashboard</h1>
           <p className="text-xs text-slate-600 mt-0.5">
@@ -259,6 +535,56 @@ export default function AnalyticsPage() {
             ))}
           </select>
         </div>
+      </div>
+
+      {/* ─── Global Date Filter ─── */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+        <div className="flex items-center gap-1.5 text-slate-600">
+          <CalendarRange className="w-4 h-4" />
+          <span className="text-xs font-semibold uppercase tracking-wider">Date Range</span>
+        </div>
+        <div className="flex items-center gap-1 bg-white border border-slate-300 rounded-xl p-1 flex-wrap">
+          {DATE_FILTER_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => {
+                setDateFilter(option.value);
+                setShowCustomPicker(option.value === 'CUSTOM');
+              }}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${dateFilter === option.value
+                ? 'bg-green-primary/20 text-green-primary'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        {showCustomPicker && (
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={customStart}
+              onChange={(e) => setCustomStart(e.target.value)}
+              className="px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg outline-none focus:border-green-primary focus:ring-2 focus:ring-green-primary/20 transition-all"
+            />
+            <span className="text-xs text-slate-600">to</span>
+            <input
+              type="date"
+              value={customEnd}
+              onChange={(e) => setCustomEnd(e.target.value)}
+              className="px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg outline-none focus:border-green-primary focus:ring-2 focus:ring-green-primary/20 transition-all"
+            />
+          </div>
+        )}
+
+        {dateFilter !== 'ALL' && (
+          <span className="text-[11px] font-medium text-slate-600 bg-slate-50 border border-slate-300 px-2.5 py-1 rounded-lg">
+            Showing: {activeDateFilterLabel}
+          </span>
+        )}
       </div>
 
       {accountsWithStats.length === 0 ? (
@@ -343,11 +669,10 @@ export default function AnalyticsPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                  activeTab === tab.key
-                    ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${activeTab === tab.key
+                  ? 'bg-green-primary/15 text-green-primary border border-green-primary/30'
+                  : 'text-slate-600 hover:text-slate-900'
+                  }`}
               >
                 <tab.icon className="w-3.5 h-3.5" />
                 {tab.label}
@@ -358,6 +683,90 @@ export default function AnalyticsPage() {
           {/* ═══════ TAB: OVERVIEW ═══════ */}
           {activeTab === 'overview' && (
             <div className="grid grid-cols-12 gap-4">
+              {/* Equity Curve */}
+              <div className="col-span-12 lg:col-span-8 card">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-sm font-bold text-slate-900">Equity Curve</h2>
+                    <p className="text-[10px] text-slate-600 mt-0.5">Account equity over {activeDateFilterLabel.toLowerCase()}</p>
+                  </div>
+                </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={equityCurveData} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="analyticsEquityGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#047857" stopOpacity={0.35} />
+                          <stop offset="60%" stopColor="#047857" stopOpacity={0.08} />
+                          <stop offset="100%" stopColor="#047857" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" />
+                      <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis
+                        tick={{ fill: '#94a3b8', fontSize: 11 }}
+                        axisLine={false}
+                        tickLine={false}
+                        width={76}
+                        domain={['auto', 'auto']}
+                        tickFormatter={(value: number) => formatCurrency(value)}
+                      />
+                      <Tooltip
+                        contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, color: '#1e293b', fontSize: 12 }}
+                        formatter={(value: number) => [formatCurrency(Number(value)), 'Equity']}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="equity"
+                        stroke="#047857"
+                        strokeWidth={2.5}
+                        fill="url(#analyticsEquityGradient)"
+                        dot={false}
+                        activeDot={{ r: 4 }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Win vs Loss */}
+              <div className="col-span-12 lg:col-span-4 card">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-slate-900">Win vs Loss</h2>
+                  <span className="text-[10px] text-slate-600">Closed trades</span>
+                </div>
+                {closedTrades.length === 0 ? (
+                  <div className="h-64 flex items-center justify-center text-xs text-slate-600">
+                    No closed trades in this range.
+                  </div>
+                ) : (
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie
+                          data={winLossPieData}
+                          dataKey="value"
+                          nameKey="name"
+                          innerRadius={54}
+                          outerRadius={82}
+                          paddingAngle={4}
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          labelLine={false}
+                        >
+                          {winLossPieData.map((entry) => (
+                            <Cell key={entry.name} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, color: '#1e293b', fontSize: 12 }}
+                          formatter={(value: number) => [value, 'Trades']}
+                        />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+              </div>
+
               {/* P/L Breakdown */}
               <div className="col-span-12 lg:col-span-4 card">
                 <h2 className="text-sm font-bold text-slate-900 mb-4">Profit & Loss</h2>
@@ -461,10 +870,13 @@ export default function AnalyticsPage() {
                 </div>
               </div>
 
-              {/* Account Performance — full width */}
+              {/* Account Performance — full width (reflects lifetime account balance, not the date filter) */}
               {filteredData.length > 1 && (
                 <div className="col-span-12 card">
-                  <h2 className="text-sm font-bold text-slate-900 mb-4">Account Performance</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-bold text-slate-900">Account Performance</h2>
+                    <span className="text-[10px] text-slate-600">Lifetime balance (not affected by date filter)</span>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {filteredData.map(({ account, stats }) => {
                       const pl = Number(account.currentBalance) - Number(account.initialBalance);
@@ -476,11 +888,10 @@ export default function AnalyticsPage() {
                               <Wallet className="w-3.5 h-3.5 text-green-primary" />
                               <span className="font-semibold text-slate-900 text-xs">{account.accountName}</span>
                             </div>
-                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                              account.accountType === 'LIVE' ? 'bg-green-primary/10 text-green-primary' :
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${account.accountType === 'LIVE' ? 'bg-green-primary/10 text-green-primary' :
                               account.accountType === 'DEMO' ? 'bg-blue-primary/10 text-blue-primary' :
-                              'bg-yellow-primary/10 text-yellow-primary'
-                            }`}>{account.accountType}</span>
+                                'bg-yellow-primary/10 text-yellow-primary'
+                              }`}>{account.accountType}</span>
                           </div>
                           <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
@@ -561,23 +972,6 @@ export default function AnalyticsPage() {
                     const isToday = cell.key === new Date().toISOString().slice(0, 10);
                     const isHovered = hoveredDay === cell.key;
 
-                    let bgColor = 'bg-slate-50';
-                    let textColor = 'text-slate-600';
-                    if (data) {
-                      const intensity = Math.min(Math.abs(data.pl) / maxAbsPL, 1);
-                      const alpha = Math.max(0.1, intensity * 0.5);
-                      if (data.pl > 0) {
-                        bgColor = `bg-green-primary/${Math.round(alpha * 100)}`;
-                        textColor = 'text-green-primary';
-                      } else if (data.pl < 0) {
-                        bgColor = `bg-red-primary/${Math.round(alpha * 100)}`;
-                        textColor = 'text-red-primary';
-                      } else {
-                        bgColor = 'bg-yellow-primary/10';
-                        textColor = 'text-yellow-primary';
-                      }
-                    }
-
                     // Use explicit classes for Tailwind JIT safety
                     let cellBg = 'bg-slate-50';
                     let cellText = 'text-slate-600';
@@ -601,9 +995,8 @@ export default function AnalyticsPage() {
                         key={cell.key}
                         onMouseEnter={() => setHoveredDay(cell.key)}
                         onMouseLeave={() => setHoveredDay(null)}
-                        className={`relative aspect-square rounded-lg border transition-all cursor-default flex flex-col items-center justify-center ${cellBg} ${
-                          isToday ? 'border-green-primary' : isHovered && data ? 'border-gray-text/50' : 'border-transparent'
-                        }`}
+                        className={`relative aspect-square rounded-lg border transition-all cursor-default flex flex-col items-center justify-center ${cellBg} ${isToday ? 'border-green-primary' : isHovered && data ? 'border-gray-text/50' : 'border-transparent'
+                          }`}
                       >
                         <span className={`text-xs font-medium ${data ? cellText : 'text-slate-600/60'}`}>
                           {cell.day}
@@ -736,7 +1129,6 @@ export default function AnalyticsPage() {
                 ) : (
                   <div className="space-y-2">
                     {instrumentData.map((ins, idx) => {
-                      const maxTrades = instrumentData[0]?.trades || 1;
                       return (
                         <div key={ins.name} className="p-3 rounded-xl bg-slate-50 border border-slate-300 hover:border-slate-300 transition-colors">
                           <div className="flex items-center justify-between mb-2">
@@ -749,11 +1141,10 @@ export default function AnalyticsPage() {
                               <span className={`text-xs font-bold ${ins.pl >= 0 ? 'text-green-primary' : 'text-red-primary'}`}>
                                 {ins.pl >= 0 ? '+' : ''}{formatCurrency(ins.pl)}
                               </span>
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                                ins.winRate >= 60 ? 'bg-green-primary/10 text-green-primary' :
+                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${ins.winRate >= 60 ? 'bg-green-primary/10 text-green-primary' :
                                 ins.winRate >= 40 ? 'bg-yellow-primary/10 text-yellow-primary' :
-                                'bg-red-primary/10 text-red-primary'
-                              }`}>
+                                  'bg-red-primary/10 text-red-primary'
+                                }`}>
                                 {formatPercentage(ins.winRate)}
                               </span>
                             </div>
@@ -791,7 +1182,9 @@ export default function AnalyticsPage() {
                             <span className="text-xs font-bold text-slate-900">{ins.name}</span>
                             <span className="text-[10px] text-slate-600 ml-2">{ins.trades} trades</span>
                           </div>
-                          <span className="text-xs font-bold text-green-primary">+{formatCurrency(ins.pl)}</span>
+                          <span className="text-xs font-bold text-green-primary">
+                            {ins.pl >= 0 ? '+' : ''}{formatCurrency(ins.pl)}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -799,16 +1192,18 @@ export default function AnalyticsPage() {
                   <div className="col-span-12 lg:col-span-6 card">
                     <h2 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
                       <ArrowDownRight className="w-4 h-4 text-red-primary" />
-                      Least Profitable
+                      Most Losses
                     </h2>
                     <div className="space-y-2">
-                      {[...instrumentData].sort((a, b) => a.pl - b.pl).slice(0, 5).map(ins => (
+                      {[...instrumentData].sort((a, b) => b.losses - a.losses || a.lossSum - b.lossSum).slice(0, 5).map(ins => (
                         <div key={ins.name} className="flex items-center justify-between p-2.5 rounded-lg bg-red-primary/5 border border-red-primary/10">
                           <div>
                             <span className="text-xs font-bold text-slate-900">{ins.name}</span>
                             <span className="text-[10px] text-slate-600 ml-2">{ins.trades} trades</span>
                           </div>
-                          <span className="text-xs font-bold text-red-primary">{formatCurrency(ins.pl)}</span>
+                          <div className="text-right">
+                            <p className="text-xs font-bold text-red-primary">{formatCurrency(ins.lossSum)}</p>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -836,16 +1231,14 @@ export default function AnalyticsPage() {
                     <p className="text-3xl font-bold text-red-primary">{streaks.maxLoss}</p>
                     <p className="text-xs text-slate-600 mt-1">Worst Losing Streak</p>
                   </div>
-                  <div className={`p-4 rounded-xl text-center ${
-                    streaks.currentType === 'win' ? 'bg-green-primary/5 border border-green-primary/20'
+                  <div className={`p-4 rounded-xl text-center ${streaks.currentType === 'win' ? 'bg-green-primary/5 border border-green-primary/20'
                     : streaks.currentType === 'loss' ? 'bg-red-primary/5 border border-red-primary/20'
-                    : 'bg-slate-50 border border-slate-300'
-                  }`}>
-                    <p className={`text-3xl font-bold ${
-                      streaks.currentType === 'win' ? 'text-green-primary'
+                      : 'bg-slate-50 border border-slate-300'
+                    }`}>
+                    <p className={`text-3xl font-bold ${streaks.currentType === 'win' ? 'text-green-primary'
                       : streaks.currentType === 'loss' ? 'text-red-primary'
-                      : 'text-slate-600'
-                    }`}>{streaks.currentStreak}</p>
+                        : 'text-slate-600'
+                      }`}>{streaks.currentStreak}</p>
                     <p className="text-xs text-slate-600 mt-1">
                       Current Streak {streaks.currentType !== 'none' && `(${streaks.currentType === 'win' ? 'Winning' : 'Losing'})`}
                     </p>
@@ -855,7 +1248,10 @@ export default function AnalyticsPage() {
 
               {/* Detailed Stats table */}
               <div className="col-span-12 lg:col-span-8 card">
-                <h2 className="text-sm font-bold text-slate-900 mb-4">Detailed Account Statistics</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-slate-900">Detailed Account Statistics</h2>
+                  <span className="text-[10px] text-slate-600">Lifetime (not affected by date filter)</span>
+                </div>
                 <div className="overflow-x-auto -mx-6">
                   <table className="w-full min-w-[600px]">
                     <thead>
@@ -900,7 +1296,7 @@ export default function AnalyticsPage() {
                   Recent Closed Trades
                 </h2>
                 {closedTrades.length === 0 ? (
-                  <p className="text-xs text-slate-600 py-6 text-center">No closed trades yet</p>
+                  <p className="text-xs text-slate-600 py-6 text-center">No closed trades in this range</p>
                 ) : (
                   <div className="overflow-x-auto -mx-6">
                     <table className="w-full min-w-[700px]">
@@ -930,17 +1326,15 @@ export default function AnalyticsPage() {
                               {t.entryPrice ? `$${Number(t.entryPrice).toFixed(2)}` : '—'}
                             </td>
                             <td className="px-2 py-2 text-center">
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                                t.result === 'PROFIT' ? 'bg-green-primary/10 text-green-primary' :
+                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${t.result === 'PROFIT' ? 'bg-green-primary/10 text-green-primary' :
                                 t.result === 'LOSS' ? 'bg-red-primary/10 text-red-primary' :
-                                'bg-yellow-primary/10 text-yellow-primary'
-                              }`}>
+                                  'bg-yellow-primary/10 text-yellow-primary'
+                                }`}>
                                 {t.result === 'BREAK_EVEN' ? 'EVEN' : t.result}
                               </span>
                             </td>
-                            <td className={`px-6 py-2 text-right text-xs font-bold ${
-                              t.result === 'PROFIT' ? 'text-green-primary' : t.result === 'LOSS' ? 'text-red-primary' : 'text-yellow-primary'
-                            }`}>
+                            <td className={`px-6 py-2 text-right text-xs font-bold ${t.result === 'PROFIT' ? 'text-green-primary' : t.result === 'LOSS' ? 'text-red-primary' : 'text-yellow-primary'
+                              }`}>
                               {t.result === 'PROFIT' ? '+' : t.result === 'LOSS' ? '-' : ''}
                               {formatCurrency(Math.abs(Number(t.realisedProfitLoss) || 0))}
                             </td>

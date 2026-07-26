@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Logo */}
         <div className="flex items-center justify-between px-5 pt-5 pb-2 border-b border-slate-300">
           <Link href="/dashboard" className="flex items-center">
-            <Image src="/logo.png" alt="Gredin" width={180} height={50} priority />
+            <Image src="/newLogo.png" alt="Gredin" width={180} height={50} priority />
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -171,7 +171,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Menu className="w-5 h-5" />
               </button>
               <div className="lg:hidden">
-                <Image src="/logo.png" alt="Gredin" width={160} height={45} priority />
+                <Image src="/newLogo.png" alt="Gredin" width={160} height={45} priority />
               </div>
               {/* Desktop breadcrumb */}
               <div className="hidden lg:flex items-center gap-2">

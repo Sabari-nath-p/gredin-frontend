@@ -151,7 +151,7 @@ export default function LandingPage() {
         <nav className="sticky top-0 z-50 bg-[#07090d]/95 backdrop-blur-sm border-b border-white/[0.06]">
           <div className="max-w-6xl mx-auto px-5 h-24 flex items-center justify-between" style={{ height: '100px' }}>
             <Link href="/" className="flex items-center gap-2.5" aria-label="Gredin home">
-              <Image src="/logo.png" alt="Gredin Logo" width={180} height={50} priority />
+              <Image src="/newWhite.png" alt="Gredin Logo" width={180} height={50} priority />
             </Link>
 
             <div className="hidden md:flex items-center gap-7 text-[13px] text-white/50">
@@ -425,9 +425,9 @@ export default function LandingPage() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[12px] font-medium text-white">{f.label}</span>
                       <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-semibold ${f.type === 'IMAGE' ? 'bg-red-500/10 text-red-400' :
-                          f.type === 'CHECKBOX' ? 'bg-[#047857]/10 text-[#047857]' :
-                            f.type === 'LONG_TEXT' ? 'bg-purple-500/10 text-purple-400' :
-                              'bg-blue-500/10 text-blue-400'
+                        f.type === 'CHECKBOX' ? 'bg-[#047857]/10 text-[#047857]' :
+                          f.type === 'LONG_TEXT' ? 'bg-purple-500/10 text-purple-400' :
+                            'bg-blue-500/10 text-blue-400'
                         }`}>{f.type}</span>
                     </div>
                     {f.type === 'CHECKBOX' ? (
@@ -588,10 +588,10 @@ export default function LandingPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
               <div>
                 <Link href="/" className="flex items-center gap-2 mb-4">
-                  <Image src="/logo.png" alt="Gredin Logo" width={180} height={50} />
+                  <Image src="/newLogo.png" alt="Gredin Logo" width={180} height={50} />
                 </Link>
                 <p className="text-[12px] text-white/30 leading-relaxed">
-                  The professional trading journal for serious traders. Log smarter, analyse deeper, improve faster.
+                  The professional trading journal for sxerious traders. Log smarter, analyse deeper, improve faster.
                 </p>
               </div>
 
