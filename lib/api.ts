@@ -504,6 +504,145 @@ export interface SendChatMessageResponse {
   assistantMessage: ChatMessage;
 }
 
+// ─── Admin Types ───
+
+export interface AdminOverview {
+  users: {
+    total: number;
+    active: number;
+    inactive: number;
+    newToday: number;
+    newThisWeek: number;
+    newThisMonth: number;
+    byRole: { role: string; count: number }[];
+    byProvider: { provider: string; count: number }[];
+  };
+  accounts: {
+    total: number;
+    byType: { type: string; count: number }[];
+    bySegment: { segment: string; count: number }[];
+    totalCurrentBalance: number;
+    totalInitialBalance: number;
+  };
+  trades: {
+    total: number;
+    open: number;
+    closed: number;
+    winningTrades: number;
+    losingTrades: number;
+    breakEvenTrades: number;
+    winRate: number;
+    netProfitLoss: number;
+    totalGrossProfit: number;
+    totalGrossLoss: number;
+    profitFactor: number;
+  };
+  engagement: {
+    totalTemplates: number;
+    totalChatSessions: number;
+    totalChatMessages: number;
+  };
+  recentSignups: AdminUserListItem[];
+}
+
+export interface AdminGrowthPoint {
+  date: string;
+  newUsers: number;
+  trades: number;
+  netPL: number;
+}
+
+export interface AdminUserListItem {
+  id: string;
+  name: string | null;
+  email: string;
+  role: string;
+  authProvider: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  _count?: { tradeAccounts: number; logTemplates: number; chatSessions: number };
+}
+
+export interface AdminUserDetail {
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    role: string;
+    authProvider: string;
+    googleId: string | null;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+  stats: {
+    totalAccounts: number;
+    totalTemplates: number;
+    totalChatSessions: number;
+    totalTrades: number;
+    openTrades: number;
+    closedTrades: number;
+    winningTrades: number;
+    losingTrades: number;
+    breakEvenTrades: number;
+    winRate: number;
+    netProfitLoss: number;
+  };
+  tradeAccounts: (TradeAccount & { _count?: { tradeEntries: number } })[];
+  recentTrades: (TradeEntry & { tradeAccount?: { accountName: string; brokerName: string } })[];
+}
+
+export interface AdminUsersQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: 'SUPER_ADMIN' | 'USER';
+  status?: 'active' | 'inactive';
+  sort?: 'newest' | 'oldest' | 'name';
+}
+
+// Admin API
+export const adminApi = {
+  getOverview: async (token: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<AdminOverview>('/admin/overview');
+  },
+
+  getGrowth: async (token: string, days = 30, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<AdminGrowthPoint[]>(`/admin/growth?days=${days}`);
+  },
+
+  getUsers: async (token: string, query: AdminUsersQuery = {}, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    const params = new URLSearchParams();
+    if (query.page) params.set('page', String(query.page));
+    if (query.limit) params.set('limit', String(query.limit));
+    if (query.search) params.set('search', query.search);
+    if (query.role) params.set('role', query.role);
+    if (query.status) params.set('status', query.status);
+    if (query.sort) params.set('sort', query.sort);
+    const res = await api.get<PaginatedResponse<AdminUserListItem>>(`/admin/users?${params.toString()}`);
+    return { data: res.data.data, meta: res.data.meta };
+  },
+
+  getUserDetail: async (token: string, id: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<AdminUserDetail>(`/admin/users/${id}`);
+  },
+
+  setUserStatus: async (token: string, id: string, isActive: boolean, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.put<User>(`/admin/users/${id}/status`, { isActive });
+  },
+
+  setUserRole: async (token: string, id: string, role: 'SUPER_ADMIN' | 'USER', isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.put<User>(`/admin/users/${id}/role`, { role });
+  },
+};
+
 // Chat API
 export const chatApi = {
   getSessions: async (token: string, page = 1, limit = 20, isClient = true) => {

@@ -16,7 +16,8 @@ import {
   BarChart3,
   Layers,
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
@@ -100,6 +101,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <p className="text-xs text-emerald-100/80 truncate leading-tight mt-0.5">{user?.email}</p>
             </div>
           </div>
+
+          {user?.role === 'SUPER_ADMIN' && (
+            <Link
+              href="/admin"
+              className="mt-2 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-purple-primary bg-purple-primary/10 border border-purple-primary/25 hover:bg-purple-primary/15 rounded-xl transition-all"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Admin Panel
+            </Link>
+          )}
         </div>
 
         {/* Navigation */}
