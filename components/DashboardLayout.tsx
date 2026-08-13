@@ -17,7 +17,8 @@ import {
   Layers,
   MessageSquare,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Target
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import toast from 'react-hot-toast';
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Accounts', href: '/dashboard/accounts', icon: Wallet },
   { name: 'Trades', href: '/dashboard/trades', icon: TrendingUp },
   { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Goals', href: '/dashboard/goals', icon: Target },
   { name: 'Templates', href: '/dashboard/templates', icon: Layers },
   { name: 'AI Chat', href: '/dashboard/chat', icon: MessageSquare },
   { name: 'Profile', href: '/dashboard/profile', icon: User },

@@ -29,6 +29,8 @@ import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
 import { formatCurrency, formatPercentage, formatDateTime, getTradeNetProfitLoss } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import AiAnalystCard from '@/components/AiAnalystCard';
+import GoalProgressWidget from '@/components/GoalProgressWidget';
 
 // ─────────────────────────────────────────────────────────────
 // Date filter / bucketing helpers
@@ -582,6 +584,12 @@ export default function DashboardPage() {
           <p className="text-xs text-slate-600">Trades ({activeDateFilterLabel})</p>
         </div>
       </div>
+
+      {/* AI Personal Analyst */}
+      <AiAnalystCard />
+
+      {/* Goal Progress */}
+      <GoalProgressWidget />
 
       <div className="card animate-fade-in stagger-5">
         <div className="flex items-center gap-2 mb-4">

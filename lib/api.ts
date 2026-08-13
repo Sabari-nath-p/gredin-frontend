@@ -671,3 +671,205 @@ export const chatApi = {
     return api.delete(`/chat/sessions/${sessionId}`);
   },
 };
+
+// ─── AI Personal Analyst Types ───
+
+export type AnalystFrequency = 'OFF' | 'DAILY' | 'EVERY_2_DAYS';
+
+export interface MentorActionItem {
+  title: string;
+  detail: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+}
+
+export interface MentorKeyStats {
+  totalTrades: number;
+  openTrades: number;
+  closedTrades: number;
+  winningTrades: number;
+  losingTrades: number;
+  breakEvenTrades: number;
+  winRate: number;
+  totalProfit: number;
+  totalLoss: number;
+  netProfitLoss: number;
+  profitFactor: number;
+  averageWin: number;
+  averageLoss: number;
+  largestWin: number;
+  largestLoss: number;
+  currentStreak: { type: 'WIN' | 'LOSS' | 'NONE'; count: number };
+  last30DaysNet: number;
+  prior30DaysNet: number;
+  topInstruments: { instrument: string; trades: number; winRate: number; netProfitLoss: number }[];
+}
+
+export interface MentorPlan {
+  headline: string;
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  actionItems: MentorActionItem[];
+  mentorNote: string;
+  period?: { from: string | null; to: string | null };
+  keyStats?: MentorKeyStats;
+}
+
+export interface AiAnalysis {
+  id: string;
+  plan: MentorPlan;
+  triggeredBy: 'MANUAL' | 'SCHEDULED';
+  emailSentAt: string | null;
+  createdAt: string;
+}
+
+export interface AiAnalystSettings {
+  id: string;
+  userId: string;
+  frequency: AnalystFrequency;
+  emailEnabled: boolean;
+  lastRunAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateAiAnalystSettingsRequest {
+  frequency?: AnalystFrequency;
+  emailEnabled?: boolean;
+}
+
+// AI Analyst API
+export const aiAnalystApi = {
+  getLatest: async (token: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<AiAnalysis>('/ai-analyst/latest');
+  },
+
+  generate: async (token: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.post<AiAnalysis>('/ai-analyst/generate');
+  },
+
+  getHistory: async (token: string, page = 1, limit = 10, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    const res = await api.get<PaginatedResponse<AiAnalysis>>(`/ai-analyst/history?page=${page}&limit=${limit}`);
+    return { data: res.data.data, meta: res.data.meta };
+  },
+
+  getSettings: async (token: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<AiAnalystSettings>('/ai-analyst/settings');
+  },
+
+  updateSettings: async (token: string, data: UpdateAiAnalystSettingsRequest, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.put<AiAnalystSettings>('/ai-analyst/settings', data);
+  },
+};
+
+// ─── Goals Types ───
+
+export type GoalStatus = 'ACTIVE' | 'ACHIEVED' | 'FAILED' | 'ARCHIVED';
+
+export type GoalMetricType =
+  | 'NET_PROFIT'
+  | 'WIN_RATE'
+  | 'PROFIT_FACTOR'
+  | 'MAX_DRAWDOWN'
+  | 'TRADE_COUNT'
+  | 'AVERAGE_WIN'
+  | 'AVERAGE_LOSS'
+  | 'LARGEST_LOSS';
+
+export type GoalMetricComparator = 'GTE' | 'LTE';
+
+export interface GoalMetric {
+  id: string;
+  goalId: string;
+  metricType: GoalMetricType;
+  comparator: GoalMetricComparator;
+  targetValue: number;
+  currentValue: number | null;
+  isMet: boolean;
+}
+
+export interface Goal {
+  id: string;
+  userId: string;
+  name: string;
+  description: string | null;
+  startDate: string;
+  endDate: string;
+  status: GoalStatus;
+  achievedAt: string | null;
+  metrics: GoalMetric[];
+  progressPercent: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateGoalMetricRequest {
+  metricType: GoalMetricType;
+  comparator?: GoalMetricComparator;
+  targetValue: number;
+}
+
+export interface CreateGoalRequest {
+  name: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  metrics: CreateGoalMetricRequest[];
+}
+
+export interface UpdateGoalMetricRequest {
+  id?: string;
+  metricType: GoalMetricType;
+  comparator?: GoalMetricComparator;
+  targetValue: number;
+}
+
+export interface UpdateGoalRequest {
+  name?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  status?: GoalStatus;
+  metrics?: UpdateGoalMetricRequest[];
+}
+
+// Goals API
+export const goalsApi = {
+  getAll: async (token: string, status?: GoalStatus, page = 1, limit = 20, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (status) params.set('status', status);
+    const res = await api.get<PaginatedResponse<Goal>>(`/goals?${params.toString()}`);
+    return { data: res.data.data, meta: res.data.meta };
+  },
+
+  getById: async (token: string, id: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<Goal>(`/goals/${id}`);
+  },
+
+  create: async (token: string, data: CreateGoalRequest, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.post<Goal>('/goals', data);
+  },
+
+  update: async (token: string, id: string, data: UpdateGoalRequest, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.put<Goal>(`/goals/${id}`, data);
+  },
+
+  delete: async (token: string, id: string, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.delete(`/goals/${id}`);
+  },
+
+  getProgressSummary: async (token: string, limit = 3, isClient = true) => {
+    const api = isClient ? createClientApiClient(token) : createServerApiClient(token);
+    return api.get<Goal[]>(`/goals/progress/summary?limit=${limit}`);
+  },
+};

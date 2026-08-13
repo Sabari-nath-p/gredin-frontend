@@ -11,6 +11,7 @@ import { useAuthStore } from '@/lib/store';
 import { tradeAccountApi, tradeEntryApi, type TradeAccount, type TradeEntry } from '@/lib/api';
 import { formatCurrency, formatDateTime, getTradeNetProfitLoss, getTradeTemplatePreviewItems } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import GoalProgressWidget from '@/components/GoalProgressWidget';
 
 type TabKey = 'all' | 'open' | 'closed';
 
@@ -139,6 +140,9 @@ export default function TradesPage() {
           </p>
         </div>
       </div>
+
+      {/* ── Goal progress ── */}
+      <GoalProgressWidget />
 
       {/* ── Tabs + Account filter ── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
