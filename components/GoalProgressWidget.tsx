@@ -109,7 +109,7 @@ export default function GoalProgressWidget({ limit = 3 }: { limit?: number }) {
                       {METRIC_LABELS[m.metricType] || m.metricType}
                     </span>
                     <span className="font-medium text-slate-700 number-highlight">
-                      {formatNumber(m.currentValue ?? 0)} / {formatNumber(m.targetValue)}
+                      {formatNumber(Number(m.currentValue ?? 0))} / {formatNumber(Number(m.targetValue))}
                     </span>
                   </div>
                 ))}

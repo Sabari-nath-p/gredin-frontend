@@ -48,7 +48,7 @@ export default function GoalForm({ initialGoal, submitLabel, loading, onSubmit, 
       id: m.id,
       metricType: m.metricType,
       comparator: m.comparator,
-      targetValue: m.targetValue,
+      targetValue: Number(m.targetValue),
     })) ?? [{ metricType: 'NET_PROFIT', comparator: 'GTE', targetValue: 0 }],
   );
   const [error, setError] = useState('');
