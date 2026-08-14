@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, Trash2, Loader2, Target } from 'lucide-react';
-import type { Goal, GoalMetricType, GoalMetricComparator } from '@/lib/api';
+import { useEffect, useState } from 'react';
+import { Plus, Trash2, Loader2, Target, Wallet } from 'lucide-react';
+import { useAuthStore } from '@/lib/store';
+import { tradeAccountApi, type Goal, type GoalMetricType, type GoalMetricComparator, type TradeAccount } from '@/lib/api';
+import AccountMultiSelect from './AccountMultiSelect';
 
 export interface GoalFormValues {
   name: string;
@@ -10,6 +12,7 @@ export interface GoalFormValues {
   startDate: string;
   endDate: string;
   metrics: { id?: string; metricType: GoalMetricType; comparator: GoalMetricComparator; targetValue: number }[];
+  tradeAccountIds: string[];
 }
 
 const METRIC_OPTIONS: { value: GoalMetricType; label: string }[] = [
@@ -37,6 +40,7 @@ interface GoalFormProps {
 }
 
 export default function GoalForm({ initialGoal, submitLabel, loading, onSubmit, extraAction }: GoalFormProps) {
+  const { token } = useAuthStore();
   const [name, setName] = useState(initialGoal?.name ?? '');
   const [description, setDescription] = useState(initialGoal?.description ?? '');
   const [startDate, setStartDate] = useState(
@@ -51,7 +55,23 @@ export default function GoalForm({ initialGoal, submitLabel, loading, onSubmit, 
       targetValue: Number(m.targetValue),
     })) ?? [{ metricType: 'NET_PROFIT', comparator: 'GTE', targetValue: 0 }],
   );
+  const [tradeAccountIds, setTradeAccountIds] = useState<string[]>(
+    initialGoal?.tradeAccounts.map((a) => a.id) ?? [],
+  );
+  const [accounts, setAccounts] = useState<TradeAccount[]>([]);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!token) return;
+    (async () => {
+      try {
+        const res = await tradeAccountApi.getAll(token);
+        setAccounts(res.data);
+      } catch {
+        // Silently fail — the multi-select just shows "No trade accounts yet".
+      }
+    })();
+  }, [token]);
 
   const addMetric = () => {
     setMetrics((prev) => [...prev, { metricType: 'WIN_RATE', comparator: 'GTE', targetValue: 0 }]);
@@ -92,6 +112,7 @@ export default function GoalForm({ initialGoal, submitLabel, loading, onSubmit, 
       startDate,
       endDate,
       metrics: metrics.map((m) => ({ ...m, targetValue: Number(m.targetValue) })),
+      tradeAccountIds,
     });
   };
 
@@ -153,6 +174,17 @@ export default function GoalForm({ initialGoal, submitLabel, loading, onSubmit, 
               required
             />
           </div>
+        </div>
+
+        <div>
+          <label className="flex items-center gap-1.5 text-xs font-medium text-slate-900 mb-1">
+            <Wallet className="w-3.5 h-3.5 text-slate-500" />
+            Trade Accounts
+          </label>
+          <AccountMultiSelect accounts={accounts} selectedIds={tradeAccountIds} onChange={setTradeAccountIds} />
+          <p className="text-[11px] text-slate-500 mt-1">
+            Choose which accounts count toward this goal, or leave it on &ldquo;All accounts&rdquo;.
+          </p>
         </div>
       </div>
 

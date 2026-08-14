@@ -723,12 +723,23 @@ export interface AiAnalysis {
   createdAt: string;
 }
 
+// Lightweight trade-account summary used wherever a Goal or the AI Analyst
+// is scoped to a subset of the user's trade accounts.
+export interface ScopedTradeAccount {
+  id: string;
+  accountName: string;
+  brokerName: string;
+  currencyCode: string;
+}
+
 export interface AiAnalystSettings {
   id: string;
   userId: string;
   frequency: AnalystFrequency;
   emailEnabled: boolean;
   lastRunAt: string | null;
+  // Empty array = analysis covers ALL of the user's trade accounts.
+  tradeAccounts: ScopedTradeAccount[];
   createdAt: string;
   updatedAt: string;
 }
@@ -736,6 +747,8 @@ export interface AiAnalystSettings {
 export interface UpdateAiAnalystSettingsRequest {
   frequency?: AnalystFrequency;
   emailEnabled?: boolean;
+  // Omit to leave unchanged; pass [] to reset scoping back to "all accounts".
+  tradeAccountIds?: string[];
 }
 
 // AI Analyst API
@@ -803,6 +816,8 @@ export interface Goal {
   status: GoalStatus;
   achievedAt: string | null;
   metrics: GoalMetric[];
+  // Empty array = progress is measured across ALL of the user's trade accounts.
+  tradeAccounts: ScopedTradeAccount[];
   progressPercent: number;
   createdAt: string;
   updatedAt: string;
@@ -820,6 +835,7 @@ export interface CreateGoalRequest {
   startDate: string;
   endDate: string;
   metrics: CreateGoalMetricRequest[];
+  tradeAccountIds?: string[];
 }
 
 export interface UpdateGoalMetricRequest {
@@ -836,6 +852,8 @@ export interface UpdateGoalRequest {
   endDate?: string;
   status?: GoalStatus;
   metrics?: UpdateGoalMetricRequest[];
+  // Omit to leave unchanged; pass [] to reset scoping back to "all accounts".
+  tradeAccountIds?: string[];
 }
 
 // Goals API

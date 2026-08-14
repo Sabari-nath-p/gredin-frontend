@@ -48,6 +48,7 @@ export default function EditGoalPage() {
           comparator: m.comparator,
           targetValue: m.targetValue,
         })),
+        tradeAccountIds: values.tradeAccountIds,
       });
       toast.success('Goal updated');
       router.push('/dashboard/goals');

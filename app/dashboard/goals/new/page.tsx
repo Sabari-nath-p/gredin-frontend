@@ -28,6 +28,7 @@ export default function NewGoalPage() {
           comparator: m.comparator,
           targetValue: m.targetValue,
         })),
+        tradeAccountIds: values.tradeAccountIds,
       });
       toast.success('Goal created');
       router.push('/dashboard/goals');

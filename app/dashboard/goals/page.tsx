@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Target, Plus, Trash2, CheckCircle2, XCircle, Pencil } from 'lucide-react';
+import { Target, Plus, Trash2, CheckCircle2, XCircle, Pencil, Wallet } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { goalsApi, type Goal, type GoalStatus } from '@/lib/api';
 import { formatDate, formatNumber } from '@/lib/utils';
@@ -149,8 +149,14 @@ export default function GoalsPage() {
                   {goal.status}
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mb-3">
+              <p className="text-xs text-slate-600 mb-1">
                 {formatDate(goal.startDate)} → {formatDate(goal.endDate)}
+              </p>
+              <p className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-3 truncate">
+                <Wallet className="w-3 h-3 flex-shrink-0" />
+                {goal.tradeAccounts.length === 0
+                  ? 'All accounts'
+                  : goal.tradeAccounts.map((a) => a.accountName).join(', ')}
               </p>
 
               <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mb-3">

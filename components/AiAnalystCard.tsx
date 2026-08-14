@@ -14,11 +14,15 @@ import toast from 'react-hot-toast';
 import { useAuthStore } from '@/lib/store';
 import {
   aiAnalystApi,
+  tradeAccountApi,
   type AiAnalysis,
   type AiAnalystSettings,
   type AnalystFrequency,
+  type TradeAccount,
+  type UpdateAiAnalystSettingsRequest,
 } from '@/lib/api';
 import { formatCurrency } from '@/lib/utils';
+import AccountMultiSelect from './AccountMultiSelect';
 
 const FREQUENCY_LABELS: Record<AnalystFrequency, string> = {
   OFF: 'Off',
@@ -51,6 +55,7 @@ export default function AiAnalystCard() {
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState<AiAnalystSettings | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [accounts, setAccounts] = useState<TradeAccount[]>([]);
 
   useEffect(() => {
     if (!token) return;
@@ -70,18 +75,22 @@ export default function AiAnalystCard() {
     setShowSettings((v) => !v);
     if (!token || settings) return;
     try {
-      const res = await aiAnalystApi.getSettings(token);
-      setSettings(res.data);
+      const [settingsRes, accountsRes] = await Promise.all([
+        aiAnalystApi.getSettings(token),
+        tradeAccountApi.getAll(token),
+      ]);
+      setSettings(settingsRes.data);
+      setAccounts(accountsRes.data);
     } catch {
       toast.error('Could not load analyst settings');
     }
   };
 
-  const saveSettings = async (frequency: AnalystFrequency, emailEnabled: boolean) => {
+  const saveSettings = async (patch: UpdateAiAnalystSettingsRequest) => {
     if (!token) return;
     setSavingSettings(true);
     try {
-      const res = await aiAnalystApi.updateSettings(token, { frequency, emailEnabled });
+      const res = await aiAnalystApi.updateSettings(token, patch);
       setSettings(res.data);
       toast.success('Analyst settings updated');
     } catch {
@@ -169,7 +178,7 @@ export default function AiAnalystCard() {
             <label className="text-xs font-semibold text-slate-700">Auto-analysis frequency</label>
             <select
               value={settings?.frequency ?? 'OFF'}
-              onChange={(e) => saveSettings(e.target.value as AnalystFrequency, settings?.emailEnabled ?? true)}
+              onChange={(e) => saveSettings({ frequency: e.target.value as AnalystFrequency })}
               disabled={!settings || savingSettings}
               className="px-2.5 py-1.5 text-xs bg-white border border-slate-300 rounded-lg outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all"
             >
@@ -187,12 +196,21 @@ export default function AiAnalystCard() {
               type="checkbox"
               checked={settings?.emailEnabled ?? true}
               disabled={!settings || savingSettings}
-              onChange={(e) => saveSettings(settings?.frequency ?? 'OFF', e.target.checked)}
+              onChange={(e) => saveSettings({ emailEnabled: e.target.checked })}
               className="w-4 h-4 accent-purple-primary cursor-pointer"
             />
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Trade accounts to analyse</label>
+            <AccountMultiSelect
+              accounts={accounts}
+              selectedIds={settings?.tradeAccounts.map((a) => a.id) ?? []}
+              onChange={(ids) => saveSettings({ tradeAccountIds: ids })}
+              disabled={!settings || savingSettings}
+            />
+          </div>
           <p className="text-[11px] text-slate-500">
-            When enabled, a fresh plan is generated automatically and emailed to you on this schedule.
+            When enabled, a fresh plan is generated automatically and emailed to you on this schedule, based on the trade accounts selected above.
           </p>
         </div>
       )}
