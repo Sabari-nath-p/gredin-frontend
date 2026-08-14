@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   Wallet, TrendingUp, BarChart3, DollarSign,
   ArrowUpRight, ArrowDownRight, Plus, Activity,
-  ChevronRight, Sparkles, Clock, CheckCircle2, CalendarRange,
+  ChevronRight, Sparkles, Clock, CheckCircle2, CalendarRange, Target,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -596,7 +596,7 @@ export default function DashboardPage() {
           <Sparkles className="w-5 h-5 text-green-primary" />
           <h2 className="text-lg font-bold text-slate-900">Quick Actions</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <Link
             href="/dashboard/trades/new"
             className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-green-primary/20 hover:border-green-primary/40 hover:bg-green-primary/5 transition-all group"
@@ -620,6 +620,19 @@ export default function DashboardPage() {
             <div>
               <h3 className="font-semibold text-slate-900 text-sm">New Account</h3>
               <p className="text-xs text-slate-600">Create trading account</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/dashboard/goals/new"
+            className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-300 hover:border-purple-primary/30 hover:bg-purple-primary/5 transition-all group"
+          >
+            <div className="w-10 h-10 bg-purple-primary/10 rounded-xl flex items-center justify-center group-hover:bg-purple-primary/15 transition-colors">
+              <Target className="w-5 h-5 text-purple-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900 text-sm">New Goal</h3>
+              <p className="text-xs text-slate-600">Set a target to track</p>
             </div>
           </Link>
 
