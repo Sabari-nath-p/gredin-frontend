@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Check, Wallet } from 'lucide-react';
 import type { TradeAccount } from '@/lib/api';
 
@@ -14,13 +15,43 @@ interface AccountMultiSelectProps {
 
 export default function AccountMultiSelect({ accounts, selectedIds, onChange, disabled }: AccountMultiSelectProps) {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Portal target only exists client-side.
+  useEffect(() => setMounted(true), []);
+
+  // The dropdown panel is rendered into document.body (via a portal) rather
+  // than as a normal absolutely-positioned child, because every place this
+  // component is used sits inside a `.card` container, and `.card` has
+  // `overflow: hidden` — a nested absolute panel gets silently clipped.
+  // Position is tracked manually against the trigger button's rect instead.
+  useEffect(() => {
+    if (!open) return;
+    const updatePosition = () => {
+      const rect = buttonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      // Viewport-relative (not document-relative) since the panel uses `fixed` positioning.
+      setPosition({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+    };
+    updatePosition();
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [open]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
+      const target = e.target as Node;
+      if (buttonRef.current?.contains(target) || panelRef.current?.contains(target)) {
+        return;
       }
+      setOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -50,8 +81,9 @@ export default function AccountMultiSelect({ accounts, selectedIds, onChange, di
   })();
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       <button
+        ref={buttonRef}
         type="button"
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
@@ -64,8 +96,12 @@ export default function AccountMultiSelect({ accounts, selectedIds, onChange, di
         <ChevronDown className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
-      {open && (
-        <div className="absolute z-20 mt-1.5 w-full bg-white border border-slate-300 rounded-xl shadow-lg py-1.5 max-h-64 overflow-y-auto">
+      {open && mounted && createPortal(
+        <div
+          ref={panelRef}
+          style={{ top: position.top, left: position.left, width: position.width }}
+          className="fixed z-[1000] bg-white border border-slate-300 rounded-xl shadow-lg py-1.5 max-h-64 overflow-y-auto"
+        >
           <button
             type="button"
             onClick={() => { onChange([]); setOpen(false); }}
@@ -98,7 +134,8 @@ export default function AccountMultiSelect({ accounts, selectedIds, onChange, di
           {accounts.length === 0 && (
             <p className="px-3 py-2 text-xs text-slate-500">No trade accounts yet.</p>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
