@@ -585,11 +585,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* AI Personal Analyst */}
-      <AiAnalystCard />
-
-      {/* Goal Progress */}
-      <GoalProgressWidget />
 
       <div className="card animate-fade-in stagger-5">
         <div className="flex items-center gap-2 mb-4">
@@ -650,6 +645,14 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* AI Personal Analyst */}
+      <AiAnalystCard />
+
+      {/* Goal Progress */}
+      <GoalProgressWidget />
+
+
 
       {/* Equity Curve + Win/Loss */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
